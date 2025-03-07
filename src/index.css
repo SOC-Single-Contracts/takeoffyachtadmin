@@ -1,0 +1,54 @@
+@font-face {
+    font-family: 'Sora';
+    src: url('./assets/fonts/Sorhe-Regular.otf') format('truetype');
+    font-weight: 400; /* Regular */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Sora';
+    src: url('./assets/fonts/Sorhe-Bold.otf') format('truetype');
+    font-weight: 700; /* Bold */
+    font-style: normal;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.sidebar {
+    transition: transform 0.3s ease-in-out;
+}
+.sidebar-hidden {
+    transform: translateX(-100%);
+}
+.sidebar-visible {
+    transform: translateX(0);
+}
+
+:root {
+    /* Light Theme */
+    --background-color: #ffffff;
+    --text-color: #000000;
+    --card-background: #f8f9fa;
+    --border-color: #e0e0e0;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+  }
+  
+  [data-theme="dark"] {
+    /* Dark Theme */
+    --background-color: #121212;
+    --text-color: #e0e0e0;
+    --card-background: #1e1e1e;
+    --border-color: #373737;
+    --shadow-color: rgba(0, 0, 0, 0.5);
+  }
+  
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
