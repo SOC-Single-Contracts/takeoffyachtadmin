@@ -96,7 +96,8 @@ const Chat = () => {
             senderId: msg.sender.userId,
             timestamp: msg.createdAt,
             senderName: msg.sender.nickname || msg.sender.userId,
-            type: 'text'
+            type: msg.messageType === 'file' ? 'image' : 'text',
+            url: msg.url
           }));
 
         setMessages(prev => {
@@ -177,7 +178,8 @@ const Chat = () => {
               senderId: message.sender.userId,
               timestamp: message.createdAt,
               senderName: message.sender.nickname || message.sender.userId,
-              type: 'text'
+              type: message.messageType === 'file' ? 'image' : 'text',
+              url: message.url
             }]);
             setNewMessageAdded(true);
           };
@@ -395,7 +397,7 @@ const Chat = () => {
         <div className="p-3">
           <div className="flex items-center mb-2 justify-between">
             <h2 className="text-xl font-bold">Messages</h2>
-            <Plus className="h-6 w-6 cursor-pointer hover:text-[#BEA355] transition-colors" />
+            {/* <Plus className="h-6 w-6 cursor-pointer hover:text-[#BEA355] transition-colors" /> */}
           </div>
           <div className="p-2 space-y-4">
             <div className="relative">
@@ -408,13 +410,13 @@ const Chat = () => {
                 className="pl-10 py-2 px-2 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-[#BEA355] w-full"
               />
             </div>
-            <Button
+            {/* <Button
               onClick={startNewChat}
               className="w-full h-10 capitalize flex items-center justify-center rounded-lg text-white transition duration-500 ease-in-out bg-[#BEA355] hover:bg-[#9a8544] shadow-none"
             >
               <Plus className="w-5 h-5 mr-2" />
               Start a new chat
-            </Button>
+            </Button> */}
           </div>
           <div className="space-y-2">
             {filteredParticipants.map((participant) => {
@@ -424,36 +426,35 @@ const Chat = () => {
 
               return (
                 <div
-                  key={participant.id}
-                  onClick={() => setSelectedChat(participant.id)}
-                  className={`flex items-center mb-2 border-b-2 border-gray-200 p-2 hover:bg-gray-100 transition-all duration-300 ease-in-out cursor-pointer hover:rounded-lg ${selectedChat === participant.id ? 'bg-gray-100' : ''
-                    }`}
-                >
-                  <div className="relative">
-                    <Avatar
-                      src={participant.avatar}
-                      alt={participant.name}
-                      className="h-10 w-10"
-                    />
-                    <span
-                      className={`absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white ${participant.status === 'online' ? 'bg-green-500' : 'bg-gray-400'
-                        }`}
-                    />
-                  </div>
-                  <div className="ml-3 flex-1">
-                    <p className="font-semibold">{participant.name}</p>
-                    {userChannel && (
-                      <p className="text-sm text-gray-600 truncate">
-                        {userChannel.lastMessage || 'No messages yet'}
-                      </p>
-                    )}
-                  </div>
-                  {/* {userChannel && userChannel.unreadMessageCount > 0 && (
-                    <div className="bg-[#BEA355] text-white rounded-full px-2 py-1 text-xs">
-                      {userChannel.unreadMessageCount}
-                    </div>
-                  )} */}
+                key={participant.id}
+                onClick={() => setSelectedChat(participant.id)}
+                className={`flex flex-wrap items-center mb-2 border-b-2 border-gray-200 p-2 hover:bg-gray-100 transition-all duration-300 ease-in-out cursor-pointer hover:rounded-lg ${selectedChat === participant.id ? 'bg-gray-100' : ''}`}
+              >
+                <div className="relative">
+                  <Avatar
+                    src={participant.avatar}
+                    alt={participant.name}
+                    className="h-10 w-10"
+                  />
+                  <span
+                    className={`absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white ${participant.status === 'online' ? 'bg-green-500' : 'bg-gray-400'}`}
+                  />
                 </div>
+                <div className="ml-3 flex-1 min-w-[150px]"> {/* Add a min-width to ensure it doesn't collapse too much */}
+                  <p className="font-semibold">{participant.name}</p>
+                  {userChannel && (
+                    <p className="text-sm text-gray-600 truncate">
+                      {userChannel.lastMessage || 'No messages yet'}
+                    </p>
+                  )}
+                </div>
+                {/* {userChannel && userChannel.unreadMessageCount > 0 && (
+                  <div className="bg-[#BEA355] text-white rounded-full px-2 py-1 text-xs">
+                    {userChannel.unreadMessageCount}
+                  </div>
+                )} */}
+              </div>
+              
               );
             })}
           </div>
