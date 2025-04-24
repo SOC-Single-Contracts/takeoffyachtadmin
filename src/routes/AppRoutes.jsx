@@ -101,12 +101,12 @@ const AppRoutes = () => {
           <Route path="packages" element={<PackageList />} />
           
           {/* Boats Routes */}
-          <Route path="boats" element={<Boats />} />
-          <Route path="boats/add" element={<AddBoat />} />
-          <Route path="boats/edit/:id" element={<AddBoat />} />
-          <Route path="boats/f1" element={<F1Boats />} />
-          <Route path="boats/f1/add" element={<AddF1Boat />} />
-          <Route path="boats/f1/edit/:id" element={<AddF1Boat />} />
+          <Route path="boats/yachts" element={<Boats />} />
+          <Route path="boats/yachts/add" element={<AddBoat />} />
+          <Route path="boats/yachts/edit/:id" element={<AddBoat />} />
+          <Route path="boats/f1yachts" element={<F1Boats />} />
+          <Route path="boats/f1yachts/add" element={<AddF1Boat />} />
+          <Route path="boats/f1yachts/edit/:id" element={<AddF1Boat />} />
           <Route path="boats/newyear" element={<NewYearBoats />} />
           <Route path="boats/newyear/add" element={<AddNewYearBoat />} />
           <Route path="boats/newyear/edit/:id" element={<AddNewYearBoat />} />

@@ -81,16 +81,16 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           name: "Regular Boats",
           icon: <FaShip className="text-xl" />,
           items: [
-            { name: "All Boats", path: "/boats" },
-            { name: "Add Boat", path: "/boats/add" }
+            { name: "All Boats", path: "/boats/yachts" },
+            { name: "Add Boat", path: "/boats/yachts/add" }
           ]
         },
         {
           name: "F1 Boats",
           icon: <FaShip className="text-xl" />,
           items: [
-            { name: "All F1 Boats", path: "/boats/f1" },
-            { name: "Add F1 Boat", path: "/boats/f1/add" }
+            { name: "All F1 Boats", path: "/boats/f1yachts" },
+            { name: "Add F1 Boat", path: "/boats/f1yachts/add" }
           ]
         },
         {

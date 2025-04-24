@@ -39,22 +39,80 @@ const FileUpload = ({ onFilesChange, maxFiles = null, acceptedFileTypes = "*", c
     onFilesChange?.(Object.values(updated));
   };
 
+  // const handleFileSelect = (e) => {
+  //   for (const file of e.target.files) {
+  //     addFile(file);
+  //   }
+  //   e.target.value = null; // Reset input
+  // };
   const handleFileSelect = (e) => {
-    for (const file of e.target.files) {
-      addFile(file);
+    const selectedFiles = Array.from(e.target.files);
+  
+    const updated = { ...files };
+    for (const file of selectedFiles) {
+      if (maxFiles && Object.keys(updated).length >= maxFiles) {
+        alert(`Maximum ${maxFiles} files allowed`);
+        break;
+      }
+  
+      const objectURL = URL.createObjectURL(file);
+      updated[objectURL] = {
+        id: objectURL,
+        file,
+        name: file.name,
+        size: formatFileSize(file.size),
+        type: file.type,
+        isImage: file.type.match("image.*"),
+        url: objectURL,
+      };
     }
-    e.target.value = null; // Reset input
+  
+    setFiles(updated);
+    onFilesChange?.(Object.values(updated));
+    e.target.value = null;
   };
+  
+
+  // const handleDrop = (e) => {
+  //   e.preventDefault();
+  //   setIsDragging(false);
+  //   counter.current = 0;
+
+  //   for (const file of e.dataTransfer.files) {
+  //     addFile(file);
+  //   }
+  // };
 
   const handleDrop = (e) => {
     e.preventDefault();
     setIsDragging(false);
     counter.current = 0;
-
-    for (const file of e.dataTransfer.files) {
-      addFile(file);
+  
+    const droppedFiles = Array.from(e.dataTransfer.files);
+    const updated = { ...files };
+  
+    for (const file of droppedFiles) {
+      if (maxFiles && Object.keys(updated).length >= maxFiles) {
+        alert(`Maximum ${maxFiles} files allowed`);
+        break;
+      }
+  
+      const objectURL = URL.createObjectURL(file);
+      updated[objectURL] = {
+        id: objectURL,
+        file,
+        name: file.name,
+        size: formatFileSize(file.size),
+        type: file.type,
+        isImage: file.type.match("image.*"),
+        url: objectURL,
+      };
     }
+  
+    setFiles(updated);
+    onFilesChange?.(Object.values(updated));
   };
+  
 
   const handleDragEnter = (e) => {
     e.preventDefault();
@@ -146,7 +204,7 @@ const FileUpload = ({ onFilesChange, maxFiles = null, acceptedFileTypes = "*", c
                 <span className="text-sm text-gray-500">No files selected</span>
               </div>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3   gap-4">
                 {Object.values(files).map((file) => (
                   <div key={file.id} className="relative group">
                     <div className="aspect-square rounded-lg overflow-hidden bg-gray-100">
