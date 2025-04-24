@@ -50,5 +50,12 @@
     background-color: var(--background-color);
     color: var(--text-color);
     transition: background-color 0.3s ease, color 0.3s ease;
+    /* border: 10px solid green */
+
   }
+
+/* div{
+    border: 1px solid red;
+
+} */
   

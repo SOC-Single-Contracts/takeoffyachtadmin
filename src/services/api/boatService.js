@@ -88,12 +88,56 @@ export const getAllBoats = async (features = null) => {
     throw error.response?.data || error.message;
   }
 };
-
-export const getBoatById = async (id) => {
+export const getf1AllBoats = async (features = null) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/get_yacht/${id}`, {user_id: 1});
+    const response = await axios.get(`${API_BASE_URL}/f1-yachts/`);
+    
+    const boats = response.data?.data || [];
+    return  boats
+    // if (features) {
+    //   return boats.filter(boat => {
+    //     try {
+    //       const featuresObj = boat.yacht.features ? JSON.parse(boat.yacht.features.replace(/'/g, '"')) : null;
+    //       return featuresObj && featuresObj[features];
+    //     } catch (e) {
+    //       return false;
+    //     }
+    //   });
+    // }
+    // return boats.filter(boat => {
+    //   console.log(boat)
+    //   try {
+    //     const featuresObj = boat.yacht.features ? JSON.parse(boat.yacht.features.replace(/'/g, '"')) : null;
+    //     return !featuresObj || Object.keys(featuresObj).length === 0;
+    //   } catch (e) {
+    //     return true;
+    //   }
+    // });
+  } catch (error) {
+    console.error('API Error:', error.response?.data || error.message);
+    throw error.response?.data || error.message;
+  }
+};
+
+export const getBoatById = async (id,yachtsType) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/get_yacht/${id}/`, {user_id: 1});
+
     if (response.data?.error_code === 'pass' && response.data?.data) {
       return response.data.data[0];
+    }
+    throw new Error('Failed to fetch boat data');
+  } catch (error) {
+    console.error('API Error:', error.response?.data || error.message);
+    throw error.response?.data || error.message;
+  }
+};
+export const getSingleBoatById = async (id) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/get_signle_yacht/${id}/`);
+
+    if (response.data?.error_code === 'pass' && response.data?.data) {
+      return response.data.data;
     }
     throw new Error('Failed to fetch boat data');
   } catch (error) {
