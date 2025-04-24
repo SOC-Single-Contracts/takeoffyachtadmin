@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import BoatsListingGlobal from './boatsListingGlobal';
+import BoatsListingGlobal from "./boatsListingGlobal.jsx";
+
 // import { Card, CardHeader, CardBody, CardFooter, Typography, Button, IconButton } from "@material-tailwind/react";
 // import { Link } from 'react-router-dom';
 // import { getAllBoats } from '../../services/api/boatService';

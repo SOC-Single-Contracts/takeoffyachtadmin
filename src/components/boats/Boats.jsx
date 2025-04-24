@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import BoatsListingGlobal from "./boatsListingGlobal";
+import BoatsListingGlobal from "./boatsListingGlobal.jsx";
+
 // import { Card, CardHeader, CardBody, CardFooter, Typography, Button, Dialog, DialogHeader, DialogBody, IconButton } from "@material-tailwind/react";
 // import { Link } from 'react-router-dom';
 // import { FaXmark } from "react-icons/fa6";
