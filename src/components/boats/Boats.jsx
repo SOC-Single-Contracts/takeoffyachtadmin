@@ -18,8 +18,8 @@ import BoatsListingGlobal from "./boatsListingGlobal";
 
 
 // const Boats = () => {
-//   const currency = import.meta.env.VITE_CURRENCY || 'AED';
-//   const baseUrl = import.meta.env.VITE_API_URL || 'https://api.takeoffyachts.com';
+//   const currency = 'AED';
+//   const baseUrl =  'https://api.takeoffyachts.com';
 
 //   const [yachtData, setYachtData] = useState([]);
 //   const [selectedYacht, setSelectedYacht] = useState(null);

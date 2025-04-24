@@ -18,8 +18,8 @@ const InfoRow = ({ label, value, icon }) => (
 );
 
 const BoatsListingGlobal = ({ yachtsType }) => {
-  const currency = import.meta.env.VITE_CURRENCY || 'AED';
-  const baseUrl = import.meta.env.VITE_API_URL || 'https://api.takeoffyachts.com';
+  const currency =  'AED';
+  const baseUrl =  'https://api.takeoffyachts.com';
   const [boats, setBoats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
