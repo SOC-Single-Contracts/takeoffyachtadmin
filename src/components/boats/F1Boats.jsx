@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import BoatsListingGlobal from "./boatsListingGlobal.jsx";
+// import React, { useState, useEffect } from 'react';
 
 // import { Card, CardHeader, CardBody, CardFooter, Typography, Button, IconButton } from "@material-tailwind/react";
 // import { Link } from 'react-router-dom';
@@ -158,7 +157,8 @@ import BoatsListingGlobal from "./boatsListingGlobal.jsx";
 //     </div>
 //   );
 // };
-
+import React, { useEffect, useState } from "react";
+import BoatsListingGlobal from "../../components/boats/boatsListingGlobal";
 const F1Boats = () => {
 return(
   <>

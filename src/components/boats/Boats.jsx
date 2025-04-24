@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import BoatsListingGlobal from "./boatsListingGlobal.jsx";
+// import React, { useEffect, useState } from "react";
 
 // import { Card, CardHeader, CardBody, CardFooter, Typography, Button, Dialog, DialogHeader, DialogBody, IconButton } from "@material-tailwind/react";
 // import { Link } from 'react-router-dom';
@@ -297,7 +296,8 @@ import BoatsListingGlobal from "./boatsListingGlobal.jsx";
 // </Dialog>
 //     </div>
 //   );
-
+import React, { useEffect, useState } from "react";
+import BoatsListingGlobal from "../../components/boats/boatsListingGlobal";
 const Boats = () => {
 
 return(
