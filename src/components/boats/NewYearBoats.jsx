@@ -5,7 +5,6 @@ import { getAllBoats } from '../../services/api/boatService';
 import { FaXmark } from "react-icons/fa6";
 import { FlagIcon, LocateIcon, PowerIcon, ShipIcon, TypeIcon } from "lucide-react";
 import { BsCurrencyDollar } from "react-icons/bs";
-import BoatsListingGlobal from './boatsListingGlobal';
 
 const InfoRow = ({ label, value, icon }) => (
   <div className="flex justify-between">

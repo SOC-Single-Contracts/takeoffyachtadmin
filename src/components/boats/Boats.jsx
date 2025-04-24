@@ -1,77 +1,77 @@
 import React, { useEffect, useState } from "react";
-import { Card, CardHeader, CardBody, CardFooter, Typography, Button, Dialog, DialogHeader, DialogBody, IconButton } from "@material-tailwind/react";
-import { Link } from 'react-router-dom';
-import { FaXmark } from "react-icons/fa6";
-import { FlagIcon, LocateIcon, PowerIcon, ShipIcon, TypeIcon } from "lucide-react";
-import { BsCurrencyDollar } from "react-icons/bs";
 import BoatsListingGlobal from "./boatsListingGlobal";
+// import { Card, CardHeader, CardBody, CardFooter, Typography, Button, Dialog, DialogHeader, DialogBody, IconButton } from "@material-tailwind/react";
+// import { Link } from 'react-router-dom';
+// import { FaXmark } from "react-icons/fa6";
+// import { FlagIcon, LocateIcon, PowerIcon, ShipIcon, TypeIcon } from "lucide-react";
+// import { BsCurrencyDollar } from "react-icons/bs";
 
-const InfoRow = ({ label, value, icon }) => (
-  <div className="flex justify-between">
-    <span className="font-semibold">{label}:</span>
-    <span className="flex items-center">
-      {icon && <icon className="h-5 w-5 mr-2" />}
-      {value}
-    </span>
-  </div>
-);
-
-
-const Boats = () => {
-  const currency = import.meta.env.VITE_CURRENCY || 'AED';
-  const baseUrl = import.meta.env.VITE_API_URL || 'https://api.takeoffyachts.com';
-
-  const [yachtData, setYachtData] = useState([]);
-  const [selectedYacht, setSelectedYacht] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  useEffect(() => {
-    const fetchData = async (id) => {
-      try {
-        const response = await fetch(`${baseUrl}/yacht/get_yacht/${id}`);
-        const data = await response.json();
-        setYachtData(data.data);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    // fetchData(1);
-  }, []);
-
-  const openModal = (yacht) => {
-    setSelectedYacht(yacht);
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setSelectedYacht(null);
-  };
+// const InfoRow = ({ label, value, icon }) => (
+//   <div className="flex justify-between">
+//     <span className="font-semibold">{label}:</span>
+//     <span className="flex items-center">
+//       {icon && <icon className="h-5 w-5 mr-2" />}
+//       {value}
+//     </span>
+//   </div>
+// );
 
 
-  if (!yachtData) {
-    return (
-      <div className="p-6">
-        <Card className="h-full w-full p-4">
-          <CardHeader floated={false} shadow={false} className="rounded-none">
-            <div className="animate-pulse h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
-          </CardHeader>
-          <CardBody className="overflow-auto px-0">
-            <div className="space-y-4">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="animate-pulse">
-                  <div className="h-16 bg-gray-100 rounded"></div>
-                </div>
-              ))}
-            </div>
-          </CardBody>
-        </Card>
-      </div>
-    );
-  }
+// const Boats = () => {
+//   const currency = import.meta.env.VITE_CURRENCY || 'AED';
+//   const baseUrl = import.meta.env.VITE_API_URL || 'https://api.takeoffyachts.com';
 
-  const { categories, yacht } = yachtData;
+//   const [yachtData, setYachtData] = useState([]);
+//   const [selectedYacht, setSelectedYacht] = useState(null);
+//   const [isModalOpen, setIsModalOpen] = useState(false);
+
+//   useEffect(() => {
+//     const fetchData = async (id) => {
+//       try {
+//         const response = await fetch(`${baseUrl}/yacht/get_yacht/${id}`);
+//         const data = await response.json();
+//         setYachtData(data.data);
+//       } catch (error) {
+//         console.error('Error fetching data:', error);
+//       }
+//     };
+
+//     // fetchData(1);
+//   }, []);
+
+//   const openModal = (yacht) => {
+//     setSelectedYacht(yacht);
+//     setIsModalOpen(true);
+//   };
+
+//   const closeModal = () => {
+//     setIsModalOpen(false);
+//     setSelectedYacht(null);
+//   };
+
+
+//   if (!yachtData) {
+//     return (
+//       <div className="p-6">
+//         <Card className="h-full w-full p-4">
+//           <CardHeader floated={false} shadow={false} className="rounded-none">
+//             <div className="animate-pulse h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
+//           </CardHeader>
+//           <CardBody className="overflow-auto px-0">
+//             <div className="space-y-4">
+//               {[1, 2, 3].map((i) => (
+//                 <div key={i} className="animate-pulse">
+//                   <div className="h-16 bg-gray-100 rounded"></div>
+//                 </div>
+//               ))}
+//             </div>
+//           </CardBody>
+//         </Card>
+//       </div>
+//     );
+//   }
+
+//   const { categories, yacht } = yachtData;
 
 //   return (
 
@@ -296,6 +296,8 @@ const Boats = () => {
 // </Dialog>
 //     </div>
 //   );
+
+const Boats = () => {
 
 return(
   <>
