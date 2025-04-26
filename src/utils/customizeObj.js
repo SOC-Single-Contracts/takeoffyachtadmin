@@ -42,8 +42,8 @@ export const yachtData = (data) => {
     engine_type: data?.yacht?.type,
     crew_member: data?.yacht?.crew_member,
     description: data?.yacht?.description,
-    from_date: data?.yacht?.from_date,
-    to_date: data?.yacht?.to_date,
+    // from_date: data?.yacht?.from_date,
+    // to_date: data?.yacht?.to_date,
     length:data?.yacht?.length,
     // ny_price: data?.yacht?.ny_price,
     // ny_firework: data?.yacht?.ny_firework,
@@ -94,8 +94,8 @@ export const yachtData = (data) => {
     engine_type: data?.type,
     crew_member: data?.crew_member,
     description: data?.description,
-    from_date: data?.from_date,
-    to_date: data?.to_date,
+    // from_date: data?.from_date,
+    // to_date: data?.to_date,
     length:data?.length,
     // ny_price: data?.ny_price,
     // ny_firework: data?.ny_firework,
@@ -107,209 +107,173 @@ export const yachtData = (data) => {
   };
   
 
-  export const regularYachtsStatesUpdates = (data, setLocation,setAdditionalImages,setMainImage,setCrewLanguage,setFlag,setSelectedFeatures,setSelectedCategories,setSelectedInclusion,setSelectedFoodOptions) => {
+  export const regularYachtsStatesUpdates = (data) => {
+    const updates = {};
+  
     if (data?.yacht?.latitude && data?.yacht?.longitude) {
-        setLocation({
-            lat: parseFloat(data?.yacht?.latitude),
-            lng: parseFloat(data?.yacht?.longitude)
-          });
+      updates.location = {
+        lat: parseFloat(data.yacht.latitude),
+        lng: parseFloat(data.yacht.longitude),
+      };
     }
-    if(data?.yacht?.crew_language){
-        setCrewLanguage(data?.yacht?.crew_language)
-
+  
+    if (data?.yacht?.crew_language) {
+      updates.crewLanguage = data.yacht.crew_language;
     }
-    if(data?.yacht?.flag){
-        setFlag(data?.yacht?.flag)
-
+  
+    if (data?.yacht?.flag) {
+      updates.flag = data.yacht.flag;
     }
+  
     if (data?.yacht?.features?.length > 0) {
-        const featureNames = data?.yacht?.features.map(feature => feature.name);
-        setSelectedFeatures(featureNames);
+      updates.selectedFeatures = data.yacht.features.map(feature => feature.name);
+    }
+  
+    if (data?.categories?.length > 0) {
+      updates.selectedCategories = data.categories.map(cat => cat);
+    }
+  
+    if (data?.inclusion?.length > 0) {
+      updates.selectedInclusion = data.inclusion.map(inclusion => inclusion?.name);
+    }
+  
+    if (data?.food?.length > 0) {
+      updates.selectedFoodOptions = data.food.map(food => food?.name);
+    }
+  
+    /// Additional Images
+    const carouselImages = [
+      data?.yacht?.image1, data?.yacht?.image2, data?.yacht?.image3,
+      data?.yacht?.image4, data?.yacht?.image5, data?.yacht?.image6,
+      data?.yacht?.image7, data?.yacht?.image8, data?.yacht?.image9,
+      data?.yacht?.image10, data?.yacht?.image11, data?.yacht?.image12,
+      data?.yacht?.image13, data?.yacht?.image14, data?.yacht?.image15,
+      data?.yacht?.image16, data?.yacht?.image17, data?.yacht?.image18,
+      data?.yacht?.image19, data?.yacht?.image20,
+    ].filter(url => typeof url === "string" && url.trim() !== "");
+  
+    updates.additionalImages = carouselImages.map(url => {
+      const objectURL = `${url.startsWith('http') ? '' : S3URL}${url}`;
+      return {
+        id: objectURL,
+        file: { name: url, type: 'image/jpeg', size: url.length },
+        name: url,
+        size: formatFileSize(url.length),
+        type: 'image/jpeg',
+        isImage: true,
+        url: objectURL,
+        isFromApi: true,
+      };
+    });
+  
+    /// Main yacht image
+    const mainImage = data?.yacht?.yacht_image;
+    if (typeof mainImage === "string" && mainImage.trim() !== "") {
+      const objectURL = `${mainImage.startsWith('http') ? '' : S3URL}${mainImage}`;
+      updates.mainImage = {
+        id: objectURL,
+        file: { name: mainImage, type: 'image/jpeg', size: mainImage.length },
+        name: mainImage,
+        size: formatFileSize(mainImage.length),
+        type: 'image/jpeg',
+        isImage: true,
+        url: objectURL,
+        isFromApi: true,
+      };
+    }
+    if (data?.yacht?.from_date) {
+        updates.from_date = data.yacht.from_date;
       }
-      if (data?.categories?.length > 0) {
-        const categoriesNames = data?.categories.map(cat => cat);
-        setSelectedCategories(categoriesNames);
+      if (data?.yacht?.to_date) {
+        updates.to_date = data.yacht.to_date;
       }
-      if (data?.inclusion?.length > 0) {
-        const inclusionsNames = data?.inclusion.map(inclusion => inclusion?.name);
-        setSelectedInclusion(inclusionsNames);
-      }
-      if (data?.food?.length > 0) {
-        const foodNames = data?.food.map(food => food?.name);
-        setSelectedFoodOptions(foodNames);
-      }
-
-
-    ///setAdditionalImages
-    const carosuelImages = [
-        data?.yacht?.image1,
-        data?.yacht?.image2,
-        data?.yacht?.image3,
-        data?.yacht?.image4,
-        data?.yacht?.image5,
-        data?.yacht?.image6,
-        data?.yacht?.image7,
-        data?.yacht?.image8,
-        data?.yacht?.image9,
-        data?.yacht?.image10,
-        data?.yacht?.image11,
-        data?.yacht?.image12,
-        data?.yacht?.image13,
-        data?.yacht?.image14,
-        data?.yacht?.image15,
-        data?.yacht?.image16,
-        data?.yacht?.image17,
-        data?.yacht?.image18,
-        data?.yacht?.image19,
-        data?.yacht?.image20,
-      ].filter((image) => typeof image === "string" && image.trim() !== "");
-      
-      const updatedArr = carosuelImages?.map((url) => {
-        // const objectURL = URL.createObjectURL(new Blob([url], { type: 'image/jpeg' })); // For example, Blob usage
-        const objectURL = `${url.startsWith('http') ? '' : S3URL}${url}`
-        return {
-          id: objectURL,
-          file: { name: url, type: 'image/jpeg', size: url.length }, // Mocking file properties as an example
-          name: url,
-          size: formatFileSize(url.length), // You can adjust the size as per your logic
-          type: 'image/jpeg', // You might want to adjust this type if it's not always JPEG
-          isImage: true, // This will always be true as these are image URLs
-          url: objectURL,
-          isFromApi: true,
-
-        };
-      });
-      
-      setAdditionalImages(updatedArr);
-
-
-    /// main yachtImage
-
-    const mainImage = [
-        data?.yacht?.yacht_image,
-      ].filter((image) => typeof image === "string" && image.trim() !== "");
-      
-      const mainImageArr = mainImage?.map((url) => {
-        // const objectURL = URL.createObjectURL(new Blob([url], { type: 'image/jpeg' })); // For example, Blob usage
-        const objectURL = `${url.startsWith('http') ? '' : S3URL}${url}`
-        return {
-          id: objectURL,
-          file: { name: url, type: 'image/jpeg', size: url.length }, // Mocking file properties as an example
-          name: url,
-          size: formatFileSize(url.length), // You can adjust the size as per your logic
-          type: 'image/jpeg', // You might want to adjust this type if it's not always JPEG
-          isImage: true, // This will always be true as these are image URLs
-          url: objectURL,
-          isFromApi: true,
-        };
-      });
-
-      setMainImage(mainImageArr[0])
-      
-
- 
+  
+    return updates;
   };
+  
 
-  export const f1YachtsStatesUpdates = (data, setLocation,setAdditionalImages,setMainImage,setCrewLanguage,setFlag,setSelectedFeatures,setSelectedCategories,setSelectedInclusion,setSelectedFoodOptions) => {
+  export const f1YachtsStatesUpdates = (data) => {
+    const updates = {};
+  
     if (data?.yacht?.latitude && data?.yacht?.longitude) {
-        setLocation({
-            lat: parseFloat(data?.yacht?.latitude),
-            lng: parseFloat(data?.yacht?.longitude)
-          });
+      updates.location = {
+        lat: parseFloat(data.yacht.latitude),
+        lng: parseFloat(data.yacht.longitude),
+      };
     }
-    if(data?.yacht?.crew_language){
-        setCrewLanguage(data?.yacht?.crew_language)
-
+  
+    if (data?.yacht?.crew_language) {
+      updates.crewLanguage = data.yacht.crew_language;
     }
-    if(data?.yacht?.flag){
-        setFlag(data?.yacht?.flag)
-
+  
+    if (data?.yacht?.flag) {
+      updates.flag = data.yacht.flag;
     }
+  
     if (data?.yacht?.features?.length > 0) {
-        const featureNames = data?.yacht?.features.map(feature => feature.name);
-        setSelectedFeatures(featureNames);
+      updates.selectedFeatures = data.yacht.features.map(feature => feature.name);
+    }
+  
+    if (data?.categories?.length > 0) {
+      updates.selectedCategories = data.categories.map(cat => cat);
+    }
+  
+    if (data?.inclusion?.length > 0) {
+      updates.selectedInclusion = data.inclusion.map(inclusion => inclusion?.name);
+    }
+  
+    if (data?.food?.length > 0) {
+      updates.selectedFoodOptions = data.food.map(food => food?.name);
+    }
+  
+    /// Additional Images
+    const carouselImages = [
+      data?.yacht?.image1, data?.yacht?.image2, data?.yacht?.image3,
+      data?.yacht?.image4, data?.yacht?.image5, data?.yacht?.image6,
+      data?.yacht?.image7, data?.yacht?.image8, data?.yacht?.image9,
+      data?.yacht?.image10, data?.yacht?.image11, data?.yacht?.image12,
+      data?.yacht?.image13, data?.yacht?.image14, data?.yacht?.image15,
+      data?.yacht?.image16, data?.yacht?.image17, data?.yacht?.image18,
+      data?.yacht?.image19, data?.yacht?.image20,
+    ].filter(url => typeof url === "string" && url.trim() !== "");
+  
+    updates.additionalImages = carouselImages.map(url => {
+      const objectURL = `${url.startsWith('http') ? '' : S3URL}${url}`;
+      return {
+        id: objectURL,
+        file: { name: url, type: 'image/jpeg', size: url.length },
+        name: url,
+        size: formatFileSize(url.length),
+        type: 'image/jpeg',
+        isImage: true,
+        url: objectURL,
+        isFromApi: true,
+      };
+    });
+  
+    /// Main yacht image
+    const mainImage = data?.yacht?.yacht_image;
+    if (typeof mainImage === "string" && mainImage.trim() !== "") {
+      const objectURL = `${mainImage.startsWith('http') ? '' : S3URL}${mainImage}`;
+      updates.mainImage = {
+        id: objectURL,
+        file: { name: mainImage, type: 'image/jpeg', size: mainImage.length },
+        name: mainImage,
+        size: formatFileSize(mainImage.length),
+        type: 'image/jpeg',
+        isImage: true,
+        url: objectURL,
+        isFromApi: true,
+      };
+    }
+
+    if (data?.yacht?.from_date) {
+        updates.from_date = data.yacht.from_date;
       }
-
-      if (data?.categories?.length > 0) {
-        const categoriesNames = data?.categories.map(cat => cat);
-        setSelectedCategories(categoriesNames);
+      if (data?.yacht?.to_date) {
+        updates.to_date = data.yacht.to_date;
       }
-      if (data?.inclusion?.length > 0) {
-        const inclusionsNames = data?.inclusion.map(inclusion => inclusion?.name);
-        setSelectedInclusion(inclusionsNames);
-      }
-
-      if (data?.food?.length > 0) {
-        const foodNames = data?.food.map(food => food?.name);
-        setSelectedFoodOptions(foodNames);
-      }
-
-    ///setAdditionalImages
-    const carosuelImages = [
-        data?.yacht?.image1,
-        data?.yacht?.image2,
-        data?.yacht?.image3,
-        data?.yacht?.image4,
-        data?.yacht?.image5,
-        data?.yacht?.image6,
-        data?.yacht?.image7,
-        data?.yacht?.image8,
-        data?.yacht?.image9,
-        data?.yacht?.image10,
-        data?.yacht?.image11,
-        data?.yacht?.image12,
-        data?.yacht?.image13,
-        data?.yacht?.image14,
-        data?.yacht?.image15,
-        data?.yacht?.image16,
-        data?.yacht?.image17,
-        data?.yacht?.image18,
-        data?.yacht?.image19,
-        data?.yacht?.image20,
-      ].filter((image) => typeof image === "string" && image.trim() !== "");
-      
-      const updatedArr = carosuelImages?.map((url) => {
-        // const objectURL = URL.createObjectURL(new Blob([url], { type: 'image/jpeg' })); // For example, Blob usage
-        const objectURL = `${url.startsWith('http') ? '' : S3URL}${url}`
-        return {
-          id: objectURL,
-          file: { name: url, type: 'image/jpeg', size: url.length }, // Mocking file properties as an example
-          name: url,
-          size: formatFileSize(url.length), // You can adjust the size as per your logic
-          type: 'image/jpeg', // You might want to adjust this type if it's not always JPEG
-          isImage: true, // This will always be true as these are image URLs
-          url: objectURL,
-          isFromApi: true,
-
-        };
-      });
-      
-    //   setAdditionalImages(updatedArr);
-
-
-    /// main yachtImage
-
-    const mainImage = [
-        data?.yacht?.yacht_image,
-      ].filter((image) => typeof image === "string" && image.trim() !== "");
-      
-      const mainImageArr = mainImage?.map((url) => {
-        // const objectURL = URL.createObjectURL(new Blob([url], { type: 'image/jpeg' })); // For example, Blob usage
-        const objectURL = `${url.startsWith('http') ? '' : S3URL}${url}`
-        return {
-          id: objectURL,
-          file: { name: url, type: 'image/jpeg', size: url.length }, // Mocking file properties as an example
-          name: url,
-          size: formatFileSize(url.length), // You can adjust the size as per your logic
-          type: 'image/jpeg', // You might want to adjust this type if it's not always JPEG
-          isImage: true, // This will always be true as these are image URLs
-          url: objectURL,
-          isFromApi: true,
-        };
-      });
-
-      setMainImage(mainImageArr[0])
-      
-
- 
+  
+    return updates;
   };
+  

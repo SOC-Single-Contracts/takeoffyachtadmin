@@ -80,14 +80,26 @@ const AddBoatGlobal = () => {
     try {
       let data;
       const response = await getSingleBoatById(id);
-      data = response?.find(
-        (item) => item.yacht && item.yacht.id.toString() == id
-      );
-
-      // console.log(response,data)
-      setSelectedYacht(data)
+      data = response?.find(item => item.yacht && item.yacht.id.toString() == id);
+    
+      setSelectedYacht(data);
       reset(yachtData(data));
-      regularYachtsStatesUpdates(data,setLocation,setAdditionalImages,setMainImage,setCrewLanguage,setFlag,setSelectedFeatures,setSelectedCategories,setSelectedInclusion,setSelectedFoodOptions)
+    
+      const updates = regularYachtsStatesUpdates(data);
+    
+      if (updates?.location) setLocation(updates?.location);
+      if (updates?.additionalImages) setAdditionalImages(updates?.additionalImages);
+      if (updates?.mainImage) setMainImage(updates?.mainImage);
+      if (updates?.crewLanguage) setCrewLanguage(updates?.crewLanguage);
+      if (updates?.flag) setFlag(updates?.flag);
+      if (updates?.selectedFeatures) setSelectedFeatures(updates?.selectedFeatures);
+      if (updates?.selectedCategories) setSelectedCategories(updates?.selectedCategories);
+      if (updates?.selectedInclusion) setSelectedInclusion(updates?.selectedInclusion);
+      if (updates?.selectedFoodOptions) setSelectedFoodOptions(updates?.selectedFoodOptions);
+      if (updates?.from_date) setFromDate(updates?.from_date);
+      if (updates?.to_date) setToDate(updates?.to_date);
+
+
     } catch (error) {
       console.error('Error fetching boat data:', error);
     } finally {
@@ -103,13 +115,24 @@ const AddBoatGlobal = () => {
     try {
       let data;
       const response = await getSingleF1BoatById(id);
-      data = response
-      // console.log(response,data)
-      setSelectedYacht(data)
+      data = response;
+    
+      setSelectedYacht(data);
       reset(f1yachtData(data));
-      f1YachtsStatesUpdates(data,setLocation,setAdditionalImages,setMainImage,setCrewLanguage,setFlag,setSelectedFeatures,setSelectedCategories,setSelectedInclusion,setSelectedFoodOptions)
-
-      
+    
+      const updates = f1YachtsStatesUpdates(data);
+    
+      if (updates?.location) setLocation(updates?.location);
+      if (updates?.additionalImages) setAdditionalImages(updates?.additionalImages);
+      if (updates?.mainImage) setMainImage(updates?.mainImage);
+      if (updates?.crewLanguage) setCrewLanguage(updates?.crewLanguage);
+      if (updates?.flag) setFlag(updates?.flag);
+      if (updates?.selectedFeatures) setSelectedFeatures(updates?.selectedFeatures);
+      if (updates?.selectedCategories) setSelectedCategories(updates?.selectedCategories);
+      if (updates?.selectedInclusion) setSelectedInclusion(updates?.selectedInclusion);
+      if (updates?.selectedFoodOptions) setSelectedFoodOptions(updates?.selectedFoodOptions);
+      if (updates?.from_date) setFromDate(updates?.from_date);
+      if (updates?.to_date) setToDate(updates?.to_date);
     } catch (error) {
       console.error('Error fetching boat data:', error);
     } finally {
@@ -894,11 +917,16 @@ const AddBoatGlobal = () => {
             </div>
             <div>
               <label htmlFor="from_date">From Date</label>
-              <Input className='rounded-lg' type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} />
+              <Input className='rounded-lg' type="date"
+              value={fromDate ? fromDate.split('T')[0] : ''} 
+                onChange={(e) => setFromDate(e.target.value)} />
             </div>
             <div>
               <label htmlFor="to_date">To Date</label>
-              <Input className='rounded-lg' type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} />
+              <Input className='rounded-lg' type="date"
+              value={toDate ? toDate.split('T')[0] : ''} 
+
+                onChange={(e) => setToDate(e.target.value)} />
             </div>
 
 
