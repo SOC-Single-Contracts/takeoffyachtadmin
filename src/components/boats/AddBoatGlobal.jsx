@@ -37,7 +37,7 @@ const AddBoatGlobal = () => {
   const [selectedFeatures, setSelectedFeatures] = useState([]);
   const [inclusions, setInclusions] = useState([]);
   const [selectedInclusion, setSelectedInclusion] = useState([]);
-  const [nyInclusion, setNyInclusion] = useState([]);
+  const [selectednyInclusion, setSelectedNyInclusion] = useState([]);
   const [categoriesList, setCategoriesList] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [brandsList, setBrandsList] = useState([]);
@@ -98,6 +98,9 @@ const AddBoatGlobal = () => {
       if (updates?.selectedFoodOptions) setSelectedFoodOptions(updates?.selectedFoodOptions);
       if (updates?.from_date) setFromDate(updates?.from_date);
       if (updates?.to_date) setToDate(updates?.to_date);
+      if (updates?.selectednyInclusion) setSelectedNyInclusion(updates?.selectednyInclusion);
+
+
 
 
     } catch (error) {
@@ -273,22 +276,18 @@ const AddBoatGlobal = () => {
       if (!data.length) {
         toast.error('Length is required');
         return;
-      }
+      }  
 
-      if (data.ny_status && false) {
+      if (data.ny_status) {
         if (!data.ny_price) {
           toast.error('New Year Price is required when NY Status is checked');
           return;
         }
-        if (!data.ny_availability) {
-          toast.error('New Year Availability is required when NY Status is checked');
-          return;
-        }
-        if (!data.ny_availability.from) {
+        if (!data.ny_availability_from) {
           toast.error('New Year Availability From is required when NY Status is checked');
           return;
         }
-        if (!data.ny_availability.to) {
+        if (!data.ny_availability_to) {
           toast.error('New Year Availability To is required when NY Status is checked');
           return;
         }
@@ -312,24 +311,25 @@ const AddBoatGlobal = () => {
       Object.keys(data).forEach(key => {
         if (!['yacht_image'].includes(key)) {
           const value = key === 'status' ? String(data[key]) : data[key];
-          formData.append(key, value);
+          if (value !== null && value !== undefined && value !== '') {
+            formData.append(key, value);
+          }
         }
       });
 
       // Append ny_ keys only once
-      // formData.append('ny_status', data.ny_status);
-      if (data.ny_status && false) {
+      if (data.ny_status) {
         formData.append('ny_price', data.ny_price);
         formData.append('ny_firework', data.ny_firework);
 
-        const from = data.ny_availability?.from || '';
-        const to = data.ny_availability?.to || '';
-
-        const nyAvailabilityArray = [{ from, to }];
-        const nyAvailabilityString = JSON.stringify(nyAvailabilityArray);
-
-        formData.append('ny_availability', nyAvailabilityString); // ✅ Valid JSON
-        formData.append('ny_inclusion', JSON.stringify(nyInclusion));
+        const new_availability = {
+          from:data?.ny_availability_from,
+          to:data?.ny_availability_to
+        };
+        formData.append('ny_availability', JSON.stringify(new_availability));
+        formData.append('ny_start_time', JSON.stringify(new_availability?.from));
+        formData.append('ny_end_time', JSON.stringify(new_availability?.to));
+        formData.append('ny_inclusion', JSON.stringify(selectednyInclusion));
       }
       // const ny_availability = {///remove
       //   from: data?.ny_availability?.from,
@@ -513,7 +513,9 @@ const AddBoatGlobal = () => {
       Object.keys(data).forEach(key => {
         if (!['yacht_image'].includes(key)) {
           const value = key === 'status' ? String(data[key]) : data[key];
-          formData.append(key, value);
+          if (value !== null && value !== undefined && value !== '') {
+            formData.append(key, value);
+          }
         }
       });
 
@@ -678,7 +680,7 @@ const AddBoatGlobal = () => {
 
   useEffect(() => {
     // console.log("Form values changed:", watchedValues);
-    // console.log("errors", errors)
+    console.log("errors", errors)
     console.log("selectedYacht", selectedYacht)
   }, [watchedValues, errors, selectedYacht]);
   useEffect(() => {
@@ -807,20 +809,20 @@ const AddBoatGlobal = () => {
               <label htmlFor="crew_member">Crew Member</label>
               <Input className='rounded-lg' {...register('crew_member')} error={!!errors.crew_member} />
             </div>
-            {yachtsType == "yachts" && false && <div className='flex items-center gap-2'>
+            {yachtsType == "yachts"  && <div className='flex items-center gap-2'>
               <label htmlFor="ny_status">New Year Status</label>
               <input
                 type="checkbox"
                 {...register('ny_status')}
-                onChange={(e) => {
-                  setNyStatusChecked(e.target.checked);
-                  // console.log('NY Status Checked:', e.target.checked);
-                }}
+                // onChange={(e) => {
+                //   setNyStatusChecked(e.target.checked);
+                //   // console.log('NY Status Checked:', e.target.checked);
+                // }}
                 className="form-checkbox h-5 w-5 text-[#BEA355]"
               />
             </div>}
 
-            {nyStatusChecked && yachtsType == "yachts" && false && (
+            {watchedValues?.ny_status &&  yachtsType == "yachts"  && (
               <>
                 <div>
                   <label htmlFor="ny_price">New Year Price</label>
@@ -840,14 +842,14 @@ const AddBoatGlobal = () => {
                 <div>
                   <label htmlFor="ny_availability">New Year Availability</label>
                   <div className="flex space-x-2">
-                    <Input className='rounded-lg' type="time" {...register('ny_availability.from')}
+                    <Input className='rounded-lg' type="time" {...register('ny_availability_from')}
                     //  error={!!errors.ny_availability} 
                     />
-                    <Input className='rounded-lg' type="time" {...register('ny_availability.to')}
+                    <Input className='rounded-lg' type="time" {...register('ny_availability_to')}
                     //  error={!!errors.ny_availability}
                     />
                   </div>
-                  {errors.ny_availability && <p className="text-red-500 text-sm">{errors.ny_availability.message}</p>}
+                  {/* {errors.ny_availability && <p className="text-red-500 text-sm">{errors.ny_availability.message}</p>} */}
                 </div>
                 <div>
                   <label htmlFor="ny_inclusion" className="block text-sm font-medium text-gray-700 mb-2">New Year Inclusion</label>
@@ -856,18 +858,18 @@ const AddBoatGlobal = () => {
 
                 
                    >
-                    {inclusions.map((inc) => (
+                    {inclusions?.map((inc) => (
                       <button
                         key={inc.id}
                         type="button"
                         onClick={() => {
-                          setNyInclusion(prev =>
+                          setSelectedNyInclusion(prev =>
                             prev.includes(inc.name)
                               ? prev.filter(i => i !== inc.name)
                               : [...prev, inc.name]
                           );
                         }}
-                        className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${nyInclusion.includes(inc.name) ? 'bg-[#BEA355] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                        className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${selectednyInclusion.includes(inc.name) ? 'bg-[#BEA355] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
                       >
                         {inc.name}
                       </button>
