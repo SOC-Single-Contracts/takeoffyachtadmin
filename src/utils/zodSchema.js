@@ -43,11 +43,12 @@ export const zodSchemaRegularYachts = z.object({
     inclusion: z.array(z.string()).optional(),
     category_name: z.string().optional(),
     yacht_name: z.string().optional(),
-    // ny_price: z.any().optional(),
-    // ny_firework: z.boolean().optional(),
-    // ny_status: z.boolean().optional(),
-    //  ny_availability:z.any().optional() ,
-    // ny_inclusion: z.array(z.string()).optional(),
+    ny_price: z.any().optional(),
+    ny_firework: z.boolean().optional(),
+    ny_status: z.boolean().optional(),
+     ny_availability_from:z.any().optional() ,
+     ny_availability_to:z.any().optional() ,
+
 });
 
 
