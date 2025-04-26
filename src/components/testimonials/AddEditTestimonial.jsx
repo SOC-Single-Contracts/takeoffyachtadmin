@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import FileUpload from '../common/FileUpload';
+import FileUpload from '../common/ImagesUploader/FileUpload';
 
 const schema = z.object({
   name: z.string().min(1, "Name is required"),

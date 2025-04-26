@@ -58,4 +58,13 @@
     border: 1px solid red;
 
 } */
-  
+
+#AddBoatGlobal .submitButton{
+    position: absolute;
+    bottom: 0;
+    right: 36px;
+}
+
+#AddBoatGlobal .cardClass{
+    padding-bottom: 53px ;
+}

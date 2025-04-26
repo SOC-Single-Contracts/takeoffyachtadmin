@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Card, Input, Textarea } from "@material-tailwind/react";
 import { useNavigate, useParams } from 'react-router-dom';
-import FileUpload from '../common/FileUpload';
+import FileUpload from '../common/ImagesUploader/FileUpload';
 import MapPicker from '../common/MapPicker';
 import { toast } from 'react-toastify';
 import experienceService from '../../services/api/experienceService';

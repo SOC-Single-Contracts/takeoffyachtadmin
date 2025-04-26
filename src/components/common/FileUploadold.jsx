@@ -1,6 +1,6 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
-const FileUpload = ({ onFilesChange, maxFiles = null, acceptedFileTypes = "*", containerClassName = "" }) => {
+const FileUploadOld = ({ onFilesChange, maxFiles = null, acceptedFileTypes = "*", containerClassName = "" }) => {
   const [files, setFiles] = useState({});
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef(null);
@@ -39,22 +39,16 @@ const FileUpload = ({ onFilesChange, maxFiles = null, acceptedFileTypes = "*", c
     onFilesChange?.(Object.values(updated));
   };
 
-  // const handleFileSelect = (e) => {
-  //   for (const file of e.target.files) {
-  //     addFile(file);
-  //   }
-  //   e.target.value = null; // Reset input
-  // };
   const handleFileSelect = (e) => {
     const selectedFiles = Array.from(e.target.files);
-  
     const updated = { ...files };
+
     for (const file of selectedFiles) {
       if (maxFiles && Object.keys(updated).length >= maxFiles) {
         alert(`Maximum ${maxFiles} files allowed`);
         break;
       }
-  
+
       const objectURL = URL.createObjectURL(file);
       updated[objectURL] = {
         id: objectURL,
@@ -66,37 +60,28 @@ const FileUpload = ({ onFilesChange, maxFiles = null, acceptedFileTypes = "*", c
         url: objectURL,
       };
     }
-  
+
     setFiles(updated);
     onFilesChange?.(Object.values(updated));
     e.target.value = null;
   };
-  
-
-  // const handleDrop = (e) => {
-  //   e.preventDefault();
-  //   setIsDragging(false);
-  //   counter.current = 0;
-
-  //   for (const file of e.dataTransfer.files) {
-  //     addFile(file);
-  //   }
-  // };
 
   const handleDrop = (e) => {
+    console.log("handleDrop")
     e.preventDefault();
+    e.stopPropagation();
     setIsDragging(false);
     counter.current = 0;
-  
+
     const droppedFiles = Array.from(e.dataTransfer.files);
     const updated = { ...files };
-  
+
     for (const file of droppedFiles) {
       if (maxFiles && Object.keys(updated).length >= maxFiles) {
         alert(`Maximum ${maxFiles} files allowed`);
         break;
       }
-  
+
       const objectURL = URL.createObjectURL(file);
       updated[objectURL] = {
         id: objectURL,
@@ -108,21 +93,26 @@ const FileUpload = ({ onFilesChange, maxFiles = null, acceptedFileTypes = "*", c
         url: objectURL,
       };
     }
-  
+
     setFiles(updated);
     onFilesChange?.(Object.values(updated));
   };
-  
 
   const handleDragEnter = (e) => {
+    console.log("handleDragEnter")
+
     e.preventDefault();
+    e.stopPropagation();
     if (!e.dataTransfer.types.includes('Files')) return;
     counter.current++;
     setIsDragging(true);
   };
 
   const handleDragLeave = (e) => {
+    console.log("handleDragLeave")
+
     e.preventDefault();
+    e.stopPropagation();
     counter.current--;
     if (counter.current === 0) {
       setIsDragging(false);
@@ -130,7 +120,9 @@ const FileUpload = ({ onFilesChange, maxFiles = null, acceptedFileTypes = "*", c
   };
 
   const handleDragOver = (e) => {
+    console.log("handleDragOver")
     e.preventDefault();
+    e.dataTransfer.dropEffect = "copy";
   };
 
   const removeFile = (fileId) => {
@@ -147,6 +139,10 @@ const FileUpload = ({ onFilesChange, maxFiles = null, acceptedFileTypes = "*", c
     onFilesChange?.([]);
   };
 
+  // useEffect(() => {
+  //   console.log("files in upload", files);
+  // }, [files]);
+
   return (
     <div className={`bg-white rounded-lg shadow-sm ${containerClassName}`}>
       <div
@@ -157,11 +153,17 @@ const FileUpload = ({ onFilesChange, maxFiles = null, acceptedFileTypes = "*", c
         onDragLeave={handleDragLeave}
       >
         {/* Drag overlay */}
-        <div className={`absolute inset-0 z-50 flex flex-col items-center justify-center rounded-lg transition-all ${
-          isDragging ? 'bg-white/70' : 'pointer-events-none'
-        }`}>
-          <svg className={`w-12 h-12 mb-3 text-[#BEA355] transition-opacity ${isDragging ? 'opacity-100' : 'opacity-0'}`} 
-               xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+        <div
+          className={`absolute inset-0 z-50 flex flex-col items-center justify-center rounded-lg transition-all ${
+            isDragging ? 'bg-white/70 pointer-events-auto' : 'pointer-events-none'
+          }`}
+        >
+          <svg
+            className={`w-12 h-12 mb-3 text-[#BEA355] transition-opacity ${isDragging ? 'opacity-100' : 'opacity-0'}`}
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+          >
             <path d="M19.479 10.092c-.212-3.951-3.473-7.092-7.479-7.092-4.005 0-7.267 3.141-7.479 7.092-2.57.463-4.521 2.706-4.521 5.408 0 3.037 2.463 5.5 5.5 5.5h13c3.037 0 5.5-2.463 5.5-5.5 0-2.702-1.951-4.945-4.521-5.408zm-7.479-1.092l4 4h-3v4h-2v-4h-3l4-4z" />
           </svg>
           <p className={`text-lg text-[#BEA355] transition-opacity ${isDragging ? 'opacity-100' : 'opacity-0'}`}>
@@ -204,7 +206,7 @@ const FileUpload = ({ onFilesChange, maxFiles = null, acceptedFileTypes = "*", c
                 <span className="text-sm text-gray-500">No files selected</span>
               </div>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3   gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {Object.values(files).map((file) => (
                   <div key={file.id} className="relative group">
                     <div className="aspect-square rounded-lg overflow-hidden bg-gray-100">
@@ -260,4 +262,4 @@ const FileUpload = ({ onFilesChange, maxFiles = null, acceptedFileTypes = "*", c
   );
 };
 
-export default FileUpload;
+export default FileUploadOld;
