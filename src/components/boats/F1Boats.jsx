@@ -157,14 +157,14 @@
 //     </div>
 //   );
 // };
-import React, { useEffect, useState } from "react";
-import BoatsListingGlobal from "../../components/boats/boatsListingGlobal";
-const F1Boats = () => {
-return(
-  <>
-  <BoatsListingGlobal yachtsType={"f1yachts"} />
-  </>
-);
-};
+// import React, { useEffect, useState } from "react";
+// import BoatsListingGlobal from "../../components/boats/boatsListingGlobal";
+// const F1Boats = () => {
+// return(
+//   <>
+//   <BoatsListingGlobal yachtsType={"f1yachts"} />
+//   </>
+// );
+// };
 
-export default F1Boats;
+// export default F1Boats;
