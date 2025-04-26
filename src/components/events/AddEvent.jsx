@@ -395,7 +395,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import MapPicker from '../common/MapPicker';
-import FileUpload from '../common/FileUpload';
+import FileUpload from '../common/ImagesUploader/FileUpload';
 
 const AddEvent = () => {
   const [loading, setLoading] = useState(false);

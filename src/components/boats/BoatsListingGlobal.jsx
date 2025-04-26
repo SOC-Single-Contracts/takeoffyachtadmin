@@ -56,7 +56,14 @@ const BoatsListingGlobal = ({ yachtsType }) => {
         setBoats(sortedData);
       } else if (yachtsType == "f1yachts") {
         const data = await getf1AllBoats();
-        setBoats(data);
+        const sortedData = data.sort((a, b) => {
+          const dateA = new Date(a.yacht.created_on);
+          const dateB = new Date(b.yacht.created_on);
+          return dateB - dateA; // latest date first
+        });
+        // setBoats(data);
+
+        setBoats(sortedData);
 
       } else if (yachtsType == "new_year") {
         const data = await getAllBoats('new_year');
