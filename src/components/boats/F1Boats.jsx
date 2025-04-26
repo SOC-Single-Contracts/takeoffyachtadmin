@@ -158,13 +158,14 @@
 //   );
 // };
 import React, { useEffect, useState } from "react";
-import BoatsListingGlobal from "../../components/boats/boatsListingGlobal";
+// import BoatsListingGlobal from "../../components/boats/boatsListingGlobal";
 const F1Boats = () => {
 return(
   <>
-  <BoatsListingGlobal yachtsType={"f1yachts"} />
+  {/* <BoatsListingGlobal yachtsType={"f1yachts"} /> */}
+  <h1>f1 boats</h1>
   </>
 );
 };
 
-export default F1Boats;
+export default F1Boats; 
