@@ -297,13 +297,13 @@
 //     </div>
 //   );
 import React, { useEffect, useState } from "react";
-// import BoatsListingGlobal from "../../components/boats/boatsListingGlobal";
+import BoatsListingGlobal from "./BoatsListingGlobal";
 const Boats = () => {
 
 return(
   <>
-  {/* <BoatsListingGlobal yachtsType={"yachts"} /> */}
-  <h1>boats</h1>
+  <BoatsListingGlobal yachtsType={"yachts"} />
+  {/* <h1>boats</h1> */}
 
   </>
 );
