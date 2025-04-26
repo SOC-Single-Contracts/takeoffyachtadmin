@@ -296,15 +296,15 @@
 // </Dialog>
 //     </div>
 //   );
-import React, { useEffect, useState } from "react";
-import BoatsListingGlobal from "../../components/boats/boatsListingGlobal";
-const Boats = () => {
+// import React, { useEffect, useState } from "react";
+// import BoatsListingGlobal from "../../components/boats/boatsListingGlobal";
+// const Boats = () => {
 
-return(
-  <>
-  <BoatsListingGlobal yachtsType={"yachts"} />
-  </>
-);
-};
+// return(
+//   <>
+//   <BoatsListingGlobal yachtsType={"yachts"} />
+//   </>
+// );
+// };
 
-export default Boats;  
+// export default Boats;  
