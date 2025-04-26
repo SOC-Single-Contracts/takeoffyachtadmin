@@ -158,11 +158,11 @@
 //   );
 // };
 import React, { useEffect, useState } from "react";
-// import BoatsListingGlobal from "../../components/boats/boatsListingGlobal";
+import BoatsListingGlobal from "./BoatsListingGlobal";
 const F1Boats = () => {
 return(
   <>
-  {/* <BoatsListingGlobal yachtsType={"f1yachts"} /> */}
+  <BoatsListingGlobal yachtsType={"f1yachts"} />
   <h1>f1 boats</h1>
   </>
 );
