@@ -276,7 +276,7 @@ const AddBoatGlobal = () => {
       if (!data.length) {
         toast.error('Length is required');
         return;
-      }
+      }  
 
       if (data.ny_status) {
         if (!data.ny_price) {
