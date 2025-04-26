@@ -7,6 +7,8 @@ import { FlagIcon, LocateIcon, PowerIcon, ShipIcon, TypeIcon } from "lucide-reac
 import { BsCurrencyDollar } from "react-icons/bs";
 import { da } from 'date-fns/locale/da';
 
+const PAGE_SIZE = 10;
+
 const InfoRow = ({ label, value, icon }) => (
   <div className="flex justify-between">
     <span className="font-semibold">{label}:</span>
@@ -18,14 +20,17 @@ const InfoRow = ({ label, value, icon }) => (
 );
 
 const BoatsListingGlobal = ({ yachtsType }) => {
-  const currency =  'AED';
-  const baseUrl =  'https://api.takeoffyachts.com';
+  const currency = 'AED';
+  const baseUrl = 'https://api.takeoffyachts.com';
   const [boats, setBoats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const [selectedYacht, setSelectedYacht] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(1);
+
   // const yachtsTypee = useLocation().pathname.split('/')[2];
   // console.log(yachtsTypee)
 
@@ -46,24 +51,93 @@ const BoatsListingGlobal = ({ yachtsType }) => {
 
       if (yachtsType == "yachts") {
 
-        const response = await fetch(`${baseUrl}/yacht/get_yacht/${1}`);
-        const data = await response.json();
-        const sortedData = data?.data.sort((a, b) => {
-          const dateA = new Date(a.yacht.created_on);
-          const dateB = new Date(b.yacht.created_on);
-          return dateB - dateA; // latest date first
-        });
-        setBoats(sortedData);
-      } else if (yachtsType == "f1yachts") {
-        const data = await getf1AllBoats();
-        const sortedData = data.sort((a, b) => {
-          const dateA = new Date(a.yacht.created_on);
-          const dateB = new Date(b.yacht.created_on);
-          return dateB - dateA; // latest date first
-        });
-        // setBoats(data);
+        // const response = await fetch(`${baseUrl}/yacht/get_yacht/${1}`);
+        // const data = await response.json();
+        // const sortedData = data?.data.sort((a, b) => {
+        //   const dateA = new Date(a.yacht.created_on);
+        //   const dateB = new Date(b.yacht.created_on);
+        //   return dateB - dateA; // latest date first
+        // });
+        // setBoats(sortedData);
 
-        setBoats(sortedData);
+
+
+       let payload = {
+          reqType: "handlePagination",
+          YachtType: yachtsType == "f1yachts" ? "f1yachts" : "regular",
+          user_id: 1,
+       }
+
+        let response = await fetch(`${baseUrl}/yacht/check_yacht/?page=${page}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
+
+
+        const responseData = await response.json();
+        if (responseData.error_code === 'pass') {
+          // Sort the filtered yachts if needed
+          const sortedData = responseData?.data.sort((a, b) => {
+            const dateA = new Date(a.yacht.created_on);
+            const dateB = new Date(b.yacht.created_on);
+            return dateB - dateA; // latest date first
+          });
+          setBoats((prev) => [...prev, ...sortedData]);
+          if (sortedData?.length < PAGE_SIZE) {
+            setHasMore(false)
+          } else {
+            setHasMore(true)
+          }
+        } else {
+          setHasMore(false);
+          console.error('API Error:', responseData.error);
+        }
+      } else if (yachtsType == "f1yachts") {
+        // const data = await getf1AllBoats();
+        // const sortedData = data.sort((a, b) => {
+        //   const dateA = new Date(a.yacht.created_on);
+        //   const dateB = new Date(b.yacht.created_on);
+        //   return dateB - dateA; // latest date first
+        // });
+        // setBoats(sortedData);
+
+        
+       let payload = {
+        reqType: "handlePagination",
+        YachtType: yachtsType == "f1yachts" ? "f1yachts" : "regular",
+        user_id: 1,
+     }
+
+      let response = await fetch(`${baseUrl}/yacht/check_yacht/?page=${page}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+
+      const responseData = await response.json();
+      if (responseData.error_code === 'pass') {
+        // Sort the filtered yachts if needed
+        const sortedData = responseData?.data.sort((a, b) => {
+          const dateA = new Date(a.yacht.created_on);
+          const dateB = new Date(b.yacht.created_on);
+          return dateB - dateA; // latest date first
+        });
+        setBoats((prev) => [...prev, ...sortedData]);
+        if (sortedData?.length < PAGE_SIZE) {
+          setHasMore(false)
+        } else {
+          setHasMore(true)
+        }
+      } else {
+        setHasMore(false);
+        console.error('API Error:', responseData.error);
+      }
 
       } else if (yachtsType == "new_year") {
         const data = await getAllBoats('new_year');
@@ -84,18 +158,23 @@ const BoatsListingGlobal = ({ yachtsType }) => {
   };
 
   const totalPages = Math.ceil(boats.length / itemsPerPage);
-
+  useEffect(() => {
+    if (page > 1) {
+      fetchBoats();
+    }
+  }, [page]);
 
   useEffect(() => {
     fetchBoats();
   }, []);
   //test
-  // useEffect(() => {
-  //   console.log("loading", loading)
-  //   console.log("yachtsType", yachtsType)
-  //   console.log("getCurrentPageBoats",getCurrentPageBoats())
-  //   console.log("totalPages",[...Array(totalPages)])
-  // }, [loading,getCurrentPageBoats])
+  useEffect(() => {
+    // console.log("loading", loading)
+    // console.log("yachtsType", yachtsType)
+    // console.log("getCurrentPageBoats",getCurrentPageBoats())
+    // console.log("totalPages",[...Array(totalPages)])
+    console.log("boats",boats)
+  }, [loading,getCurrentPageBoats,boats])
   if (loading) {
     return (
       <div className="p-6">
@@ -159,8 +238,8 @@ const BoatsListingGlobal = ({ yachtsType }) => {
                 <tr>
                   <th className="border-b border-blue-gray-100 p-4">Title</th>
                   <th className="border-b border-blue-gray-100 p-4">Location</th>
-                  {yachtsType == "yachts" ?   <th className="border-b border-blue-gray-100 p-4">Price per hour</th>: yachtsType == "f1yachts" ?   <th className="border-b border-blue-gray-100 p-4">Price per day</th> :""}
-                
+                  {yachtsType == "yachts" ? <th className="border-b border-blue-gray-100 p-4">Price per hour</th> : yachtsType == "f1yachts" ? <th className="border-b border-blue-gray-100 p-4">Price per day</th> : ""}
+
                   <th className="border-b border-blue-gray-100 p-4">Status</th>
                   <th className="border-b border-blue-gray-100 p-4">Actions</th>
                 </tr>
@@ -174,8 +253,8 @@ const BoatsListingGlobal = ({ yachtsType }) => {
                           : ""}
 
                     <td className="p-4">{boat?.yacht.location}</td>
-                    {yachtsType == "yachts" ?  <td className="p-4">{boat?.yacht.per_hour_price} AED</td> : yachtsType == "f1yachts" ?  <td className="p-4">{boat?.yacht.per_day_price} AED</td> :""}
-                   
+                    {yachtsType == "yachts" ? <td className="p-4">{boat?.yacht.per_hour_price} AED</td> : yachtsType == "f1yachts" ? <td className="p-4">{boat?.yacht.per_day_price} AED</td> : ""}
+
                     <td className="p-4">
                       <span className={`px-2 py-1 rounded-full text-xs ${boat?.yacht.status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                         }`}>
@@ -227,8 +306,12 @@ const BoatsListingGlobal = ({ yachtsType }) => {
           <Button
             variant="outlined"
             size="sm"
-            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-            disabled={currentPage === totalPages}
+            // onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+            // disabled={currentPage === totalPages}
+
+            onClick={()=>setPage((prevPage) => prevPage + 1)}
+            disabled={!hasMore}
+
           >
             Next
           </Button>
@@ -245,12 +328,12 @@ const BoatsListingGlobal = ({ yachtsType }) => {
         {selectedYacht && (
           <>
             <DialogHeader className="flex items-center justify-between">
-            {yachtsType == "yachts" ?   <Typography variant="h4">
+              {yachtsType == "yachts" ? <Typography variant="h4">
                 Yacht Details
-              </Typography> : yachtsType == "f1yachts" ?   <Typography variant="h4">
-               F1 Yacht Details
-              </Typography> :""}
-            
+              </Typography> : yachtsType == "f1yachts" ? <Typography variant="h4">
+                F1 Yacht Details
+              </Typography> : ""}
+
               <IconButton
                 variant="text"
                 onClick={closeModal}
@@ -277,16 +360,16 @@ const BoatsListingGlobal = ({ yachtsType }) => {
                       label="Location"
                       value={selectedYacht.location}
                     />
-                    {yachtsType == "yachts" ?   <InfoRow
+                    {yachtsType == "yachts" ? <InfoRow
                       // icon={BsCurrencyDollar}
                       label="Price per Hour"
                       value={`${currency} ${selectedYacht.per_hour_price} `}
-                    /> : yachtsType == "f1yachts" ?   <InfoRow
-                    // icon={"AED"}
-                    label="Price per Day"
-                    value={`${currency} ${selectedYacht.per_day_price}`}
-                  /> :""}
-                  
+                    /> : yachtsType == "f1yachts" ? <InfoRow
+                      // icon={"AED"}
+                      label="Price per Day"
+                      value={`${currency} ${selectedYacht.per_day_price}`}
+                    /> : ""}
+
                     <InfoRow
                       icon={TypeIcon}
                       label="Type"
@@ -336,7 +419,7 @@ const BoatsListingGlobal = ({ yachtsType }) => {
               </div>
 
               {/* Availability */}
-              {yachtsType == "yachts" ?      <div className="mt-8">
+              {yachtsType == "yachts" ? <div className="mt-8">
                 <Typography variant="h6" color="blue-gray" className="mb-4">
                   Availability
                 </Typography>
@@ -352,8 +435,8 @@ const BoatsListingGlobal = ({ yachtsType }) => {
                     />
                   </>
                 )}
-              </div> : yachtsType == "f1yachts" ? "" :""}
-         
+              </div> : yachtsType == "f1yachts" ? "" : ""}
+
 
               {/* Features */}
               <div className="mt-8">
