@@ -69,6 +69,8 @@ import AddExperience from '../components/experiences/AddExperience';
 import AllEvents from '../components/events/EventList';
 import AddEvent from '../components/events/AddEvent';
 import PackageList from "../components/events/PackageList";
+import EditBoat from "../components/boats/EditBoat";
+import EditF1Boat from "../components/boats/EditF1Boat";
 
 const AppRoutes = () => {
   return (
@@ -103,10 +105,10 @@ const AppRoutes = () => {
           {/* Boats Routes */}
           <Route path="boats/yachts" element={<Boats />} />
           <Route path="boats/yachts/add" element={<AddBoat />} />
-          <Route path="boats/yachts/edit/:id" element={<AddBoat />} />
+          <Route path="boats/yachts/edit/:id" element={<EditBoat />} />
           <Route path="boats/f1yachts" element={<F1Boats />} />
           <Route path="boats/f1yachts/add" element={<AddF1Boat />} />
-          <Route path="boats/f1yachts/edit/:id" element={<AddF1Boat />} />
+          <Route path="boats/f1yachts/edit/:id" element={<EditF1Boat />} />
           <Route path="boats/newyear" element={<NewYearBoats />} />
           <Route path="boats/newyear/add" element={<AddNewYearBoat />} />
           <Route path="boats/newyear/edit/:id" element={<AddNewYearBoat />} />
