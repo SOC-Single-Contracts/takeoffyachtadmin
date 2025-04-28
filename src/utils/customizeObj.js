@@ -1,27 +1,12 @@
 import { formatFileSize } from "./helper";
-const S3URL = "https://images-yacht?.s3.us-east-1.amazonaws.com"
+const S3URL = "https://images-yacht.s3.us-east-1.amazonaws.com"
+
+
 
 
 export const yachtData = (data) => {
 
     let obj = {
-        // ...data?.yacht,
-
-        // user_id:1,
-        // yacht:data?.yacht?.id,
-        // min_price: String(data?.yacht?.min_price),
-        // max_price: String(data?.yacht?.max_price),
-        // guest: String(data?.yacht?.guest),
-        // cancel_time_in_hour: String(data?.yacht?.cancel_time_in_hour),
-        // duration_hour: String(data?.yacht?.duration_hour),
-        // duration_minutes: String(data?.yacht?.duration_minutes),
-        // number_of_cabin: String(data?.yacht?.number_of_cabin),
-        // capacity: String(data?.yacht?.capacity),
-        // sleep_capacity: String(data?.yacht?.sleep_capacity),
-        // per_day_price: String(data?.yacht?.per_day_price),
-        // per_hour_price: String(data?.yacht?.per_hour_price),
-
-
         user_id: 1,
         yacht: data?.yacht?.id,
         name: data?.yacht?.name,
@@ -58,50 +43,29 @@ export const f1yachtData = (data) => {
 
 
     let obj = {
-        // ...data?.yacht,
-
-        // user_id:1,
-        // yacht:data?.yacht?.id,
-        // min_price: String(data?.yacht?.min_price),
-        // max_price: String(data?.yacht?.max_price),
-        // guest: String(data?.yacht?.guest),
-        // cancel_time_in_hour: String(data?.yacht?.cancel_time_in_hour),
-        // duration_hour: String(data?.yacht?.duration_hour),
-        // duration_minutes: String(data?.yacht?.duration_minutes),
-        // number_of_cabin: String(data?.yacht?.number_of_cabin),
-        // capacity: String(data?.yacht?.capacity),
-        // sleep_capacity: String(data?.yacht?.sleep_capacity),
-        // per_day_price: String(data?.yacht?.per_day_price),
-        // per_hour_price: String(data?.yacht?.per_hour_price),
-
-
         user_id: 1,
-        yacht: data?.id,
-        name: data?.name,
-        title: data?.title,
-        location: data?.location,
-        min_price: String(data?.min_price),
-        max_price: String(data?.max_price),
-        guest: String(data?.guest),
-        cancel_time_in_hour: String(data?.cancel_time_in_hour),
-        duration_hour: String(data?.duration_hour),
-        duration_minutes: String(data?.duration_minutes),
-        number_of_cabin: String(data?.number_of_cabin),
-        capacity: String(data?.capacity),
-        sleep_capacity: String(data?.sleep_capacity),
-        per_day_price: String(data?.per_day_price),
-        power: data?.power,
-        engine_type: data?.type,
-        crew_member: data?.crew_member,
-        description: data?.description,
-        // from_date: data?.from_date,
-        // to_date: data?.to_date,
-        length: data?.length,
-        // ny_price: data?.ny_price,
-        // ny_firework: data?.ny_firework,
-        // ny_status: false,
-        // ny_availability: data?.ny_availability,
-        // ny_inclusion: data?.ny_inclusion,
+        yacht: data?.yacht?.id,
+        name: data?.yacht?.name,
+        title: data?.yacht?.title,
+        location: data?.yacht?.location,
+        min_price: String(data?.yacht?.min_price),
+        max_price: String(data?.yacht?.max_price),
+        guest: String(data?.yacht?.guest),
+        cancel_time_in_hour: String(data?.yacht?.cancel_time_in_hour),
+        duration_hour: String(data?.yacht?.duration_hour),
+        duration_minutes: String(data?.yacht?.duration_minutes),
+        number_of_cabin: String(data?.yacht?.number_of_cabin),
+        capacity: String(data?.yacht?.capacity),
+        sleep_capacity: String(data?.yacht?.sleep_capacity),
+        per_day_price: String(data?.yacht?.per_day_price),
+        power: data?.yacht?.power,
+        engine_type: data?.yacht?.type,
+        crew_member: data?.yacht?.crew_member,
+        description: data?.yacht?.description,
+        // from_date: data?.yacht?.from_date,
+        // to_date: data?.yacht?.to_date,
+        length: data?.yacht?.length,
+       
     }
     return obj
 };
@@ -112,21 +76,21 @@ export const regularYachtsStatesUpdates = (data) => {
 
     if (data?.yacht?.latitude && data?.yacht?.longitude) {
         updates.location = {
-            lat: parseFloat(data.yacht.latitude),
-            lng: parseFloat(data.yacht.longitude),
+            lat: parseFloat(data?.yacht?.latitude),
+            lng: parseFloat(data?.yacht?.longitude),
         };
     }
 
     if (data?.yacht?.crew_language) {
-        updates.crewLanguage = data.yacht.crew_language;
+        updates.crewLanguage = data?.yacht?.crew_language;
     }
 
     if (data?.yacht?.flag) {
-        updates.flag = data.yacht.flag;
+        updates.flag = data?.yacht?.flag;
     }
 
     if (data?.yacht?.features?.length > 0) {
-        updates.selectedFeatures = data.yacht.features.map(feature => feature.name);
+        updates.selectedFeatures = data?.yacht?.features.map(feature => feature.name);
     }
 
     if (data?.categories?.length > 0) {
@@ -185,10 +149,10 @@ export const regularYachtsStatesUpdates = (data) => {
         };
     }
     if (data?.yacht?.from_date) {
-        updates.from_date = data.yacht.from_date;
+        updates.from_date = data?.yacht?.from_date;
     }
     if (data?.yacht?.to_date) {
-        updates.to_date = data.yacht.to_date;
+        updates.to_date = data?.yacht?.to_date;
     }
 
     return updates;
@@ -200,21 +164,21 @@ export const f1YachtsStatesUpdates = (data) => {
 
     if (data?.yacht?.latitude && data?.yacht?.longitude) {
         updates.location = {
-            lat: parseFloat(data.yacht.latitude),
-            lng: parseFloat(data.yacht.longitude),
+            lat: parseFloat(data?.yacht?.latitude),
+            lng: parseFloat(data?.yacht?.longitude),
         };
     }
 
     if (data?.yacht?.crew_language) {
-        updates.crewLanguage = data.yacht.crew_language;
+        updates.crewLanguage = data?.yacht?.crew_language;
     }
 
     if (data?.yacht?.flag) {
-        updates.flag = data.yacht.flag;
+        updates.flag = data?.yacht?.flag;
     }
 
     if (data?.yacht?.features?.length > 0) {
-        updates.selectedFeatures = data.yacht.features.map(feature => feature.name);
+        updates.selectedFeatures = data?.yacht?.features.map(feature => feature.name);
     }
 
     if (data?.categories?.length > 0) {
@@ -223,6 +187,9 @@ export const f1YachtsStatesUpdates = (data) => {
 
     if (data?.inclusion?.length > 0) {
         updates.selectedInclusion = data.inclusion.map(inclusion => inclusion?.name);
+    }
+    if (data?.ny_inclusion?.length > 0) {
+        updates.selectednyInclusion = data.ny_inclusion.map(ny_inclusion => ny_inclusion?.name);
     }
 
     if (data?.food?.length > 0) {
@@ -269,12 +236,11 @@ export const f1YachtsStatesUpdates = (data) => {
             isFromApi: true,
         };
     }
-
     if (data?.yacht?.from_date) {
-        updates.from_date = data.yacht.from_date;
+        updates.from_date = data?.yacht?.from_date;
     }
     if (data?.yacht?.to_date) {
-        updates.to_date = data.yacht.to_date;
+        updates.to_date = data?.yacht?.to_date;
     }
 
     return updates;

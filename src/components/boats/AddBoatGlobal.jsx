@@ -18,6 +18,8 @@ import { f1yachtData, f1YachtsStatesUpdates, regularYachtsStatesUpdates, yachtDa
 import ImageUploadGallery from '../common/imageGallery/imageuploadGallery';
 import FileUploadOld from '../common/FileUploadold';
 import FileUploadSingle from '../common/FileUploadSingle';
+import { format, parse } from 'date-fns';
+
 
 
 
@@ -79,7 +81,7 @@ const AddBoatGlobal = () => {
 
     try {
       let data;
-      const response = await getSingleBoatById(id);
+      const response = await getSingleBoatById(id,yachtsType == "f1yachts" ? "f1yachts" : "regular");
       data = response?.find(item => item.yacht && item.yacht.id.toString() == id);
     
       setSelectedYacht(data);
@@ -117,10 +119,11 @@ const AddBoatGlobal = () => {
 
     try {
       let data;
-      const response = await getSingleF1BoatById(id);
-      data = response;
-    
-      setSelectedYacht(data);
+      // const response = await getSingleF1BoatById(id);
+      // data = response;
+      const response = await getSingleBoatById(id,yachtsType == "f1yachts" ? "f1yachts" : "regular");
+      data = response?.find(item => item.yacht && item.yacht.id.toString() == id);
+            setSelectedYacht(data);
       reset(f1yachtData(data));
     
       const updates = f1YachtsStatesUpdates(data);
@@ -203,7 +206,16 @@ const AddBoatGlobal = () => {
       try {
         const response = await axios.get('https://api.takeoffyachts.com/yacht/food/');
         if (response.data.error_code === 'pass') {
-          setFoodOptions(response.data.extra);
+          const categories = ['extra', 'food', 'sport'];
+          const allOptions = [];
+          
+          categories.forEach(category => {
+            if (Array.isArray(response.data[category])) {
+              allOptions.push(...response.data[category]);
+            }
+          });
+          
+          setFoodOptions(allOptions);
         }
       } catch (error) {
         console.error('Error fetching food options:', error);
@@ -296,7 +308,7 @@ const AddBoatGlobal = () => {
       setLoading(true);
       const formData = new FormData();
 
-      if (!isEditMode) {
+      if (!isEditMode || isEditMode) {
         // Current date and time for availability
         const now = new Date();
         const availability = {
@@ -320,15 +332,19 @@ const AddBoatGlobal = () => {
       // Append ny_ keys only once
       if (data.ny_status) {
         formData.append('ny_price', data.ny_price);
+        formData.append('new_year_per_hour_price', data.ny_price);
+        formData.append('new_year_per_day_price', data.ny_price);
         formData.append('ny_firework', data.ny_firework);
 
         const new_availability = {
           from:data?.ny_availability_from,
           to:data?.ny_availability_to
         };
+        const formattedFrom = format(parse(new_availability.from, 'HH:mm', new Date()), 'HH:mm:ss');
+        const formattedTo = format(parse(new_availability.to, 'HH:mm', new Date()), 'HH:mm:ss');
         formData.append('ny_availability', JSON.stringify(new_availability));
-        formData.append('ny_start_time', JSON.stringify(new_availability?.from));
-        formData.append('ny_end_time', JSON.stringify(new_availability?.to));
+        formData.append('new_year_start_time', formattedFrom);
+        formData.append('new_year_end_time', formattedTo);
         formData.append('ny_inclusion', JSON.stringify(selectednyInclusion));
       }
       // const ny_availability = {///remove
@@ -347,6 +363,8 @@ const AddBoatGlobal = () => {
       additionalImages.forEach((img, index) => {
         if(img?.file instanceof File){
           formData.append(`image${index + 1}`, img.file);
+        }else if(img?.isFromApi){
+          formData.append(`image${index + 1}`, img.url);
         }
       });
       formData.append('notes', notes);
@@ -358,7 +376,7 @@ const AddBoatGlobal = () => {
       formData.append('features', JSON.stringify(selectedFeatures));
       formData.append('subcategory', JSON.stringify(selectedFeatures));
       formData.append('inclusion', JSON.stringify(selectedInclusion));
-      formData.append('category', JSON.stringify(selectedCategories));
+      formData.append('categories', JSON.stringify(selectedCategories));
       // formData.append('food_name', foodName);
       // formData.append('food_price', foodPrice);
       // formData.append('brand_id', selectedBrand);
@@ -392,7 +410,6 @@ const AddBoatGlobal = () => {
         // Handle API validation errors
         if (response.error) {
           const { data } = response.error;
-
           // Check for detailed validation errors
           if (data.details && typeof data.details === 'object') {
             Object.entries(data.details).forEach(([field, messages]) => {
@@ -467,8 +484,8 @@ const AddBoatGlobal = () => {
       //   return;
       // }
 
-       // Validate main image
-       if (mainImage && mainImage?.file) {
+      // Validate main image
+      if (mainImage && mainImage?.file) {
         const mainImageError = validateImage(mainImage.file);
         if (mainImageError) {
           toast.error(`Main image error: ${mainImageError}`);
@@ -493,12 +510,27 @@ const AddBoatGlobal = () => {
       if (!data.length) {
         toast.error('Length is required');
         return;
+      }  
+
+      if (data.ny_status) {
+        if (!data.ny_price) {
+          toast.error('New Year Price is required when NY Status is checked');
+          return;
+        }
+        if (!data.ny_availability_from) {
+          toast.error('New Year Availability From is required when NY Status is checked');
+          return;
+        }
+        if (!data.ny_availability_to) {
+          toast.error('New Year Availability To is required when NY Status is checked');
+          return;
+        }
       }
 
       setLoading(true);
       const formData = new FormData();
 
-      if (!isEditMode) {
+      if (!isEditMode ||  isEditMode) {
         // Current date and time for availability
         const now = new Date();
         const availability = {
@@ -519,8 +551,29 @@ const AddBoatGlobal = () => {
         }
       });
 
+      // Append ny_ keys only once
+      if (data.ny_status) {
+        formData.append('ny_price', data.ny_price);
+        formData.append('new_year_per_hour_price', data.ny_price);
+        formData.append('new_year_per_day_price', data.ny_price);
+        formData.append('ny_firework', data.ny_firework);
 
-
+        const new_availability = {
+          from:data?.ny_availability_from,
+          to:data?.ny_availability_to
+        };
+        const formattedFrom = format(parse(new_availability.from, 'HH:mm', new Date()), 'HH:mm:ss');
+        const formattedTo = format(parse(new_availability.to, 'HH:mm', new Date()), 'HH:mm:ss');
+        formData.append('ny_availability', JSON.stringify(new_availability));
+        formData.append('new_year_start_time', formattedFrom);
+        formData.append('new_year_end_time', formattedTo);
+        formData.append('ny_inclusion', JSON.stringify(selectednyInclusion));
+      }
+      // const ny_availability = {///remove
+      //   from: data?.ny_availability?.from,
+      //   to: data?.ny_availability?.to,
+      // };
+      // formData.set('ny_availability', JSON.stringify(ny_availability));///remove
 
       formData.append('latitude', location.lat);
       formData.append('longitude', location.lng);
@@ -532,6 +585,8 @@ const AddBoatGlobal = () => {
       additionalImages.forEach((img, index) => {
         if(img?.file instanceof File){
           formData.append(`image${index + 1}`, img.file);
+        }else if(img?.isFromApi){
+          formData.append(`image${index + 1}`, img.url);
         }
       });
       formData.append('notes', notes);
@@ -543,7 +598,7 @@ const AddBoatGlobal = () => {
       formData.append('features', JSON.stringify(selectedFeatures));
       formData.append('subcategory', JSON.stringify(selectedFeatures));
       formData.append('inclusion', JSON.stringify(selectedInclusion));
-      formData.append('category', JSON.stringify(selectedCategories));
+      formData.append('categories', JSON.stringify(selectedCategories));
       // formData.append('food_name', foodName);
       // formData.append('food_price', foodPrice);
       // formData.append('brand_id', selectedBrand);
@@ -647,45 +702,45 @@ const AddBoatGlobal = () => {
     setAdditionalImages([...additionalImages,...validFiles.slice(0, 20)]);
   }, []);
   //test
-  useEffect(() => {
-    const newData = {
-      ...watchedValues,
-      location,
-      additionalImages,
-      mainImage,
-      notes,
-      flag,
-      crewLanguage,
-      fromDate,
-      toDate,
-      selectedFeatures,
-      selectedInclusion,
-      selectedCategories,
-      selectedFoodOptions,
-    };
+  // useEffect(() => {
+  //   const newData = {
+  //     ...watchedValues,
+  //     location,
+  //     additionalImages,
+  //     mainImage,
+  //     notes,
+  //     flag,
+  //     crewLanguage,
+  //     fromDate,
+  //     toDate,
+  //     selectedFeatures,
+  //     selectedInclusion,
+  //     selectedCategories,
+  //     selectedFoodOptions,
+  //   };
   
-    setDebuggingObject((prev) => {
-      const hasChanged = JSON.stringify(prev) !== JSON.stringify(newData);
-      if (hasChanged) {
-        return newData;
-      }
-      return prev;
-    });
-  }, [
-    watchedValues, errors, location, additionalImages, mainImage,
-    selectedYacht, notes, flag, crewLanguage, fromDate, toDate,
-    selectedFeatures, selectedInclusion, selectedCategories, selectedFoodOptions,
-  ]);
+  //   setDebuggingObject((prev) => {
+  //     const hasChanged = JSON.stringify(prev) !== JSON.stringify(newData);
+  //     if (hasChanged) {
+  //       return newData;
+  //     }
+  //     return prev;
+  //   });
+  // }, [
+  //   watchedValues, errors, location, additionalImages, mainImage,
+  //   selectedYacht, notes, flag, crewLanguage, fromDate, toDate,
+  //   selectedFeatures, selectedInclusion, selectedCategories, selectedFoodOptions,
+  // ]);
   
 
-  useEffect(() => {
-    // console.log("Form values changed:", watchedValues);
-    console.log("errors", errors)
-    console.log("selectedYacht", selectedYacht)
-  }, [watchedValues, errors, selectedYacht]);
-  useEffect(() => {
-    console.log("debuggingObject", debuggingObject)
-  }, [debuggingObject])
+  // useEffect(() => {
+  //   // console.log("Form values changed:", watchedValues);
+  //   console.log("errors", errors)
+  //   console.log("selectedYacht", selectedYacht)
+  // }, [watchedValues, errors, selectedYacht]);
+  // useEffect(() => {
+  //   console.log("debuggingObject", debuggingObject)
+  // }, [debuggingObject])
   if (initialLoading) {
     return (
       <div className="flex justify-center items-center h-screen">

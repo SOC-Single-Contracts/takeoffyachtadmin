@@ -163,7 +163,7 @@ const F1Boats = () => {
 return(
   <>
   <BoatsListingGlobal yachtsType={"f1yachts"} />
-  <h1>f1 boats</h1>
+  {/* <h1>f1 boats</h1> */}
   </>
 );
 };
