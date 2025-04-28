@@ -245,7 +245,7 @@ const AddBoatGlobal = () => {
 
   const handleSubmitYachts = async (data) => {
 
-    console.log(data)
+    // console.log(data)
     try {
       if (!mainImage && !isEditMode) {
         toast.error('Please select a main yacht image');
@@ -383,10 +383,10 @@ const AddBoatGlobal = () => {
       if (selectedFoodOptions.length > 0) {
         formData.append('food_name', JSON.stringify(selectedFoodOptions));
       }
-      console.log("FormData contents:");
-      for (let pair of formData.entries()) {
-        console.log(`${pair[0]}:`, pair[1]);
-      }
+      // console.log("FormData contents:");
+      // for (let pair of formData.entries()) {
+      //   console.log(`${pair[0]}:`, pair[1]);
+      // }
 
       let url;
 
@@ -434,7 +434,7 @@ const AddBoatGlobal = () => {
         }
       }
     } catch (error) {
-      console.log(error)
+      console.error(error)
       if (error.response) {
         const { data } = error.response;
 
@@ -467,7 +467,7 @@ const AddBoatGlobal = () => {
   };
   const handleSubmitf1Yachts = async (data) => {
 
-    console.log(data)
+    // console.log(data)
     try {
       if (!mainImage && !isEditMode) {
         toast.error('Please select a main yacht image');
@@ -605,10 +605,10 @@ const AddBoatGlobal = () => {
       if (selectedFoodOptions.length > 0) {
         formData.append('food_name', JSON.stringify(selectedFoodOptions));
       }
-      console.log("FormData contents:");
-      for (let pair of formData.entries()) {
-        console.log(`${pair[0]}:`, pair[1]);
-      }
+      // console.log("FormData contents:");
+      // for (let pair of formData.entries()) {
+      //   console.log(`${pair[0]}:`, pair[1]);
+      // }
 
       let url;
 
@@ -648,7 +648,7 @@ const AddBoatGlobal = () => {
         }
       }
     } catch (error) {
-      // console.log(error)
+      console.error(error)
       if (error.response?.data?.error) {
         try {
           const errorObj = JSON.parse(error.response.data.error);
@@ -688,7 +688,7 @@ const AddBoatGlobal = () => {
   }, []);
 
   const handleAdditionalImagesChange = useCallback((files) => {
-    console.log(files)
+    // console.log(files)
     // Validate each file
     const validFiles = files.filter((file, index) => {
       const error = validateImage(file.file);
