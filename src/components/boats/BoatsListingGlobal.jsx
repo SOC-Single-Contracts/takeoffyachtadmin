@@ -6,6 +6,7 @@ import { FaXmark } from "react-icons/fa6";
 import { FlagIcon, LocateIcon, PowerIcon, ShipIcon, TypeIcon } from "lucide-react";
 import { BsCurrencyDollar } from "react-icons/bs";
 import { da } from 'date-fns/locale/da';
+import { CustomPagination } from '../common/customPagination/customPagination';
 
 const PAGE_SIZE = 10;
 
@@ -24,12 +25,13 @@ const BoatsListingGlobal = ({ yachtsType }) => {
   const baseUrl = 'https://api.takeoffyachts.com';
   const [boats, setBoats] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const [selectedYacht, setSelectedYacht] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
+  const [totalYachts, settotalYachts] = useState(0);
+
 
   // const yachtsTypee = useLocation().pathname.split('/')[2];
   // console.log(yachtsTypee)
@@ -62,11 +64,11 @@ const BoatsListingGlobal = ({ yachtsType }) => {
 
 
 
-       let payload = {
+        let payload = {
           reqType: "handlePagination",
           YachtType: yachtsType == "f1yachts" ? "f1yachts" : "regular",
           user_id: 1,
-       }
+        }
 
         let response = await fetch(`${baseUrl}/yacht/check_yacht/?page=${page}`, {
           method: 'POST',
@@ -85,7 +87,9 @@ const BoatsListingGlobal = ({ yachtsType }) => {
             const dateB = new Date(b.yacht.created_on);
             return dateB - dateA; // latest date first
           });
-          setBoats((prev) => [...prev, ...sortedData]);
+          setBoats(sortedData);
+          settotalYachts(responseData?.total_yachts)
+
           if (sortedData?.length < PAGE_SIZE) {
             setHasMore(false)
           } else {
@@ -104,40 +108,42 @@ const BoatsListingGlobal = ({ yachtsType }) => {
         // });
         // setBoats(sortedData);
 
-        
-       let payload = {
-        reqType: "handlePagination",
-        YachtType: yachtsType == "f1yachts" ? "f1yachts" : "regular",
-        user_id: 1,
-     }
 
-      let response = await fetch(`${baseUrl}/yacht/check_yacht/?page=${page}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
-
-
-      const responseData = await response.json();
-      if (responseData.error_code === 'pass') {
-        // Sort the filtered yachts if needed
-        const sortedData = responseData?.data.sort((a, b) => {
-          const dateA = new Date(a.yacht.created_on);
-          const dateB = new Date(b.yacht.created_on);
-          return dateB - dateA; // latest date first
-        });
-        setBoats((prev) => [...prev, ...sortedData]);
-        if (sortedData?.length < PAGE_SIZE) {
-          setHasMore(false)
-        } else {
-          setHasMore(true)
+        let payload = {
+          reqType: "handlePagination",
+          YachtType: yachtsType == "f1yachts" ? "f1yachts" : "regular",
+          user_id: 1,
         }
-      } else {
-        setHasMore(false);
-        console.error('API Error:', responseData.error);
-      }
+
+        let response = await fetch(`${baseUrl}/yacht/check_yacht/?page=${page}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
+
+
+        const responseData = await response.json();
+        if (responseData.error_code === 'pass') {
+          // Sort the filtered yachts if needed
+          const sortedData = responseData?.data.sort((a, b) => {
+            const dateA = new Date(a.yacht.created_on);
+            const dateB = new Date(b.yacht.created_on);
+            return dateB - dateA; // latest date first
+          });
+          setBoats(sortedData);
+          settotalYachts(responseData?.total_yachts)
+
+          if (sortedData?.length < PAGE_SIZE) {
+            setHasMore(false)
+          } else {
+            setHasMore(true)
+          }
+        } else {
+          setHasMore(false);
+          console.error('API Error:', responseData.error);
+        }
 
       } else if (yachtsType == "new_year") {
         const data = await getAllBoats('new_year');
@@ -151,30 +157,25 @@ const BoatsListingGlobal = ({ yachtsType }) => {
     }
   };
 
-  const getCurrentPageBoats = () => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    return boats.slice(startIndex, endIndex);
-  };
+  const handleNext = ()=>{
+    setPage((prevPage) => prevPage + 1)
+  }
+  const handlePrev = ()=>{
+    setPage((prevPage) => prevPage - 1)
+  }
 
-  const totalPages = Math.ceil(boats.length / itemsPerPage);
-  useEffect(() => {
-    if (page > 1) {
-      fetchBoats();
-    }
-  }, [page]);
-
+  const totalPages = Math.ceil(totalYachts / itemsPerPage);
   useEffect(() => {
     fetchBoats();
-  }, []);
+  }, [page]);
   //test
-  useEffect(() => {
-    // console.log("loading", loading)
-    // console.log("yachtsType", yachtsType)
-    // console.log("getCurrentPageBoats",getCurrentPageBoats())
-    // console.log("totalPages",[...Array(totalPages)])
-    console.log("boats",boats)
-  }, [loading,getCurrentPageBoats,boats])
+  // useEffect(() => {
+  //   console.log("loading", loading)
+  //   console.log("yachtsType", yachtsType)
+  //   console.log("totalPages",[...Array(totalPages)])
+  //   console.log("boats", boats)
+  //   console.log("totalYachts", totalYachts)
+  // }, [loading, boats,totalYachts])
   if (loading) {
     return (
       <div className="p-6">
@@ -245,7 +246,7 @@ const BoatsListingGlobal = ({ yachtsType }) => {
                 </tr>
               </thead>
               <tbody>
-                {getCurrentPageBoats().map((boat) => (
+                {boats?.map((boat) => (
                   <tr key={boat?.yacht.id} className="hover:bg-gray-50" onClick={() => openModal(boat?.yacht)}>
                     {yachtsType === "f1yachts" ? <td className="p-4">{boat?.yacht.title}</td>
                       : yachtsType === "yachts" ? <td className="p-4">{boat?.yacht.name}</td>
@@ -283,38 +284,52 @@ const BoatsListingGlobal = ({ yachtsType }) => {
           )}
         </CardBody>
         <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-          <Button
+        {/* <CustomPagination 
+  page={page}
+  totalPages={totalPages}
+  handleNext={handleNext}
+  handlePrev={handlePrev}
+  setPage={setPage}
+  hasMore={hasMore}
+/> */}
+
+<Button
             variant="outlined"
             size="sm"
-            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
+            onClick={() => setPage((prevPage) => prevPage - 1)}
+            disabled={page==1}
           >
             Previous
           </Button>
           <div className="flex items-center gap-2">
-            {[...Array(totalPages)].slice(0, 6).map((_, index) => (
+            {[...Array(totalPages)].slice(0,6).map((_, index) => (
               <IconButton
                 key={index + 1}
-                variant={currentPage === index + 1 ? "outlined" : "text"}
+                variant={page === index + 1 ? "outlined" : "text"}
+                // variant='outlined'
                 size="sm"
-                onClick={() => setCurrentPage(index + 1)}
+                onClick={() => {
+                  setPage(index + 1);
+
+                }}
               >
                 {index + 1}
               </IconButton>
             ))}
+
           </div>
           <Button
             variant="outlined"
             size="sm"
-            // onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-            // disabled={currentPage === totalPages}
-
-            onClick={()=>setPage((prevPage) => prevPage + 1)}
+            onClick={() => setPage((prevPage) => prevPage + 1)}
             disabled={!hasMore}
 
           >
             Next
           </Button>
+
+
+
         </CardFooter>
       </Card>
       {/* Modal for displaying yacht details */}

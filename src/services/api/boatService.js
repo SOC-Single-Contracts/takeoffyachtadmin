@@ -132,9 +132,9 @@ export const getBoatById = async (id,yachtsType) => {
     throw error.response?.data || error.message;
   }
 };
-export const getSingleBoatById = async (id) => {
+export const getSingleBoatById = async (id,yachtsType) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/get_signle_yacht/${id}/`);
+    const response = await axios.get(`${API_BASE_URL}/get_signle_yacht/${id}/?YachtType=${yachtsType}`);
 
     if (response.data?.error_code === 'pass' && response.data?.data) {
       return response.data.data;
