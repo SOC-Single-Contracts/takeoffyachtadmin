@@ -3,7 +3,7 @@ import { Card, CardHeader, CardBody, CardFooter, Typography, Button, IconButton,
 import { Link, useLocation } from 'react-router-dom';
 import { getAllBoats, getf1AllBoats } from '../../services/api/boatService';
 import { FaXmark } from "react-icons/fa6";
-import { FlagIcon, LocateIcon, PowerIcon, ShipIcon, TypeIcon } from "lucide-react";
+import { ArrowLeftIcon, ArrowRightIcon, FlagIcon, LocateIcon, PowerIcon, ShipIcon, TypeIcon } from "lucide-react";
 import { BsCurrencyDollar } from "react-icons/bs";
 import { da } from 'date-fns/locale/da';
 import { CustomPagination } from '../common/customPagination/customPagination';
@@ -298,7 +298,10 @@ const BoatsListingGlobal = ({ yachtsType }) => {
             size="sm"
             onClick={() => setPage((prevPage) => prevPage - 1)}
             disabled={page==1}
+            className='flex'
           >
+                <ArrowLeftIcon strokeWidth={2} className="h-4 w-4" />
+
             Previous
           </Button>
           <div className="flex items-center gap-2">
@@ -323,9 +326,12 @@ const BoatsListingGlobal = ({ yachtsType }) => {
             size="sm"
             onClick={() => setPage((prevPage) => prevPage + 1)}
             disabled={!hasMore}
+            className='flex'
 
           >
             Next
+            <ArrowRightIcon strokeWidth={2} className="h-4 w-4" />
+
           </Button>
 
 
