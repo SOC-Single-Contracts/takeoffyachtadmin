@@ -157,10 +157,10 @@ const BoatsListingGlobal = ({ yachtsType }) => {
     }
   };
 
-  const handleNext = ()=>{
+  const handleNext = () => {
     setPage((prevPage) => prevPage + 1)
   }
-  const handlePrev = ()=>{
+  const handlePrev = () => {
     setPage((prevPage) => prevPage - 1)
   }
 
@@ -172,10 +172,11 @@ const BoatsListingGlobal = ({ yachtsType }) => {
   // useEffect(() => {
   //   console.log("loading", loading)
   //   console.log("yachtsType", yachtsType)
-  //   console.log("totalPages",[...Array(totalPages)])
+  //   console.log("totalPages", [...Array(totalPages)])
   //   console.log("boats", boats)
   //   console.log("totalYachts", totalYachts)
-  // }, [loading, boats,totalYachts])
+  //   console.log("selectedYacht", selectedYacht)
+  // }, [loading, boats, totalYachts, selectedYacht])
   if (loading) {
     return (
       <div className="p-6">
@@ -283,8 +284,8 @@ const BoatsListingGlobal = ({ yachtsType }) => {
             </table>
           )}
         </CardBody>
-        <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-        {/* <CustomPagination 
+        <CardFooter className="flex flex-wrap items-center justify-between border-t border-blue-gray-50 p-4">
+          {/* <CustomPagination 
   page={page}
   totalPages={totalPages}
   handleNext={handleNext}
@@ -293,19 +294,19 @@ const BoatsListingGlobal = ({ yachtsType }) => {
   hasMore={hasMore}
 /> */}
 
-<Button
+          <Button
             variant="outlined"
             size="sm"
             onClick={() => setPage((prevPage) => prevPage - 1)}
-            disabled={page==1}
+            disabled={page == 1}
             className='flex'
           >
-                <ArrowLeftIcon strokeWidth={2} className="h-4 w-4" />
+            <ArrowLeftIcon strokeWidth={2} className="h-4 w-4" />
 
             Previous
           </Button>
-          <div className="flex items-center gap-2">
-            {[...Array(totalPages)].slice(0,6).map((_, index) => (
+          <div className="flex py-3 flex-wrap items-center gap-2">
+            {[...Array(totalPages)].map((_, index) => (
               <IconButton
                 key={index + 1}
                 variant={page === index + 1 ? "outlined" : "text"}
@@ -462,15 +463,19 @@ const BoatsListingGlobal = ({ yachtsType }) => {
               {/* Features */}
               <div className="mt-8">
                 <Typography variant="h6" color="blue-gray" className="mb-4">
-                  Features
+                  Features:
                 </Typography>
-                <div className="grid grid-cols-2 gap-4">
-                  {selectedYacht.features && typeof selectedYacht.features === 'string' && (
-                    <div>
-                      {JSON.parse(selectedYacht.features.replace(/'/g, '"')).key}
-                    </div>
+                <div className=" gap-4">
+                {selectedYacht?.features && selectedYacht?.features.length > 0 ? (
+                    selectedYacht?.features.map((feature, index) => (
+                      <span key={index} className="text-gray-800 mx-2 dark:text-gray-200 font-medium">{feature}</span>
+
+                    ))
+                  ) : (
+                    <p className="text-gray-500 dark:text-gray-400 text-xs">N/A</p>
                   )}
                 </div>
+
               </div>
 
               {/* Description */}
