@@ -159,7 +159,7 @@ const BoatBookings = () => {
             <>
               <table className="w-full text-left border-collapse rounded-lg overflow-hidden shadow-sm bg-white">
                 <thead className="bg-black text-white text-sm uppercase font-medium">
-                  <tr className='flex '>
+                  <tr className=' '>
                     <th className="border-b border-blue-gray-100 p-4">User Id</th>
                     <th className="border-b border-blue-gray-100 p-4">Yacht</th>
                     <th className="border-b border-blue-gray-100 p-4">Booking Date</th>
@@ -176,7 +176,7 @@ const BoatBookings = () => {
                     return (
                       <tr 
                         key={booking.id} 
-                        className="hover:bg-gray-50 flex  cursor-pointer transition-colors"
+                        className="hover:bg-gray-50   cursor-pointer transition-colors"
                         onClick={() => handleRowClick(booking, yacht)}
                       >
                         <td className="p-4">{booking.User || booking.info?.user_id || ''}</td>
