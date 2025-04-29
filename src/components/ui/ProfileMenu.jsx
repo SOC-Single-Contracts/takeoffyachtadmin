@@ -6,9 +6,19 @@ import {
     Avatar,
     Typography,
 } from "@material-tailwind/react";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 export function ProfileMenu() {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+
+
+    const handleLogout = () => {
+        logout();
+        navigate('/login', { replace: true });
+      };
 
 
     return (
@@ -103,7 +113,7 @@ export function ProfileMenu() {
                     </Typography>
                 </MenuItem>
                 <hr className="my-2 border-blue-gray-50" />
-                <MenuItem className="flex items-center gap-2 ">
+                <MenuItem onClick={()=>handleLogout()} className="flex items-center gap-2 ">
                     <svg
                         width="16"
                         height="14"
