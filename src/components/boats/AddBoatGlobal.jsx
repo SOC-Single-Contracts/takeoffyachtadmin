@@ -19,6 +19,7 @@ import ImageUploadGallery from '../common/imageGallery/imageuploadGallery';
 import FileUploadOld from '../common/FileUploadold';
 import FileUploadSingle from '../common/FileUploadSingle';
 import { format, parse } from 'date-fns';
+import { getS3PathOnly } from '../../utils/helper';
 
 
 
@@ -364,7 +365,8 @@ const AddBoatGlobal = () => {
         if(img?.file instanceof File){
           formData.append(`image${index + 1}`, img.file);
         }else if(img?.isFromApi){
-          formData.append(`image${index + 1}`, img.url);
+          let urlPath = getS3PathOnly(img.url)
+          formData.append(`image${index + 1}`, urlPath);
         }
       });
       formData.append('notes', notes);
@@ -586,7 +588,8 @@ const AddBoatGlobal = () => {
         if(img?.file instanceof File){
           formData.append(`image${index + 1}`, img.file);
         }else if(img?.isFromApi){
-          formData.append(`image${index + 1}`, img.url);
+          let urlPath = getS3PathOnly(img.url)
+          formData.append(`image${index + 1}`, urlPath);
         }
       });
       formData.append('notes', notes);
