@@ -249,7 +249,7 @@ const BoatsListingGlobal = ({ yachtsType }) => {
               </thead>
               <tbody>
                 {boats?.map((boat) => (
-                  <tr key={boat?.yacht.id} className="hover:bg-gray-50" onClick={() => openModal(boat?.yacht)}>
+                  <tr key={boat?.yacht.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => openModal(boat?.yacht)}>
                     {yachtsType === "f1yachts" ? <td className="p-4">{boat?.yacht.title}</td>
                       : yachtsType === "yachts" ? <td className="p-4">{boat?.yacht.name}</td>
                         : yachtsType === "new_year" ? <td className="p-4">{boat?.yacht.title}</td>
