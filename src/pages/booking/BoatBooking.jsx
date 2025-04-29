@@ -107,6 +107,13 @@ const BoatBookings = () => {
       </Typography>
     </div>
   );
+
+  //test
+
+  // useEffect(()=>{
+  //   console.log("bookings",bookings);
+  //   console.log("selectedBooking",selectedBooking)
+  // },[bookings,selectedBooking])
     
 
   if (loading) {
@@ -152,7 +159,7 @@ const BoatBookings = () => {
             <>
               <table className="w-full text-left border-collapse rounded-lg overflow-hidden shadow-sm bg-white">
                 <thead className="bg-black text-white text-sm uppercase font-medium">
-                  <tr>
+                  <tr className='flex '>
                     <th className="border-b border-blue-gray-100 p-4">User Id</th>
                     <th className="border-b border-blue-gray-100 p-4">Yacht</th>
                     <th className="border-b border-blue-gray-100 p-4">Booking Date</th>
@@ -169,7 +176,7 @@ const BoatBookings = () => {
                     return (
                       <tr 
                         key={booking.id} 
-                        className="hover:bg-gray-50 cursor-pointer transition-colors"
+                        className="hover:bg-gray-50 flex  cursor-pointer transition-colors"
                         onClick={() => handleRowClick(booking, yacht)}
                       >
                         <td className="p-4">{booking.User || booking.info?.user_id || ''}</td>
@@ -184,10 +191,10 @@ const BoatBookings = () => {
                         <td className="p-4">{booking.info?.guest || 'N/A'}</td>
                         <td className="p-4">
                           <div>
-                            <div className="font-medium">${booking.total_cost}</div>
+                            <div className="font-medium">AED {booking.total_cost}</div>
                             {booking.partial_payment && (
-                              <div className="text-sm text-gray-500">
-                                Paid: ${booking.paid_cost}
+                              <div className="text-sm text-green-500">
+                                Paid: AED{booking.paid_cost}
                               </div>
                             )}
                           </div>
@@ -323,15 +330,15 @@ const BoatBookings = () => {
                           <div className="bg-gray-50 rounded-lg p-4">
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                               <PaymentInfoCard
-                                label="Total Amount"
-                                value={`$${selectedBooking.booking.total_cost}`}
+                                title="Total Amount"
+                                value={`AED ${selectedBooking.booking.total_cost}`}
                               />
                               <PaymentInfoCard
-                                label="Paid Amount"
-                                value={`$${selectedBooking.booking.paid_cost}`}
+                                title="Paid Amount"
+                                value={`AED ${selectedBooking.booking.paid_cost}`}
                               />
                               <PaymentInfoCard
-                                label="Status"
+                                title="Status"
                                 value={
                                   <Chip
                                     size="sm"
