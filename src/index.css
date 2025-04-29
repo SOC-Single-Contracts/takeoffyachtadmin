@@ -69,11 +69,11 @@
     padding-bottom: 53px ;
 }
 
-.scrollbar-hide {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none;    /* Firefox */
+/* .scrollbar-hide {
+    -ms-overflow-style: none; 
+    scrollbar-width: none;    
   }
   .scrollbar-hide::-webkit-scrollbar {
-    display: none;            /* Chrome, Safari and Opera */
-  }
+    display: none;           
+  } */
   
