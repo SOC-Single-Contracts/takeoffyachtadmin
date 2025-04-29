@@ -7,6 +7,7 @@ import { ArrowLeftIcon, ArrowRightIcon, FlagIcon, LocateIcon, PowerIcon, ShipIco
 import { BsCurrencyDollar } from "react-icons/bs";
 import { da } from 'date-fns/locale/da';
 import { CustomPagination } from '../common/customPagination/customPagination';
+import { formatDate } from '../../utils/helper';
 
 const PAGE_SIZE = 10;
 
@@ -284,7 +285,7 @@ const BoatsListingGlobal = ({ yachtsType }) => {
             </table>
           )}
         </CardBody>
-        <CardFooter className="flex flex-wrap items-center justify-between border-t border-blue-gray-50 p-4">
+        <CardFooter className="flex flex-wrap items-center justify-center border-t border-blue-gray-50 p-4">
           {/* <CustomPagination 
   page={page}
   totalPages={totalPages}
@@ -294,7 +295,7 @@ const BoatsListingGlobal = ({ yachtsType }) => {
   hasMore={hasMore}
 /> */}
 
-          <Button
+          {/* <Button
             variant="outlined"
             size="sm"
             onClick={() => setPage((prevPage) => prevPage - 1)}
@@ -333,7 +334,37 @@ const BoatsListingGlobal = ({ yachtsType }) => {
             Next
             <ArrowRightIcon strokeWidth={2} className="h-4 w-4" />
 
-          </Button>
+          </Button> */}
+
+
+
+              <div className="flex items-center gap-4 justify-center mt-4">
+                          <IconButton
+                            size="sm"
+                            variant="outlined"
+                            onClick={() => setPage((prevPage) => prevPage - 1)}
+                            disabled={page == 1}
+                            className="border-gray-300 text-gray-700 flex items-center justify-center"
+                          >
+            <ArrowLeftIcon strokeWidth={2} className="h-4 w-4" />
+            
+                    
+                          </IconButton>
+                          <Typography color="gray" className="font-normal">
+                            Page <strong className="text-gray-900">{page}</strong> of{" "}
+                            <strong className="text-gray-900">{totalPages}</strong>
+                          </Typography>
+                          <IconButton
+                            size="sm"
+                            variant="outlined"
+                            onClick={() => setPage((prevPage) => prevPage + 1)}
+                            disabled={!hasMore}
+                            className="border-gray-300 text-gray-700 flex items-center justify-center"
+                          >
+                                   <ArrowRightIcon strokeWidth={2} className="h-4 w-4" />
+
+                          </IconButton>
+                        </div>
 
 
 
@@ -449,11 +480,11 @@ const BoatsListingGlobal = ({ yachtsType }) => {
                   <>
                     <InfoRow
                       label="Available From"
-                      value={typeof selectedYacht.availability === 'string' ? JSON.parse(selectedYacht.availability.replace(/'/g, '"')).from || 'N/A' : selectedYacht.availability?.from || 'N/A'}
+                      value={typeof selectedYacht.availability === 'string' ? JSON.parse(selectedYacht.availability.replace(/'/g, '"')).from || 'N/A' : formatDate(selectedYacht.availability?.from)  || 'N/A'}
                     />
                     <InfoRow
                       label="Available To"
-                      value={typeof selectedYacht.availability === 'string' ? JSON.parse(selectedYacht.availability.replace(/'/g, '"')).to || 'N/A' : selectedYacht.availability?.to || 'N/A'}
+                      value={typeof selectedYacht.availability === 'string' ? JSON.parse(selectedYacht.availability.replace(/'/g, '"')).to || 'N/A' : formatDate(selectedYacht.availability?.to) || 'N/A'}
                     />
                   </>
                 )}
@@ -461,7 +492,7 @@ const BoatsListingGlobal = ({ yachtsType }) => {
 
 
               {/* Features */}
-              <div className="mt-8">
+              {yachtsType == "yachts" ?   <div className="mt-8">
                 <Typography variant="h6" color="blue-gray" className="mb-4">
                   Features:
                 </Typography>
@@ -476,7 +507,8 @@ const BoatsListingGlobal = ({ yachtsType }) => {
                   )}
                 </div>
 
-              </div>
+              </div> : yachtsType == "f1yachts" ? "" :""}
+            
 
               {/* Description */}
               {selectedYacht.description && (
