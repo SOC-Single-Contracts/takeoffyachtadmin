@@ -111,10 +111,10 @@ const BoatBookingGlobal
 
   //test
 
-  useEffect(()=>{
-    console.log("bookings",bookings);
-    console.log("selectedBooking",selectedBooking)
-  },[bookings,selectedBooking])
+  // useEffect(()=>{
+  //   console.log("bookings",bookings);
+  //   console.log("selectedBooking",selectedBooking)
+  // },[bookings,selectedBooking])
     
 
   if (loading) {
@@ -185,17 +185,19 @@ const BoatBookingGlobal
                         className="hover:bg-gray-50   cursor-pointer transition-colors"
                         onClick={() => handleRowClick(booking, yacht)}
                       >
-                        <td className="p-4">{booking?.User || booking?.info?.user_id || 'Guest'}</td>
+                        <td className="p-4">{booking?.User || booking.user_id || 'Guest'}</td>
                         <td className="p-4">
                           <div>
-                            <div className="font-medium">{yacht?.title ? yacht?.title : yacht?.name ? yacht?.name:""}</div>
+                            <div className="font-medium">{yacht?.name ? yacht?.name : yacht?.title ? yacht?.title:""}</div>
                             <div className="text-sm text-gray-500">{yacht?.location}</div>
                           </div>
                         </td>
-                        <td className="p-4">{formatDate(booking?.selected_date)}</td>
+                        {yachtsType == "yachts" ?  <td className="p-4">{formatDate(booking?.selected_date)}</td> : yachtsType == "f1yachts" ?  <td className="p-4">{formatDate(booking?.start_date)}</td> :""}
+
+                       
                         {yachtsType == "yachts" ? booking?.booking_type == "hourly" ?   <td className="p-4">{booking?.duration_hour} hours</td> : <td className="p-4">N/A</td> : yachtsType == "f1yachts" ? "" :""}
                       
-                        <td className="p-4">{booking?.info?.guest || 'N/A'}</td>
+                        <td className="p-4">{booking?.adults + booking?.kids || '0'}</td>
                         <td className="p-4">
                           <div>
                             <div className="font-medium">AED {booking?.total_cost}</div>
@@ -236,7 +238,8 @@ const BoatBookingGlobal
                           <AnchorIcon className="h-6 w-6 text-blue-500" />
                         </div>
                         <div>
-                          <Typography variant="h5">Booking Details</Typography>
+                        {yachtsType == "yachts" ?             <Typography variant="h5">Booking Details</Typography> : yachtsType == "f1yachts" ?             <Typography variant="h5">F1 Booking Details</Typography> :""}
+              
                           <Typography variant="small" color="gray">
                             Booking ID: #{selectedBooking?.booking?.id}
                           </Typography>
@@ -264,7 +267,7 @@ const BoatBookingGlobal
                             <InfoRow
                               icon={Anchor}
                               label="Yacht Name"
-                              value={selectedBooking?.yacht?.title ? selectedBooking?.yacht?.title : selectedBooking?.yacht?.name ? selectedBooking?.yacht?.name:""}
+                              value={selectedBooking?.yacht?.name ? selectedBooking?.yacht?.name : selectedBooking?.yacht?.title ? selectedBooking?.yacht?.title:""}
                             />
                             <InfoRow
                               icon={MapPin}
@@ -290,11 +293,17 @@ const BoatBookingGlobal
                             Booking Information
                           </Typography>
                           <div className="space-y-3">
-                            <InfoRow
+                            
+                    {yachtsType == "yachts" ?            <InfoRow
                               icon={CalendarDaysIcon}
                               label="Booking Date"
                               value={formatDate(selectedBooking?.booking?.selected_date)}
-                            />
+                            /> : yachtsType == "f1yachts" ?      <InfoRow
+                            icon={CalendarDaysIcon}
+                            label="Booking Date"
+                            value={formatDate(selectedBooking?.booking?.start_date)}
+                          /> :""}
+                       
 
                     {yachtsType == "yachts" ?       <InfoRow
                               icon={ClockIcon}
@@ -306,7 +315,7 @@ const BoatBookingGlobal
                             <InfoRow
                               icon={UsersIcon}
                               label="Number of Guests"
-                              value={selectedBooking?.booking?.info?.guest || 'N/A'}
+                              value={selectedBooking?.booking?.adults + selectedBooking?.booking?.kids || '0'}
                             />
                             {selectedBooking?.booking?.phone_number && (
                               <InfoRow
