@@ -110,7 +110,7 @@ const BoatBookingGlobal
   );
 
   //test
-
+  
   // useEffect(()=>{
   //   console.log("bookings",bookings);
   //   console.log("selectedBooking",selectedBooking)
