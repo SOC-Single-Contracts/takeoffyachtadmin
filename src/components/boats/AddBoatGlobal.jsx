@@ -361,14 +361,19 @@ const AddBoatGlobal = () => {
       }
 
       // Append additional images
-      additionalImages.forEach((img, index) => {
-        if(img?.file instanceof File){
-          formData.append(`image${index + 1}`, img.file);
-        }else if(img?.isFromApi){
-          let urlPath = getS3PathOnly(img.url)
-          formData.append(`image${index + 1}`, urlPath);
+      for (let i = 0; i < 20; i++) {
+        const img = additionalImages[i];
+      
+        if (img?.file instanceof File) {
+          formData.append(`image${i + 1}`, img.file);
+        } else if (img?.isFromApi && img.url) {
+          const urlPath = getS3PathOnly(img.url);
+          formData.append(`image${i + 1}`, urlPath);
+        } else {
+          // Append a null placeholder for missing images
+          formData.append(`image${i + 1}`, '');
         }
-      });
+      }
       formData.append('notes', notes);
       formData.append('type', data?.engine_type);
       formData.append('flag', flag);
@@ -584,14 +589,19 @@ const AddBoatGlobal = () => {
       }
 
       // Append additional images
-      additionalImages.forEach((img, index) => {
-        if(img?.file instanceof File){
-          formData.append(`image${index + 1}`, img.file);
-        }else if(img?.isFromApi){
-          let urlPath = getS3PathOnly(img.url)
-          formData.append(`image${index + 1}`, urlPath);
+      for (let i = 0; i < 20; i++) {
+        const img = additionalImages[i];
+      
+        if (img?.file instanceof File) {
+          formData.append(`image${i + 1}`, img.file);
+        } else if (img?.isFromApi && img.url) {
+          const urlPath = getS3PathOnly(img.url);
+          formData.append(`image${i + 1}`, urlPath);
+        } else {
+          // Append a null placeholder for missing images
+          formData.append(`image${i + 1}`, '');
         }
-      });
+      }
       formData.append('notes', notes);
       formData.append('type', data?.engine_type);
       formData.append('flag', flag);
