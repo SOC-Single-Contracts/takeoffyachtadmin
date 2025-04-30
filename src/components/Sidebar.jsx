@@ -93,12 +93,28 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             { name: "Add F1 Boat", path: "/boats/f1yachts/add" }
           ]
         },
+        // {
+        //   name: "New Year Boats",
+        //   icon: <FaRegCalendarAlt className="text-xl" />,
+        //   items: [
+        //     { name: "All New Year Boats", path: "/boats/newyear" },
+        //     { name: "Add New Year Boat", path: "/boats/newyear/add" }
+        //   ]
+        // }
+      ]
+    },
+    {
+      name: "Bookings",
+      icon: <MdOutlineEventNote className="text-xl" />,
+      type: "accordion",
+      items: [
         {
-          name: "New Year Boats",
-          icon: <FaRegCalendarAlt className="text-xl" />,
+          name: "Bookings",
+          icon: <MdOutlineEventNote className="text-xl" />,
           items: [
-            { name: "All New Year Boats", path: "/boats/newyear" },
-            { name: "Add New Year Boat", path: "/boats/newyear/add" }
+            { name: "Boat Bookings", path: "/boat-bookings/yachts" },
+            { name: "f1 Boat Bookings", path: "/boat-bookings/f1yachts" },
+            // { name: "Event Bookings", path: "/event-bookings" },
           ]
         }
       ]
@@ -195,22 +211,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         }
       ]
     },
-    {
-      name: "Bookings",
-      icon: <MdOutlineEventNote className="text-xl" />,
-      type: "accordion",
-      items: [
-        {
-          name: "Bookings",
-          icon: <MdOutlineEventNote className="text-xl" />,
-          items: [
-            { name: "Boat Bookings", path: "/boat-bookings/yachts" },
-            { name: "f1 Boat Bookings", path: "/boat-bookings/f1yachts" },
-            { name: "Event Bookings", path: "/event-bookings" },
-          ]
-        }
-      ]
-    },
+ 
     {
       name: "Experiences",
       icon: <MdOutlineEventNote className="text-xl" />,
