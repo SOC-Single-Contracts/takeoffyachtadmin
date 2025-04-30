@@ -197,7 +197,7 @@ const BoatBookingGlobal
                        
                         {yachtsType == "yachts" ? booking?.booking_type == "hourly" ?   <td className="p-4">{booking?.duration_hour} hours</td> : <td className="p-4">N/A</td> : yachtsType == "f1yachts" ? "" :""}
                       
-                        <td className="p-4">{booking?.adults + booking?.kids || '0'}</td>
+                        <td className="p-4">{(booking?.adults ?? 0) + (booking?.kids ?? 0)}</td>
                         <td className="p-4">
                           <div>
                             <div className="font-medium">AED {booking?.total_cost}</div>
@@ -315,7 +315,8 @@ const BoatBookingGlobal
                             <InfoRow
                               icon={UsersIcon}
                               label="Number of Guests"
-                              value={selectedBooking?.booking?.adults + selectedBooking?.booking?.kids || '0'}
+                             value = {(selectedBooking?.booking?.adults ?? 0) + (selectedBooking?.booking?.kids ?? 0)}
+                              
                             />
                             {selectedBooking?.booking?.phone_number && (
                               <InfoRow
