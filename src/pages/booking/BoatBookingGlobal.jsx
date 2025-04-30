@@ -64,10 +64,12 @@ const BoatBookingGlobal
 
   const getStatusText = (booking) => {
     if (booking.cancel) return 'Cancelled';
+    if (booking?.total_cost === booking?.paid_cost) return 'Confirmed';
     if (booking?.is_partial_payment) return 'Partial Payment';
     return 'Confirmed';
   };
 
+  
   // Pagination logic
   const totalPages = Math.ceil(bookings.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
