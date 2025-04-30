@@ -601,7 +601,7 @@ const AddBoatGlobal = () => {
       formData.append('features', JSON.stringify(selectedFeatures));
       formData.append('subcategory', JSON.stringify(selectedFeatures));
       formData.append('inclusion', JSON.stringify(selectedInclusion));
-      formData.append('categories', JSON.stringify(selectedCategories));
+      formData.append('category', JSON.stringify(selectedCategories));
       // formData.append('food_name', foodName);
       // formData.append('food_price', foodPrice);
       // formData.append('brand_id', selectedBrand);
@@ -616,7 +616,7 @@ const AddBoatGlobal = () => {
       let url;
 
       url = isEditMode
-        ? `https://api.takeoffyachts.com/yacht/f1-yachts-details/${id}/`
+        ? `https://api.takeoffyachts.com/yacht/f1-yachts-details/`
         : 'https://api.takeoffyachts.com/yacht/f1-yachts/';
 
       const response = await axios({
@@ -705,45 +705,45 @@ const AddBoatGlobal = () => {
     setAdditionalImages([...additionalImages,...validFiles.slice(0, 20)]);
   }, []);
   //test
-  // useEffect(() => {
-  //   const newData = {
-  //     ...watchedValues,
-  //     location,
-  //     additionalImages,
-  //     mainImage,
-  //     notes,
-  //     flag,
-  //     crewLanguage,
-  //     fromDate,
-  //     toDate,
-  //     selectedFeatures,
-  //     selectedInclusion,
-  //     selectedCategories,
-  //     selectedFoodOptions,
-  //   };
+  useEffect(() => {
+    const newData = {
+      ...watchedValues,
+      location,
+      additionalImages,
+      mainImage,
+      notes,
+      flag,
+      crewLanguage,
+      fromDate,
+      toDate,
+      selectedFeatures,
+      selectedInclusion,
+      selectedCategories,
+      selectedFoodOptions,
+    };
   
-  //   setDebuggingObject((prev) => {
-  //     const hasChanged = JSON.stringify(prev) !== JSON.stringify(newData);
-  //     if (hasChanged) {
-  //       return newData;
-  //     }
-  //     return prev;
-  //   });
-  // }, [
-  //   watchedValues, errors, location, additionalImages, mainImage,
-  //   selectedYacht, notes, flag, crewLanguage, fromDate, toDate,
-  //   selectedFeatures, selectedInclusion, selectedCategories, selectedFoodOptions,
-  // ]);
+    setDebuggingObject((prev) => {
+      const hasChanged = JSON.stringify(prev) !== JSON.stringify(newData);
+      if (hasChanged) {
+        return newData;
+      }
+      return prev;
+    });
+  }, [
+    watchedValues, errors, location, additionalImages, mainImage,
+    selectedYacht, notes, flag, crewLanguage, fromDate, toDate,
+    selectedFeatures, selectedInclusion, selectedCategories, selectedFoodOptions,
+  ]);
   
 
-  // useEffect(() => {
-  //   // console.log("Form values changed:", watchedValues);
-  //   console.log("errors", errors)
-  //   console.log("selectedYacht", selectedYacht)
-  // }, [watchedValues, errors, selectedYacht]);
-  // useEffect(() => {
-  //   console.log("debuggingObject", debuggingObject)
-  // }, [debuggingObject])
+  useEffect(() => {
+    // console.log("Form values changed:", watchedValues);
+    console.log("errors", errors)
+    console.log("selectedYacht", selectedYacht)
+  }, [watchedValues, errors, selectedYacht]);
+  useEffect(() => {
+    console.log("debuggingObject", debuggingObject)
+  }, [debuggingObject])
   if (initialLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -819,14 +819,15 @@ const AddBoatGlobal = () => {
               <label htmlFor="cancel_time_in_hour">Cancel Time (hours)</label>
               <Input className='rounded-lg' type="number" {...register('cancel_time_in_hour')} error={!!errors.cancel_time_in_hour} />
             </div>
-            <div>
+            {yachtsType == "yachts" &&  <div>
               <label htmlFor="duration_hour">Duration (hours)</label>
               <Input className='rounded-lg' type="number" {...register('duration_hour')} error={!!errors.duration_hour} />
-            </div>
-            <div>
+            </div>}
+           
+            {/* <div>
               <label htmlFor="duration_minutes">Duration (minutes)</label>
               <Input className='rounded-lg' type="number" {...register('duration_minutes')} error={!!errors.duration_minutes} />
-            </div>
+            </div> */}
             <div>
               <label htmlFor="number_of_cabin">Number of Cabins</label>
               <Input className='rounded-lg' type="number" {...register('number_of_cabin')} error={!!errors.number_of_cabin} />
@@ -1048,7 +1049,8 @@ const AddBoatGlobal = () => {
 
               </div>
             </div>
-            <div>
+
+            {yachtsType == "yachts" ?  <div>
               <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">Category</label>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                 {categoriesList.map((category, index) => (
@@ -1072,7 +1074,32 @@ const AddBoatGlobal = () => {
                   </button>
                 ))}
               </div>
-            </div>
+            </div> : yachtsType == "f1yachts" ?  <div>
+              <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                {categoriesList.map((category, index) => (
+                  <button
+                    key={index}
+                    type="button"
+                    onClick={() => {
+                      setSelectedCategories(prev =>
+                        prev.includes(category)
+                          ? prev.filter(c => c !== category)
+                          : [...prev, category]
+                      )
+                    }}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-colors
+                      ${selectedCategories.includes(category)
+                        ? 'bg-[#BEA355] text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                  >
+                    {category}
+                  </button>
+                ))}
+              </div>
+            </div> :""}
+           
             <div>
               <label htmlFor="food_options" className="block text-sm font-medium text-gray-700 mb-2">Food Options</label>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-2">

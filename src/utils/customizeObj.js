@@ -17,7 +17,7 @@ export const yachtData = (data) => {
         guest: String(data?.yacht?.guest),
         cancel_time_in_hour: String(data?.yacht?.cancel_time_in_hour),
         duration_hour: String(data?.yacht?.duration_hour),
-        duration_minutes: String(data?.yacht?.duration_minutes),
+        // duration_minutes: String(data?.yacht?.duration_minutes),
         number_of_cabin: String(data?.yacht?.number_of_cabin),
         capacity: String(data?.yacht?.capacity),
         sleep_capacity: String(data?.yacht?.sleep_capacity),
@@ -52,8 +52,8 @@ export const f1yachtData = (data) => {
         max_price: String(data?.yacht?.max_price),
         guest: String(data?.yacht?.guest),
         cancel_time_in_hour: String(data?.yacht?.cancel_time_in_hour),
-        duration_hour: String(data?.yacht?.duration_hour),
-        duration_minutes: String(data?.yacht?.duration_minutes),
+        // duration_hour: String(data?.yacht?.duration_hour),
+        // duration_minutes: String(data?.yacht?.duration_minutes),
         number_of_cabin: String(data?.yacht?.number_of_cabin),
         capacity: String(data?.yacht?.capacity),
         sleep_capacity: String(data?.yacht?.sleep_capacity),
@@ -182,7 +182,7 @@ export const f1YachtsStatesUpdates = (data) => {
     }
 
     if (data?.categories?.length > 0) {
-        updates.selectedCategories = data.categories.map(cat => cat);
+        updates.selectedCategories = data.categories.map(cat => cat?.name);
     }
 
     if (data?.inclusion?.length > 0) {
