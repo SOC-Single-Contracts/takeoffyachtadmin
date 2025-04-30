@@ -116,20 +116,20 @@ const Login = () => {
               Login
             </Button>
 
-            <p className="text-sm text-center mt-4">
+            {/* <p className="text-sm text-center mt-4">
               Don’t have an account?{" "}
               <Link to="/signup" className="text-yellow-600 font-medium hover:underline">
                 Sign Up
               </Link>
-            </p>
+            </p> */}
 
-            <div className="flex items-center my-6">
+            {/* <div className="flex items-center my-6">
               <hr className="flex-1 border-t border-gray-300" />
               <span className="px-4 text-sm text-gray-500">OR</span>
               <hr className="flex-1 border-t border-gray-300" />
-            </div>
+            </div> */}
 
-            <div className="space-y-4">
+            {/* <div className="space-y-4">
                 <button className="w-full relative flex items-center justify-center rounded-full py-2 bg-slate-100 hover:bg-gray-200">
                     <img
                         src="https://www.svgrepo.com/show/475656/google-color.svg"
@@ -154,7 +154,7 @@ const Login = () => {
                     />
                     <p className="text-center font-semibold">Sign in with Apple</p>
                 </button>
-            </div>
+            </div> */}
           </form>
         </div>
       </div>
