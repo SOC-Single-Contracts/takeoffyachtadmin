@@ -705,45 +705,45 @@ const AddBoatGlobal = () => {
     setAdditionalImages([...additionalImages,...validFiles.slice(0, 20)]);
   }, []);
   //test
-  useEffect(() => {
-    const newData = {
-      ...watchedValues,
-      location,
-      additionalImages,
-      mainImage,
-      notes,
-      flag,
-      crewLanguage,
-      fromDate,
-      toDate,
-      selectedFeatures,
-      selectedInclusion,
-      selectedCategories,
-      selectedFoodOptions,
-    };
+  // useEffect(() => {
+  //   const newData = {
+  //     ...watchedValues,
+  //     location,
+  //     additionalImages,
+  //     mainImage,
+  //     notes,
+  //     flag,
+  //     crewLanguage,
+  //     fromDate,
+  //     toDate,
+  //     selectedFeatures,
+  //     selectedInclusion,
+  //     selectedCategories,
+  //     selectedFoodOptions,
+  //   };
   
-    setDebuggingObject((prev) => {
-      const hasChanged = JSON.stringify(prev) !== JSON.stringify(newData);
-      if (hasChanged) {
-        return newData;
-      }
-      return prev;
-    });
-  }, [
-    watchedValues, errors, location, additionalImages, mainImage,
-    selectedYacht, notes, flag, crewLanguage, fromDate, toDate,
-    selectedFeatures, selectedInclusion, selectedCategories, selectedFoodOptions,
-  ]);
+  //   setDebuggingObject((prev) => {
+  //     const hasChanged = JSON.stringify(prev) !== JSON.stringify(newData);
+  //     if (hasChanged) {
+  //       return newData;
+  //     }
+  //     return prev;
+  //   });
+  // }, [
+  //   watchedValues, errors, location, additionalImages, mainImage,
+  //   selectedYacht, notes, flag, crewLanguage, fromDate, toDate,
+  //   selectedFeatures, selectedInclusion, selectedCategories, selectedFoodOptions,
+  // ]);
   
 
-  useEffect(() => {
-    // console.log("Form values changed:", watchedValues);
-    console.log("errors", errors)
-    console.log("selectedYacht", selectedYacht)
-  }, [watchedValues, errors, selectedYacht]);
-  useEffect(() => {
-    console.log("debuggingObject", debuggingObject)
-  }, [debuggingObject])
+  // useEffect(() => {
+  //   // console.log("Form values changed:", watchedValues);
+  //   console.log("errors", errors)
+  //   console.log("selectedYacht", selectedYacht)
+  // }, [watchedValues, errors, selectedYacht]);
+  // useEffect(() => {
+  //   console.log("debuggingObject", debuggingObject)
+  // }, [debuggingObject])
   if (initialLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
