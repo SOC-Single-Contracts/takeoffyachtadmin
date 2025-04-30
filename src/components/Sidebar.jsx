@@ -204,7 +204,8 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           name: "Bookings",
           icon: <MdOutlineEventNote className="text-xl" />,
           items: [
-            { name: "Boat Bookings", path: "/boat-bookings" },
+            { name: "Boat Bookings", path: "/boat-bookings/yachts" },
+            { name: "f1 Boat Bookings", path: "/boat-bookings/f1yachts" },
             { name: "Event Bookings", path: "/event-bookings" },
           ]
         }

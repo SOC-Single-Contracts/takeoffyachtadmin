@@ -71,6 +71,8 @@ import AddEvent from '../components/events/AddEvent';
 import PackageList from "../components/events/PackageList";
 import EditBoat from "../components/boats/EditBoat";
 import EditF1Boat from "../components/boats/EditF1Boat";
+import BoatBookingRegularyachts from "../pages/booking/BoatBookingRegularyachts";
+import BoatBookingf1yachts from "../pages/booking/BoatBookingf1yachts";
 
 const AppRoutes = () => {
   return (
@@ -165,7 +167,9 @@ const AppRoutes = () => {
           <Route path="inclusions/edit/:id" element={<AddInclusion />} />
           <Route path="specifications/add" element={<AddSpecifications />} />
           <Route path="specifications/edit/:id" element={<AddSpecifications />} />
-          <Route path="boat-bookings" element={<BoatBookings />} />
+          <Route path="boat-bookings/yachts" element={<BoatBookingRegularyachts />} />
+          <Route path="boat-bookings/f1yachts" element={<BoatBookingf1yachts />} />
+
           <Route path="event-bookings" element={<EventBookings />} />
         </Route>
 
