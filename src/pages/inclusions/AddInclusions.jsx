@@ -12,6 +12,7 @@ const schema = z.object({
   lightIcon: z.any(),
   inclusionTitle: z.string().min(1, "Inclusion Title is required"),
 });
+const S3URL = "https://images-yacht.s3.us-east-1.amazonaws.com"
 
 const AddInclusion = () => {
   const navigate = useNavigate();
@@ -30,6 +31,8 @@ const AddInclusion = () => {
   // Watch for file changes
   const darkIconFile = watch('darkIcon');
   const lightIconFile = watch('lightIcon');
+  const watchedValues = watch(); // Watches all form fields
+
 
   useEffect(() => {
     if (darkIconFile?.[0]) {
@@ -104,6 +107,13 @@ const AddInclusion = () => {
       setLoading(false);
     }
   };
+
+
+  //test
+
+  useEffect(()=>{
+console.log("watchedValues",watchedValues)
+  },[watchedValues])
 
   if (fetchLoading) {
     return (
@@ -182,7 +192,7 @@ const AddInclusion = () => {
                 <div className="mt-2">
                   <p className="text-sm text-gray-500 mb-1">Current Dark Icon:</p>
                   <img 
-                    src={`https://api.takeoffyachts.com${currentInclusion.dark_icon}`}
+                    src={`${S3URL}${currentInclusion.dark_icon}`}
                     alt="Current Dark Icon"
                     className="w-16 h-16 object-contain border rounded p-2"
                   />
@@ -221,7 +231,7 @@ const AddInclusion = () => {
                 <div className="mt-2">
                   <p className="text-sm text-gray-500 mb-1">Current Light Icon:</p>
                   <img 
-                    src={`https://api.takeoffyachts.com${currentInclusion.light_icon}`}
+                    src={`${S3URL}${currentInclusion.light_icon}`}
                     alt="Current Light Icon"
                     className="w-16 h-16 object-contain border rounded p-2"
                   />

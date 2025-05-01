@@ -170,14 +170,14 @@ const BoatsListingGlobal = ({ yachtsType }) => {
     fetchBoats();
   }, [page]);
   //test
-  // useEffect(() => {
-  //   console.log("loading", loading)
-  //   console.log("yachtsType", yachtsType)
-  //   console.log("totalPages", [...Array(totalPages)])
-  //   console.log("boats", boats)
-  //   console.log("totalYachts", totalYachts)
-  //   console.log("selectedYacht", selectedYacht)
-  // }, [loading, boats, totalYachts, selectedYacht])
+  useEffect(() => {
+    // console.log("loading", loading)
+    // console.log("yachtsType", yachtsType)
+    // console.log("totalPages", [...Array(totalPages)])
+    // console.log("boats", boats)
+    // console.log("totalYachts", totalYachts)
+    console.log("selectedYacht", selectedYacht)
+  }, [loading, boats, totalYachts, selectedYacht])
   if (loading) {
     return (
       <div className="p-6">
