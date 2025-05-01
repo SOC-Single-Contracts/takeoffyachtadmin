@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardBody, Typography, Button, Dialog, DialogHeader, DialogBody, DialogFooter, Input, CardFooter, IconButton } from "@material-tailwind/react";
 import { Link } from 'react-router-dom';
 import { getAllInclusions } from '../../services/api/inclusionsService';
-
+const S3URL = "https://images-yacht.s3.us-east-1.amazonaws.com"
 const AllInclusions = () => {
   const [loading, setLoading] = useState(true);
   const [inclusions, setInclusions] = useState([]);
@@ -101,7 +101,7 @@ const AllInclusions = () => {
                     <td className="p-4">
                       {inclusion.dark_icon ? (
                         <img 
-                          src={`https://api.takeoffyachts.com${inclusion.dark_icon}`}
+                          src={`${S3URL}${inclusion.dark_icon}`}
                           alt="Dark Icon" 
                           className="w-8 h-8 object-contain"
                         />
@@ -110,7 +110,7 @@ const AllInclusions = () => {
                     <td className="p-4">
                       {inclusion.light_icon ? (
                         <img 
-                          src={`https://api.takeoffyachts.com${inclusion.light_icon}`}
+                          src={`${S3URL}${inclusion.light_icon}`}
                           alt="Light Icon"
                           className="w-8 h-8 object-contain"
                         />

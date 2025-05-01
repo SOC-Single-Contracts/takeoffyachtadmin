@@ -120,6 +120,21 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       ]
     },
     {
+      name: "Inclusions",
+      icon: <GiNotebook className="text-xl" />,
+      type: "accordion",
+      items: [
+        {
+          name: "Inclusions",
+          icon: <GiNotebook className="text-xl" />,
+          items: [
+            { name: "All Inclusions", path: "/inclusions" },
+            { name: "Add Inclusion", path: "/inclusions/add" }
+          ]
+        }
+      ]
+    },
+    {
       name: "Brands",
       icon: <TbBrandAirbnb className="text-xl" />,
       type: "accordion",
@@ -181,21 +196,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         }
       ]
     },
-    {
-      name: "Inclusions",
-      icon: <GiNotebook className="text-xl" />,
-      type: "accordion",
-      items: [
-        {
-          name: "Inclusions",
-          icon: <GiNotebook className="text-xl" />,
-          items: [
-            { name: "All Inclusions", path: "/inclusions" },
-            { name: "Add Inclusion", path: "/inclusions/add" }
-          ]
-        }
-      ]
-    },
+  
     {
       name: "Specifications",
       icon: <MdCategory className="text-xl" />,
