@@ -80,6 +80,16 @@ export const regularYachtsStatesUpdates = (data) => {
             lng: parseFloat(data?.yacht?.longitude),
         };
     }
+    if (data?.yacht?.meeting_point_link) {
+        updates.meetingPoint = data?.yacht?.meeting_point_link ;
+    }
+    if (data?.yacht?.car_parking_link) {
+        updates.carParking = data?.yacht?.car_parking_link ;
+    }
+    if (data?.yacht?.taxi_drop_off_link) {
+        updates.taxiDropOff = data?.yacht?.taxi_drop_off_link ;
+    }
+
 
     if (data?.yacht?.crew_language) {
         updates.crewLanguage = data?.yacht?.crew_language;
@@ -167,6 +177,15 @@ export const f1YachtsStatesUpdates = (data) => {
             lat: parseFloat(data?.yacht?.latitude),
             lng: parseFloat(data?.yacht?.longitude),
         };
+    }
+    if (data?.yacht?.meeting_point_link) {
+        updates.meetingPoint = data?.yacht?.meeting_point_link ;
+    }
+    if (data?.yacht?.car_parking_link) {
+        updates.carParking = data?.yacht?.car_parking_link ;
+    }
+    if (data?.yacht?.taxi_drop_off_link) {
+        updates.taxiDropOff = data?.yacht?.taxi_drop_off_link ;
     }
 
     if (data?.yacht?.crew_language) {

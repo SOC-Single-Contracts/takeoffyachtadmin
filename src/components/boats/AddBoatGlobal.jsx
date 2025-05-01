@@ -32,6 +32,9 @@ const AddBoatGlobal = () => {
   const [mainImage, setMainImage] = useState(null);
   const [additionalImages, setAdditionalImages] = useState([]);
   const [location, setLocation] = useState(null);
+  const [meetingPoint,setMeetingPoint] = useState("");
+  const [carParking,setcarParking] = useState("")
+  const [taxiDropOff,settaxiDropOff] = useState("")
   const [notes, setNotes] = useState('');
   const [flag, setFlag] = useState('');
   const [crewLanguage, setCrewLanguage] = useState('');
@@ -91,6 +94,9 @@ const AddBoatGlobal = () => {
       const updates = regularYachtsStatesUpdates(data);
     
       if (updates?.location) setLocation(updates?.location);
+      if (updates?.meetingPoint) setMeetingPoint(updates?.meetingPoint);
+      if (updates?.carParking) setcarParking(updates?.carParking);
+      if (updates?.taxiDropOff) settaxiDropOff(updates?.taxiDropOff);
       if (updates?.additionalImages) setAdditionalImages(updates?.additionalImages);
       if (updates?.mainImage) setMainImage(updates?.mainImage);
       if (updates?.crewLanguage) setCrewLanguage(updates?.crewLanguage);
@@ -130,6 +136,9 @@ const AddBoatGlobal = () => {
       const updates = f1YachtsStatesUpdates(data);
     
       if (updates?.location) setLocation(updates?.location);
+      if (updates?.meetingPoint) setMeetingPoint(updates?.meetingPoint);
+      if (updates?.carParking) setcarParking(updates?.carParking);
+      if (updates?.taxiDropOff) settaxiDropOff(updates?.taxiDropOff);
       if (updates?.additionalImages) setAdditionalImages(updates?.additionalImages);
       if (updates?.mainImage) setMainImage(updates?.mainImage);
       if (updates?.crewLanguage) setCrewLanguage(updates?.crewLanguage);
@@ -240,8 +249,22 @@ const AddBoatGlobal = () => {
     // fetchBrands();
   }, []);
 
-  const handleLocationSelect = useCallback((newLocation) => {
-    setLocation(newLocation);
+  const handleLocationSelect = useCallback((newLocation,type) => {
+    console.log("type",type,newLocation)
+    if(type == "yachtLocation"){
+      setLocation(newLocation);
+    }else if(type == "meetingPoint"){
+      let url = `https://www.google.com/maps/search/?api=1&query=${newLocation?.lat},${newLocation?.lng}`
+      setMeetingPoint(url)
+    }else if(type == "carParking"){
+      let url = `https://www.google.com/maps/search/?api=1&query=${newLocation?.lat},${newLocation?.lng}`
+      setcarParking(url)
+    }else if(type == "taxiDropOff"){
+      let url = `https://www.google.com/maps/search/?api=1&query=${newLocation?.lat},${newLocation?.lng}`
+      settaxiDropOff(url)
+    }else{
+      setLocation(newLocation);
+    }
   }, []);
 
   const handleSubmitYachts = async (data) => {
@@ -254,7 +277,20 @@ const AddBoatGlobal = () => {
       }
 
       if (!location) {
+        console.log("jdadjadkjakldjaskl")
         toast.error('Please select a location on the map');
+        return;
+      }
+      if (!meetingPoint) {
+        toast.error('Please select a meetingPoint on the map');
+        return;
+      }
+      if (!carParking) {
+        toast.error('Please select a carParking on the map');
+        return;
+      }
+      if (!taxiDropOff) {
+        toast.error('Please select a taxiDropOff on the map');
         return;
       }
 
@@ -353,9 +389,13 @@ const AddBoatGlobal = () => {
       //   to: data?.ny_availability?.to,
       // };
       // formData.set('ny_availability', JSON.stringify(ny_availability));///remove
-
+       //location
       formData.append('latitude', location.lat);
       formData.append('longitude', location.lng);
+      formData.append('meeting_point_link', meetingPoint);
+      formData.append('car_parking_link', carParking);
+      formData.append('taxi_drop_off_link', taxiDropOff);
+
       if (mainImage?.file instanceof File) {
         formData.append('yacht_image', mainImage.file);
       }
@@ -486,6 +526,19 @@ const AddBoatGlobal = () => {
         return;
       }
 
+      if (!meetingPoint) {
+        toast.error('Please select a meetingPoint on the map');
+        return;
+      }
+      if (!carParking) {
+        toast.error('Please select a carParking on the map');
+        return;
+      }
+      if (!taxiDropOff) {
+        toast.error('Please select a taxiDropOff on the map');
+        return;
+      }
+
       // if (!selectedBrand) {
       //   toast.error('Please select a brand');
       //   return;
@@ -584,6 +637,9 @@ const AddBoatGlobal = () => {
 
       formData.append('latitude', location.lat);
       formData.append('longitude', location.lng);
+      formData.append('meeting_point_link', meetingPoint);
+      formData.append('car_parking_link', carParking);
+      formData.append('taxi_drop_off_link', taxiDropOff);
       if (mainImage?.file instanceof File) {
         formData.append('yacht_image', mainImage.file);
       }
@@ -715,45 +771,51 @@ const AddBoatGlobal = () => {
     setAdditionalImages([...additionalImages,...validFiles.slice(0, 20)]);
   }, []);
   //test
-  // useEffect(() => {
-  //   const newData = {
-  //     ...watchedValues,
-  //     location,
-  //     additionalImages,
-  //     mainImage,
-  //     notes,
-  //     flag,
-  //     crewLanguage,
-  //     fromDate,
-  //     toDate,
-  //     selectedFeatures,
-  //     selectedInclusion,
-  //     selectedCategories,
-  //     selectedFoodOptions,
-  //   };
+  useEffect(() => {
+    const newData = {
+      ...watchedValues,
+      location,
+      additionalImages,
+      mainImage,
+      notes,
+      flag,
+      crewLanguage,
+      fromDate,
+      toDate,
+      selectedFeatures,
+      selectedInclusion,
+      selectedCategories,
+      selectedFoodOptions,
+      meetingPoint,
+      taxiDropOff,
+      carParking
+    };
   
-  //   setDebuggingObject((prev) => {
-  //     const hasChanged = JSON.stringify(prev) !== JSON.stringify(newData);
-  //     if (hasChanged) {
-  //       return newData;
-  //     }
-  //     return prev;
-  //   });
-  // }, [
-  //   watchedValues, errors, location, additionalImages, mainImage,
-  //   selectedYacht, notes, flag, crewLanguage, fromDate, toDate,
-  //   selectedFeatures, selectedInclusion, selectedCategories, selectedFoodOptions,
-  // ]);
+    setDebuggingObject((prev) => {
+      const hasChanged = JSON.stringify(prev) !== JSON.stringify(newData);
+      if (hasChanged) {
+        return newData;
+      }
+      return prev;
+    });
+  }, [
+    watchedValues, errors, location, additionalImages, mainImage,
+    selectedYacht, notes, flag, crewLanguage, fromDate, toDate,
+    selectedFeatures, selectedInclusion, selectedCategories, selectedFoodOptions,
+    meetingPoint,
+    taxiDropOff,
+    carParking
+  ]);
   
 
-  // useEffect(() => {
-  //   // console.log("Form values changed:", watchedValues);
-  //   console.log("errors", errors)
-  //   console.log("selectedYacht", selectedYacht)
-  // }, [watchedValues, errors, selectedYacht]);
-  // useEffect(() => {
-  //   console.log("debuggingObject", debuggingObject)
-  // }, [debuggingObject])
+  useEffect(() => {
+    // console.log("Form values changed:", watchedValues);
+    console.log("errors", errors)
+    console.log("selectedYacht", selectedYacht)
+  }, [watchedValues, errors, selectedYacht]);
+  useEffect(() => {
+    console.log("debuggingObject", debuggingObject)
+  }, [debuggingObject])
   if (initialLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -956,12 +1018,42 @@ const AddBoatGlobal = () => {
               <label className="block text-sm font-medium text-gray-700 mb-2">Notes</label>
               <ReactQuill value={notes} onChange={setNotes} />
             </div>
-
             <div className="col-span- mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Location on Map</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Meeting Point</label>
               <div className="h-[450px] w-full overflow-hidden">
                 <MapPicker
-                  onLocationSelect={handleLocationSelect}
+                    onLocationSelect={(newLocation) => handleLocationSelect(newLocation, "meetingPoint")}
+                  initialLocation={location}
+                />
+              </div>
+            
+            </div>
+            <div className="col-span- mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Car Parking</label>
+              <div className="h-[450px] w-full overflow-hidden">
+                <MapPicker
+                    onLocationSelect={(newLocation) => handleLocationSelect(newLocation, "carParking")}
+                  initialLocation={location}
+                />
+              </div>
+            
+            </div>
+            <div className="col-span- mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Taxi Drop Off</label>
+              <div className="h-[450px] w-full overflow-hidden">
+                <MapPicker
+                    onLocationSelect={(newLocation) => handleLocationSelect(newLocation, "taxiDropOff")}
+                  initialLocation={location}
+                />
+              </div>
+            
+            </div>
+
+            <div className="col-span- mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Yacht Location</label>
+              <div className="h-[450px] w-full overflow-hidden">
+                <MapPicker
+                    onLocationSelect={(newLocation) => handleLocationSelect(newLocation, "yachtLocation")}
                   initialLocation={location}
                 />
               </div>
