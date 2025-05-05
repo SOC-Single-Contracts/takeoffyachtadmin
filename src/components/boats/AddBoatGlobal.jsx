@@ -202,12 +202,12 @@ const AddBoatGlobal = () => {
         // const response = await axios.get('https://api.takeoffyachts.com/yacht/subcategory_data/');
         const response = await axios.get('https://api.takeoffyachts.com/yacht/feature-images/');
         // console.log("response",response)
-        if (response?.data?.length>0) {
-          setFeaturesList(response?.data);
+        if (response?.data?.error_code === 'pass') {
+          setFeaturesList(response?.data?.data);
         }
         // if (response?.data?.error_code === 'pass') {
         //   setFeaturesList(response?.data?.sub_category);
-        // }
+        // // }
       } catch (error) {
         console.error('Error fetching featureList:', error);
         setFeaturesList([]);
@@ -1207,7 +1207,7 @@ const AddBoatGlobal = () => {
               </div>
             </div> :""}
            
-            <div>
+            {/* <div>
               <label htmlFor="food_options" className="block text-sm font-medium text-gray-700 mb-2">Food Options</label>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                 {foodOptions?.map((food) => (
@@ -1231,7 +1231,7 @@ const AddBoatGlobal = () => {
                   </button>
                 ))}
               </div>
-            </div>
+            </div> */}
           </div>
           <button
             type="submit"
