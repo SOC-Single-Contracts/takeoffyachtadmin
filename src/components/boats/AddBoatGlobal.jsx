@@ -33,6 +33,7 @@ const AddBoatGlobal = () => {
   const [additionalImages, setAdditionalImages] = useState([]);
   const [location, setLocation] = useState(null);
   const [meetingPoint,setMeetingPoint] = useState("");
+  const [yachtLocationLink, setyachtLocationLink] = useState("");
   const [carParking,setcarParking] = useState("")
   const [taxiDropOff,settaxiDropOff] = useState("")
   const [notes, setNotes] = useState('');
@@ -95,6 +96,7 @@ const AddBoatGlobal = () => {
     
       if (updates?.location) setLocation(updates?.location);
       if (updates?.meetingPoint) setMeetingPoint(updates?.meetingPoint);
+      if (updates?.yachtLocationLink) setyachtLocationLink(updates?.yachtLocationLink);
       if (updates?.carParking) setcarParking(updates?.carParking);
       if (updates?.taxiDropOff) settaxiDropOff(updates?.taxiDropOff);
       if (updates?.additionalImages) setAdditionalImages(updates?.additionalImages);
@@ -137,6 +139,7 @@ const AddBoatGlobal = () => {
     
       if (updates?.location) setLocation(updates?.location);
       if (updates?.meetingPoint) setMeetingPoint(updates?.meetingPoint);
+      if (updates?.yachtLocationLink) setyachtLocationLink(updates?.yachtLocationLink);
       if (updates?.carParking) setcarParking(updates?.carParking);
       if (updates?.taxiDropOff) settaxiDropOff(updates?.taxiDropOff);
       if (updates?.additionalImages) setAdditionalImages(updates?.additionalImages);
@@ -257,7 +260,9 @@ const AddBoatGlobal = () => {
   const handleLocationSelect = useCallback((newLocation,type) => {
     console.log("type",type,newLocation)
     if(type == "yachtLocation"){
+      let url = `https://www.google.com/maps/search/?api=1&query=${newLocation?.lat},${newLocation?.lng}`
       setLocation(newLocation);
+      setyachtLocationLink(url)
     }else if(type == "meetingPoint"){
       let url = `https://www.google.com/maps/search/?api=1&query=${newLocation?.lat},${newLocation?.lng}`
       setMeetingPoint(url)
@@ -280,9 +285,7 @@ const AddBoatGlobal = () => {
         toast.error('Please select a main yacht image');
         return;
       }
-
-      if (!location) {
-        console.log("jdadjadkjakldjaskl")
+      if (!location || !yachtLocationLink) {
         toast.error('Please select a location on the map');
         return;
       }
@@ -400,6 +403,7 @@ const AddBoatGlobal = () => {
       formData.append('meeting_point_link', meetingPoint);
       formData.append('car_parking_link', carParking);
       formData.append('taxi_drop_off_link', taxiDropOff);
+      formData.append('location_url', yachtLocationLink);
 
       if (mainImage?.file instanceof File) {
         formData.append('yacht_image', mainImage.file);
@@ -526,7 +530,7 @@ const AddBoatGlobal = () => {
         return;
       }
 
-      if (!location) {
+      if (!location || !yachtLocationLink) {
         toast.error('Please select a location on the map');
         return;
       }
@@ -645,6 +649,7 @@ const AddBoatGlobal = () => {
       formData.append('meeting_point_link', meetingPoint);
       formData.append('car_parking_link', carParking);
       formData.append('taxi_drop_off_link', taxiDropOff);
+      formData.append('location_url', yachtLocationLink);
       if (mainImage?.file instanceof File) {
         formData.append('yacht_image', mainImage.file);
       }
@@ -793,7 +798,8 @@ const AddBoatGlobal = () => {
       selectedFoodOptions,
       meetingPoint,
       taxiDropOff,
-      carParking
+      carParking,
+      yachtLocationLink
     };
   
     setDebuggingObject((prev) => {
@@ -809,6 +815,7 @@ const AddBoatGlobal = () => {
     selectedFeatures, selectedInclusion, selectedCategories, selectedFoodOptions,
     meetingPoint,
     taxiDropOff,
+    yachtLocationLink,
     carParking
   ]);
   
