@@ -185,8 +185,8 @@ const AddBoatGlobal = () => {
     const fetchCategories = async () => {
       try {
         const response = await axios.get('https://api.takeoffyachts.com/yacht/category_data/');
-        if (response.data.error_code === 'pass') {
-          setCategoriesList(response.data.category);
+        if (response?.data?.error_code === 'pass') {
+          setCategoriesList(response?.data?.category);
         }
       } catch (error) {
         console.error('Error fetching categoriesList:', error);
@@ -199,10 +199,15 @@ const AddBoatGlobal = () => {
   useEffect(() => {
     const fetchFeaturesList = async () => {
       try {
-        const response = await axios.get('https://api.takeoffyachts.com/yacht/subcategory_data/');
-        if (response.data.error_code === 'pass') {
-          setFeaturesList(response.data.sub_category);
+        // const response = await axios.get('https://api.takeoffyachts.com/yacht/subcategory_data/');
+        const response = await axios.get('https://api.takeoffyachts.com/yacht/feature-images/');
+        // console.log("response",response)
+        if (response?.data?.length>0) {
+          setFeaturesList(response?.data);
         }
+        // if (response?.data?.error_code === 'pass') {
+        //   setFeaturesList(response?.data?.sub_category);
+        // }
       } catch (error) {
         console.error('Error fetching featureList:', error);
         setFeaturesList([]);
@@ -215,7 +220,7 @@ const AddBoatGlobal = () => {
     const fetchFoodOptions = async () => {
       try {
         const response = await axios.get('https://api.takeoffyachts.com/yacht/food/');
-        if (response.data.error_code === 'pass') {
+        if (response?.data?.error_code === 'pass') {
           const categories = ['extra', 'food', 'sport'];
           const allOptions = [];
           
@@ -238,8 +243,8 @@ const AddBoatGlobal = () => {
     const fetchBrands = async () => {
       try {
         const response = await axios.get('https://api.takeoffyachts.com/yacht/brand/');
-        if (response.data.error_code === 'pass') {
-          // setBrandsList(response.data.data);
+        if (response?.data?.error_code === 'pass') {
+          // setBrandsList(response?.data?.data);
         }
       } catch (error) {
         console.error('Error fetching brandsList:', error);
@@ -450,7 +455,7 @@ const AddBoatGlobal = () => {
         },
       });
 
-      if (response.data.error_code === 'pass') {
+      if (response?.data?.error_code === 'pass') {
         toast.success(`Yacht successfully ${isEditMode ? 'updated' : 'added'}`);
         navigate('/boats/yachts');
       } else {
@@ -694,15 +699,15 @@ const AddBoatGlobal = () => {
         },
       });
 
-      if (response.data.error_code === 'pass') {
+      if (response?.data?.error_code === 'pass') {
         toast.success(`f1 Yacht successfully ${isEditMode ? 'updated' : 'added'}`);
         navigate('/boats/f1yachts');
 
       } else {
         // Handle API validation errors
-        if (response.data.error) {
-          let error = response.data.error
-          // const errorObj = JSON.parse(response.data.error);
+        if (response?.data?.error) {
+          let error = response?.data?.error
+          // const errorObj = JSON.parse(response?.data?.error);
           // Object.entries(errorObj).forEach(([key, errors]) => {
           //   errors.forEach(error => {
           //     toast.error(`${key}: ${error.string}`);
@@ -720,7 +725,7 @@ const AddBoatGlobal = () => {
       console.error(error)
       if (error.response?.data?.error) {
         try {
-          const errorObj = JSON.parse(error.response.data.error);
+          const errorObj = JSON.parse(error.response?.data?.error);
           Object.entries(errorObj).forEach(([key, errors]) => {
             errors.forEach(error => {
               toast.error(`${key}: ${error.string}`);
@@ -1111,18 +1116,18 @@ const AddBoatGlobal = () => {
                     type="button"
                     onClick={() => {
                       setSelectedFeatures(prev =>
-                        prev.includes(feature)
-                          ? prev.filter(f => f !== feature)
-                          : [...prev, feature]
+                        prev.includes(feature?.name)
+                          ? prev.filter(f => f !== feature?.name)
+                          : [...prev, feature?.name]
                       )
                     }}
                     className={`px-4 py-2 rounded-full text-sm font-medium transition-colors
-                      ${selectedFeatures.includes(feature)
+                      ${selectedFeatures.includes(feature?.name)
                         ? 'bg-[#BEA355] text-white'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                       }`}
                   >
-                    {feature}
+                    {feature?.name}
                   </button>
                 ))}
               </div>
