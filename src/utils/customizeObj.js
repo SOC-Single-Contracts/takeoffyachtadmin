@@ -89,6 +89,10 @@ export const regularYachtsStatesUpdates = (data) => {
     if (data?.yacht?.taxi_drop_off_link) {
         updates.taxiDropOff = data?.yacht?.taxi_drop_off_link ;
     }
+    if (data?.yacht?.location_url) {
+        updates.yachtLocationLink = data?.yacht?.location_url ;
+    }
+    
 
 
     if (data?.yacht?.crew_language) {
@@ -187,7 +191,9 @@ export const f1YachtsStatesUpdates = (data) => {
     if (data?.yacht?.taxi_drop_off_link) {
         updates.taxiDropOff = data?.yacht?.taxi_drop_off_link ;
     }
-
+    if (data?.yacht?.location_url) {
+        updates.yachtLocationLink = data?.yacht?.location_url ;
+    }
     if (data?.yacht?.crew_language) {
         updates.crewLanguage = data?.yacht?.crew_language;
     }
