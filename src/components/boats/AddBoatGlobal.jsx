@@ -436,9 +436,8 @@ const AddBoatGlobal = () => {
       // formData.append('food_name', foodName);
       // formData.append('food_price', foodPrice);
       // formData.append('brand_id', selectedBrand);
-      if (selectedFoodOptions.length > 0) {
-        formData.append('food_name', JSON.stringify(selectedFoodOptions));
-      }
+      formData.append('food_name', JSON.stringify(selectedFoodOptions));
+     
       // console.log("FormData contents:");
       // for (let pair of formData.entries()) {
       //   console.log(`${pair[0]}:`, pair[1]);
@@ -681,9 +680,8 @@ const AddBoatGlobal = () => {
       // formData.append('food_name', foodName);
       // formData.append('food_price', foodPrice);
       // formData.append('brand_id', selectedBrand);
-      if (selectedFoodOptions.length > 0) {
-        formData.append('food_name', JSON.stringify(selectedFoodOptions));
-      }
+      formData.append('food_name', JSON.stringify(selectedFoodOptions));
+     
       // console.log("FormData contents:");
       // for (let pair of formData.entries()) {
       //   console.log(`${pair[0]}:`, pair[1]);
@@ -781,53 +779,56 @@ const AddBoatGlobal = () => {
     setAdditionalImages([...additionalImages,...validFiles.slice(0, 20)]);
   }, []);
   //test
-  useEffect(() => {
-    const newData = {
-      ...watchedValues,
-      location,
-      additionalImages,
-      mainImage,
-      notes,
-      flag,
-      crewLanguage,
-      fromDate,
-      toDate,
-      selectedFeatures,
-      selectedInclusion,
-      selectedCategories,
-      selectedFoodOptions,
-      meetingPoint,
-      taxiDropOff,
-      carParking,
-      yachtLocationLink
-    };
+  // useEffect(() => {
+  //   const newData = {
+  //     ...watchedValues,
+  //     location,
+  //     additionalImages,
+  //     mainImage,
+  //     notes,
+  //     flag,
+  //     crewLanguage,
+  //     fromDate,
+  //     toDate,
+  //     selectedFeatures,
+  //     selectedInclusion,
+  //     selectedCategories,
+  //     selectedFoodOptions,
+  //     meetingPoint,
+  //     taxiDropOff,
+  //     carParking,
+  //     yachtLocationLink
+  //   };
   
-    setDebuggingObject((prev) => {
-      const hasChanged = JSON.stringify(prev) !== JSON.stringify(newData);
-      if (hasChanged) {
-        return newData;
-      }
-      return prev;
-    });
-  }, [
-    watchedValues, errors, location, additionalImages, mainImage,
-    selectedYacht, notes, flag, crewLanguage, fromDate, toDate,
-    selectedFeatures, selectedInclusion, selectedCategories, selectedFoodOptions,
-    meetingPoint,
-    taxiDropOff,
-    yachtLocationLink,
-    carParking
-  ]);
+  //   setDebuggingObject((prev) => {
+  //     const hasChanged = JSON.stringify(prev) !== JSON.stringify(newData);
+  //     if (hasChanged) {
+  //       return newData;
+  //     }
+  //     return prev;
+  //   });
+  // }, [
+  //   watchedValues, errors, location, additionalImages, mainImage,
+  //   selectedYacht, notes, flag, crewLanguage, fromDate, toDate,
+  //   selectedFeatures, selectedInclusion, selectedCategories, selectedFoodOptions,
+  //   meetingPoint,
+  //   taxiDropOff,
+  //   yachtLocationLink,
+  //   carParking
+  // ]);
   
 
-  useEffect(() => {
-    // console.log("Form values changed:", watchedValues);
-    console.log("errors", errors)
-    console.log("selectedYacht", selectedYacht)
-  }, [watchedValues, errors, selectedYacht]);
-  useEffect(() => {
-    console.log("debuggingObject", debuggingObject)
-  }, [debuggingObject])
+  // useEffect(() => {
+  //   // console.log("Form values changed:", watchedValues);
+  //   console.log("errors", errors)
+  //   console.log("selectedYacht", selectedYacht)
+  // }, [watchedValues, errors, selectedYacht]);
+  // useEffect(() => {
+  //   console.log("debuggingObject", debuggingObject)
+  // }, [debuggingObject])
+
+
+
   if (initialLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
