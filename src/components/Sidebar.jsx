@@ -135,6 +135,25 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       ]
     },
     {
+      name: "Food Menu",
+      icon: <MdFastfood className="text-xl" />,
+      type: "accordion",
+      items: [
+        {
+          name: "Extras",
+          icon: <MdFastfood className="text-xl" />,
+          items: [
+            { name: "All Foods ", path: "/extras" },
+            { name: "Food and Beverages", path: "/extras/food-and-beverages" },
+            { name: "Water Sports", path: "/extras/water-sports" },
+            { name: "Miscellaneous", path: "/extras/misc" },
+            { name: "Extra", path: "/extras/extra" },
+            { name: "Add Foods", path: "/extras/add" }
+          ]
+        }
+      ]
+    },
+    {
       name: "Brands",
       icon: <TbBrandAirbnb className="text-xl" />,
       type: "accordion",
@@ -164,23 +183,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         }
       ]
     },
-    {
-      name: "Food Menu",
-      icon: <MdFastfood className="text-xl" />,
-      type: "accordion",
-      items: [
-        {
-          name: "Extras",
-          icon: <MdFastfood className="text-xl" />,
-          items: [
-            { name: "Food and Beverages", path: "/extras/food-and-beverages" },
-            { name: "Water Sports", path: "/extras/water-sports" },
-            { name: "Miscellaneous", path: "/extras/misc" },
-            { name: "Add Extras", path: "/extras/add" }
-          ]
-        }
-      ]
-    },
+  
     {
       name: "Features",
       icon: <AiFillStar className="text-xl" />,

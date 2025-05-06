@@ -1,5 +1,5 @@
 import { formatFileSize } from "./helper";
-const S3URL = "https://images-yacht.s3.us-east-1.amazonaws.com"
+const S3URL = import.meta.env.VITE_S3_URL || 'https://images-yacht.s3.us-east-1.amazonaws.com';
 
 
 

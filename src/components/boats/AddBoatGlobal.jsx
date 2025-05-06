@@ -285,8 +285,8 @@ const AddBoatGlobal = () => {
         toast.error('Please select a main yacht image');
         return;
       }
-      if (!location || !yachtLocationLink) {
-        toast.error('Please select a location on the map');
+      if (!location) {
+        toast.error('Please select a Yacht location on the map');
         return;
       }
       if (!meetingPoint) {
@@ -530,8 +530,8 @@ const AddBoatGlobal = () => {
         return;
       }
 
-      if (!location || !yachtLocationLink) {
-        toast.error('Please select a location on the map');
+      if (!location) {
+        toast.error('Please select a Yacht location on the map');
         return;
       }
 
@@ -1214,10 +1214,11 @@ const AddBoatGlobal = () => {
               </div>
             </div> :""}
            
-            {/* <div>
+            <div>
               <label htmlFor="food_options" className="block text-sm font-medium text-gray-700 mb-2">Food Options</label>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                {foodOptions?.map((food) => (
+                {/* remove duplicate names */}
+                {[...new Map(foodOptions?.map(f => [f.name, f])).values()]?.map((food) => (
                   <button
                     key={food.id}
                     type="button"
@@ -1234,11 +1235,11 @@ const AddBoatGlobal = () => {
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                       }`}
                   >
-                    {food.name} - ${food.price}
+                    {food.name} - {import.meta.env.VITE_CURRENCY || "AED"} {food.price}
                   </button>
                 ))}
               </div>
-            </div> */}
+            </div>
           </div>
           <button
             type="submit"
