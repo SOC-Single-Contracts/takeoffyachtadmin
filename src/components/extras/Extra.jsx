@@ -1,70 +1,49 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardHeader, CardBody, Typography, Button, IconButton, Dialog, DialogHeader, DialogBody, DialogFooter, Input } from "@material-tailwind/react";
+import { Card, CardHeader, CardBody, Typography, Button, Dialog, DialogHeader, DialogBody, DialogFooter, Input, CardFooter, IconButton } from "@material-tailwind/react";
 import { Link } from 'react-router-dom';
 import { getAllExtras, updateExtra } from '../../services/api/extrasService';
 import { toast } from 'react-toastify';
-import { use } from 'react';
-
 const BASE_URL = import.meta.env.VITE_S3_URL || 'https://images-yacht.s3.us-east-1.amazonaws.com';
 
-const AllExtras = () => {
-  const [allItems, setAllItems] = useState([]);
+const Extra = () => {
+  const [miscItems, setMiscItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
   const [open, setOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [newPrice, setNewPrice] = useState("");
-  const itemsPerPage = 5;
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
-    fetchAllItems();
+    fetchMiscItems();
   }, []);
 
-  const fetchAllItems = async () => {
+  const fetchMiscItems = async () => {
     try {
       const response = await getAllExtras();
-      
-      const foodItems = response.food.map(item => ({
+      const miscItems = response.extra.map(item => ({
         id: item.id,
         title: item.name,
         price: item.price,
-        category: 'food',
         image: item.food_image ? `${BASE_URL}${item.food_image}` : null
-      }));
 
-      const sportItems = response.sport.map(item => ({
-        id: item.id,
-        title: item.name,
-        price: item.price,
-        category: 'sport',
-        image: item.food_image ? `${BASE_URL}${item.food_image}` : null
       }));
-
-      const extraItems = response.extra.map(item => ({
-        id: item.id,
-        title: item.name,
-        price: item.price,
-        category: 'extra',
-        image: item.food_image ? `${BASE_URL}${item.food_image}` : null
-      }));
-
-      const miscItems = response.misc.map(item => ({
-        id: item.id,
-        title: item.name,
-        price: item.price,
-        category: 'misc',
-        image: item.food_image ? `${BASE_URL}${item.food_image}` : null
-      }));
-
-      const allItems = [...foodItems, ...sportItems,...miscItems, ...extraItems];
-      setAllItems(allItems);
+      setMiscItems(miscItems);
     } catch (error) {
-      console.error('Error fetching all items:', error);
-      toast.error('Failed to fetch items');
+      console.error('Error fetching Extra items:', error);
+      toast.error('Failed to fetch Extra items');
     } finally {
       setLoading(false);
     }
   };
+
+  const getCurrentPageItems = () => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return miscItems.slice(startIndex, endIndex);
+  };
+
+  const totalPages = Math.ceil(miscItems.length / itemsPerPage);
 
   const handleOpen = (item) => {
     setSelectedItem(item);
@@ -88,63 +67,13 @@ const AllExtras = () => {
       await updateExtra(selectedItem.id, parseFloat(newPrice));
       toast.success('Price updated successfully');
       handleClose();
-      fetchAllItems(); // Refresh the list
+      fetchMiscItems(); // Refresh the list
     } catch (error) {
       console.error('Error updating price:', error);
       toast.error('Failed to update price');
     }
   };
 
-  // Pagination logic
-  const totalPages = Math.ceil(allItems.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentItems = allItems.slice(startIndex, endIndex);
-
-  const next = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const prev = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const getPageNumbers = () => {
-    const delta = 1; // Number of pages to show before and after current page
-    const range = [];
-    for (
-      let i = Math.max(2, currentPage - delta);
-      i <= Math.min(totalPages - 1, currentPage + delta);
-      i++
-    ) {
-      range.push(i);
-    }
-
-    if (currentPage - delta > 2) {
-      range.unshift("...");
-    }
-    if (currentPage + delta < totalPages - 1) {
-      range.push("...");
-    }
-
-    range.unshift(1);
-    if (totalPages > 1) {
-      range.push(totalPages);
-    }
-
-    return range;
-  };
-
-  //test
-
-  // useEffect(()=>{
-
-  //   console.log("allItems",allItems)
-  // },[allItems])
   if (loading) {
     return (
       <div className="p-6">
@@ -163,15 +92,15 @@ const AllExtras = () => {
           <div className="mb-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">
             <div>
               <Typography variant="h3" className='font-sora' color="blue-gray">
-                All Extras
+                Extra Items
               </Typography>
               <Typography color="gray" className="mt-1 font-normal">
-                Manage all your extra items
+                Manage your Extra items
               </Typography>
             </div>
             <Link to="/extras/add">
-              <Button className="flex items-center bg-[#BEA355] rounded-full capitalize gap-3 font-medium" size="sm">
-                Add New Item
+              <Button className="flex items-center bg-[#BEA355] rounded-full font-medium capitalize gap-3" size="sm">
+                Add New Extra Item
               </Button>
             </Link>
           </div>
@@ -181,26 +110,15 @@ const AllExtras = () => {
             <thead className="bg-black text-white text-sm uppercase font-medium">
               <tr>
                 <th className="border-b border-blue-gray-100 p-4">Title</th>
-                <th className="border-b border-blue-gray-100 p-4">Category</th>
                 <th className="border-b border-blue-gray-100 p-4">Price</th>
                 <th className="border-b border-blue-gray-100 p-4">Image</th>
                 <th className="border-b border-blue-gray-100 p-4">Action</th>
               </tr>
             </thead>
             <tbody>
-              {currentItems.map((item) => (
+              {getCurrentPageItems().map((item) => (
                 <tr key={item.id} className="hover:bg-gray-50">
                   <td className="p-4">{item.title}</td>
-                  <td className="p-4">
-                    <span className={`px-2 py-1 rounded text-xs font-medium ${
-                      item.category === 'food' ? 'bg-green-100 text-green-800' :
-                      item.category === 'sport' ? 'bg-blue-100 text-blue-800' :
-                      item.category === 'misc' ? 'bg-purple-100 text-purple-800' :
-                      'bg-gray-100 text-gray-800'
-                    }`}>
-                      {item.category.charAt(0).toUpperCase() + item.category.slice(1)}
-                    </span>
-                  </td>
                   <td className="p-4">{import.meta.env.VITE_CURRENCY || "AED"} {item.price}</td>
                   <td className="p-4">
                     {item.image ? (
@@ -228,48 +146,46 @@ const AllExtras = () => {
                   </td>
                 </tr>
               ))}
+              {miscItems.length === 0 && (
+                <tr>
+                  <td colSpan={4} className="p-4 text-center text-gray-500">
+                    No Extra items found
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
-          
-          {/* Pagination */}
-          <div className="flex items-center gap-4 justify-center mt-4">
-            <Button
-              variant="text"
-              className="flex items-center gap-2 text-[#BEA355]"
-              onClick={prev}
-              disabled={currentPage === 1}
-            >
-              Previous
-            </Button>
-
-            <div className="flex items-center gap-2">
-              {getPageNumbers().map((number, index) => (
-                <React.Fragment key={index}>
-                  {number === "..." ? (
-                    <span className="px-3 py-2">...</span>
-                  ) : (
-                    <IconButton
-                      variant={currentPage === number ? "filled" : "text"}
-                      className={currentPage === number ? "bg-[#BEA355]" : "text-[#BEA355]"}
-                      onClick={() => setCurrentPage(number)}
-                    >
-                      {number}
-                    </IconButton>
-                  )}
-                </React.Fragment>
-              ))}
-            </div>
-
-            <Button
-              variant="text"
-              className="flex items-center gap-2 text-[#BEA355]"
-              onClick={next}
-              disabled={currentPage === totalPages}
-            >
-              Next
-            </Button>
-          </div>
         </CardBody>
+        <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
+          <Button 
+            variant="outlined" 
+            size="sm"
+            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </Button>
+          <div className="flex items-center gap-2">
+            {[...Array(totalPages)].map((_, index) => (
+              <IconButton
+                key={index + 1}
+                variant={currentPage === index + 1 ? "outlined" : "text"}
+                size="sm"
+                onClick={() => setCurrentPage(index + 1)}
+              >
+                {index + 1}
+              </IconButton>
+            ))}
+          </div>
+          <Button 
+            variant="outlined" 
+            size="sm"
+            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </Button>
+        </CardFooter>
       </Card>
 
       {/* Edit Price Modal */}
@@ -289,10 +205,9 @@ const AllExtras = () => {
         <DialogHeader className="font-sora justify-center">Edit Price</DialogHeader>
         <DialogBody divider className="px-6">
           <div className="space-y-4">
-            <Typography variant="paragraph" color="blue-gray" className="font-normal text-center mb-4">
+            <Typography variant="paragraph" color="blue-gray" className="font-normal text-center">
               Update price for {selectedItem?.title}
             </Typography>
-            <label htmlFor="price">Price</label>
             <Input
               type="number"
               value={newPrice}
@@ -323,4 +238,4 @@ const AllExtras = () => {
   );
 };
 
-export default AllExtras;
+export default Extra;

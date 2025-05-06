@@ -3,6 +3,7 @@ import { Card, CardHeader, CardBody, Typography, Button, Dialog, DialogHeader, D
 import { Link } from 'react-router-dom';
 import { getAllExtras, updateExtra } from '../../services/api/extrasService';
 import { toast } from 'react-toastify';
+const BASE_URL = import.meta.env.VITE_S3_URL || 'https://images-yacht.s3.us-east-1.amazonaws.com';
 
 const Miscellaneous = () => {
   const [miscItems, setMiscItems] = useState([]);
@@ -20,11 +21,12 @@ const Miscellaneous = () => {
   const fetchMiscItems = async () => {
     try {
       const response = await getAllExtras();
-      const miscItems = response.extra.map(item => ({
+      const miscItems = response.misc.map(item => ({
         id: item.id,
         title: item.name,
         price: item.price,
-        image: item.food_image
+        image: item.food_image ? `${BASE_URL}${item.food_image}` : null
+
       }));
       setMiscItems(miscItems);
     } catch (error) {
@@ -117,14 +119,20 @@ const Miscellaneous = () => {
               {getCurrentPageItems().map((item) => (
                 <tr key={item.id} className="hover:bg-gray-50">
                   <td className="p-4">{item.title}</td>
-                  <td className="p-4">${item.price}</td>
+                  <td className="p-4">{import.meta.env.VITE_CURRENCY || "AED"} {item.price}</td>
                   <td className="p-4">
-                    {item.image && (
+                    {item.image ? (
                       <img 
                         src={item.image} 
                         alt={item.title} 
                         className="w-12 h-12 object-cover rounded"
                       />
+                    ) : (
+                      <div className="w-16 h-6 bg-gray-100 rounded flex items-center justify-center">
+                        <Typography variant="small" className="text-gray-500">
+                          No image
+                        </Typography>
+                      </div>
                     )}
                   </td>
                   <td className="p-4">

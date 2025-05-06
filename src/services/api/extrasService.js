@@ -25,11 +25,14 @@ export const addExtra = async (data) => {
           formData.append('food_image', data.image);
           break;
         case 'misc':
-          formData.append('mic_image', data.image);
+          formData.append('food_image', data.image);
           break;
         case 'sport':
-          formData.append('water_sport_image', data.image);
+          formData.append('food_image', data.image);
           break;
+          case 'extra':
+            formData.append('food_image', data.image);
+            break;
       }
     }
 

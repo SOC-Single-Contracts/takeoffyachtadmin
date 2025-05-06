@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import { getAllExtras, updateExtra } from '../../services/api/extrasService';
 import { toast } from 'react-toastify';
 
+const BASE_URL = import.meta.env.VITE_S3_URL || 'https://images-yacht.s3.us-east-1.amazonaws.com';
+
 const FoodMenu = () => {
   const [foodItems, setFoodItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -24,7 +26,8 @@ const FoodMenu = () => {
         id: item.id,
         title: item.name,
         price: item.price,
-        image: item.food_image
+        image: item.food_image ? `${BASE_URL}${item.food_image}` : null
+
       }));
       setFoodItems(foodItems);
     } catch (error) {
@@ -72,6 +75,12 @@ const FoodMenu = () => {
     }
   };
 
+  //test
+
+  useEffect(()=>{
+ console.log("Current Page Items: ", getCurrentPageItems());  
+  },[getCurrentPageItems()])
+
   if (loading) {
     return (
       <div className="p-6">
@@ -117,7 +126,7 @@ const FoodMenu = () => {
               {getCurrentPageItems().map((item) => (
                 <tr key={item.id} className="hover:bg-gray-50">
                   <td className="p-4">{item.title}</td>
-                  <td className="p-4">${item.price}</td>
+                  <td className="p-4">{import.meta.env.VITE_CURRENCY || "AED"} {item.price}</td>
                   <td className="p-4">
                     {item.image && (
                       <img 

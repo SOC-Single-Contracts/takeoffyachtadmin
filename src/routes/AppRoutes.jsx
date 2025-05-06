@@ -54,6 +54,7 @@ import BoatBookings from "../pages/booking/BoatBooking";
 import EventBookings from "../pages/booking/EventBooking";
 import AddExtras from "../components/extras/AddExtras";
 import Miscellaneous from "../components/extras/Miscellaneous";
+import Extra from "../components/extras/Extra";
 import WaterSports from "../components/extras/WaterSports";
 import AllExtras from "../components/extras/AllExtras";
 
@@ -132,6 +133,7 @@ const AppRoutes = () => {
           <Route path="extras/food-and-beverages" element={<FoodMenu />} />
           <Route path="extras/water-sports" element={<WaterSports />} />
           <Route path="extras/misc" element={<Miscellaneous />} />
+          <Route path="extras/extra" element={<Extra />} />
           <Route path="extras/add" element={<AddExtras />} />
           <Route path="extras" element={<AllExtras />} />
           

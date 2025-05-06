@@ -18,7 +18,10 @@ const extrasSchema = z.object({
 const CATEGORY_MAP = {
   'Food and Beverages': 'food',
   'Water Sports': 'sport',
-  'Miscellaneous': 'misc'
+  'Miscellaneous': 'misc' ,
+  'extra': 'extra' ,
+
+
 };
 
 const AddExtras = () => {
@@ -159,6 +162,10 @@ const AddExtras = () => {
                 <option value="Food and Beverages">Food and Beverages</option>
                 <option value="Water Sports">Water Sports</option>
                 <option value="Miscellaneous">Miscellaneous</option>
+                <option value="extra">Extra</option>
+
+
+
               </select>
               {errors.category && <p className="text-red-500 text-sm">{errors.category.message}</p>}
             </div>
