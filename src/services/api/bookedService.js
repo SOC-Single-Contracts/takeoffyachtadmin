@@ -30,3 +30,14 @@ export const getEventBookings = async (eventId) => {
     throw error;
   }
 };
+
+
+export const updateBookingStatus = async (userData) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/approve_cancel_booking/`, userData);
+    return response.data;
+  } catch (error) {
+    console.error('API Error:', error.response?.data); // Debug log
+    throw error;
+  }
+};
