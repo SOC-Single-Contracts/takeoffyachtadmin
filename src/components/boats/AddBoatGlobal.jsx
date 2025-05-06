@@ -224,7 +224,7 @@ const AddBoatGlobal = () => {
       try {
         const response = await axios.get('https://api.takeoffyachts.com/yacht/food/');
         if (response?.data?.error_code === 'pass') {
-          const categories = ['extra', 'food', 'sport'];
+          const categories = ['extra', 'food', 'sport','misc'];
           const allOptions = [];
           
           categories.forEach(category => {
