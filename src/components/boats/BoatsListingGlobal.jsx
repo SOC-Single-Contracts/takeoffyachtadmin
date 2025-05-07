@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardHeader, CardBody, CardFooter, Typography, Button, IconButton, Dialog, DialogHeader, DialogBody } from "@material-tailwind/react";
+import { Card, CardHeader, CardBody, CardFooter, Typography, Button, IconButton, Dialog, DialogHeader, DialogBody, Input } from "@material-tailwind/react";
 import { Link, useLocation } from 'react-router-dom';
 import { getAllBoats, getf1AllBoats } from '../../services/api/boatService';
 import { FaXmark } from "react-icons/fa6";
@@ -32,7 +32,8 @@ const BoatsListingGlobal = ({ yachtsType }) => {
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
   const [totalYachts, settotalYachts] = useState(0);
-
+  const [query, setQuery] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
 
   // const yachtsTypee = useLocation().pathname.split('/')[2];
   // console.log(yachtsTypee)
@@ -169,6 +170,117 @@ const BoatsListingGlobal = ({ yachtsType }) => {
   useEffect(() => {
     fetchBoats();
   }, [page]);
+  // useEffect(() => {
+  //   const handler = setTimeout(() => {
+  //     setDebouncedQuery(query);
+  //   }, 500);
+
+  //   return () => {
+  //     clearTimeout(handler); // Clear the timeout if query changes before 500ms
+  //   };
+  // }, [query]);
+
+  // useEffect(() => {
+  //   const handleSearchFilter = async () => {
+
+  //     if (!debouncedQuery) {
+  //       setResults([]);
+  //       return;
+  //     }
+      
+  //     try {
+  //       // Pass 'new_year' as the feature to filter New Year boats
+  
+  //       if (yachtsType == "yachts") {
+  //         let payload = {
+  //           reqType: "handleSearchFilter",
+  //           YachtType: yachtsType == "f1yachts" ? "f1yachts" : "regular",
+  //           user_id: 1,
+  //           name: debouncedQuery,
+  //         }
+  
+  //         let response = await fetch(`${baseUrl}/yacht/check_yacht/?page=${page}`, {
+  //           method: 'POST',
+  //           headers: {
+  //             'Content-Type': 'application/json',
+  //           },
+  //           body: JSON.stringify(payload),
+  //         });
+  
+  
+  //         const responseData = await response.json();
+  //         if (responseData.error_code === 'pass') {
+  //           // Sort the filtered yachts if needed
+  //           const sortedData = responseData?.data.sort((a, b) => {
+  //             const dateA = new Date(a.yacht.created_on);
+  //             const dateB = new Date(b.yacht.created_on);
+  //             return dateB - dateA; // latest date first
+  //           });
+  //           setBoats(sortedData);
+  //           settotalYachts(responseData?.total_yachts)
+  
+  //           if (sortedData?.length < PAGE_SIZE) {
+  //             setHasMore(false)
+  //           } else {
+  //             setHasMore(true)
+  //           }
+  //         } else {
+  //           setHasMore(false);
+  //           console.error('API Error:', responseData.error);
+  //         }
+  //       } else if (yachtsType == "f1yachts") {
+  
+  //         let payload = {
+  //           reqType: "handleSearchFilter",
+  //           YachtType: yachtsType == "f1yachts" ? "f1yachts" : "regular",
+  //           user_id: 1,
+  //           name: debouncedQuery
+  //         }
+  
+  //         let response = await fetch(`${baseUrl}/yacht/check_yacht/?page=${page}`, {
+  //           method: 'POST',
+  //           headers: {
+  //             'Content-Type': 'application/json',
+  //           },
+  //           body: JSON.stringify(payload),
+  //         });
+  
+  
+  //         const responseData = await response.json();
+  //         if (responseData.error_code === 'pass') {
+  //           // Sort the filtered yachts if needed
+  //           const sortedData = responseData?.data.sort((a, b) => {
+  //             const dateA = new Date(a.yacht.created_on);
+  //             const dateB = new Date(b.yacht.created_on);
+  //             return dateB - dateA; // latest date first
+  //           });
+  //           setBoats(sortedData);
+  //           settotalYachts(responseData?.total_yachts)
+  
+  //           if (sortedData?.length < PAGE_SIZE) {
+  //             setHasMore(false)
+  //           } else {
+  //             setHasMore(true)
+  //           }
+  //         } else {
+  //           setHasMore(false);
+  //           console.error('API Error:', responseData.error);
+  //         }
+  
+  //       } else if (yachtsType == "new_year") {
+  //         const data = await getAllBoats('new_year');
+  //         setBoats(data);
+  //       }
+  
+  //     } catch (error) {
+  //       console.error('Error fetching New Year boats:', error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   handleSearchFilter();
+  // }, [debouncedQuery]);
   //test
   // useEffect(() => {
   //   // console.log("loading", loading)
@@ -176,8 +288,9 @@ const BoatsListingGlobal = ({ yachtsType }) => {
   //   // console.log("totalPages", [...Array(totalPages)])
   //   // console.log("boats", boats)
   //   // console.log("totalYachts", totalYachts)
-  //   console.log("selectedYacht", selectedYacht)
-  // }, [loading, boats, totalYachts, selectedYacht])
+  //   // console.log("selectedYacht", selectedYacht)
+  //   console.log("debouncedQuery",Boolean(debouncedQuery) )
+  // }, [loading, boats, totalYachts, selectedYacht,debouncedQuery])
   if (loading) {
     return (
       <div className="p-6">
@@ -228,7 +341,21 @@ const BoatsListingGlobal = ({ yachtsType }) => {
 
               </Button>
             </Link>
+
+            
           </div>
+          {/* <div className="grid grid-cols-1 md:grid-cols-2">
+          <div>
+                          <Input 
+                          className='rounded-lg '
+                          placeholder='Search by name'
+                          type="text"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+                           />
+                        </div>
+          </div> */}
+    
         </CardHeader>
         <CardBody className="overflow-auto px-0">
           {loading ? (
@@ -239,7 +366,7 @@ const BoatsListingGlobal = ({ yachtsType }) => {
             <table className="w-full text-left border-collapse rounded-lg overflow-hidden shadow-sm bg-white">
               <thead className="bg-black text-white text-sm uppercase font-medium">
                 <tr>
-                  <th className="border-b border-blue-gray-100 p-4">Title</th>
+                  <th className="border-b border-blue-gray-100 p-4">Name</th>
                   <th className="border-b border-blue-gray-100 p-4">Location</th>
                   {yachtsType == "yachts" ? <th className="border-b border-blue-gray-100 p-4">Price per hour</th> : yachtsType == "f1yachts" ? <th className="border-b border-blue-gray-100 p-4">Price per day</th> : ""}
 
@@ -250,9 +377,9 @@ const BoatsListingGlobal = ({ yachtsType }) => {
               <tbody>
                 {boats?.map((boat) => (
                   <tr key={boat?.yacht.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => openModal(boat?.yacht)}>
-                    {yachtsType === "f1yachts" ? <td className="p-4">{boat?.yacht.title}</td>
+                    {yachtsType === "f1yachts" ? <td className="p-4">{boat?.yacht.name}</td>
                       : yachtsType === "yachts" ? <td className="p-4">{boat?.yacht.name}</td>
-                        : yachtsType === "new_year" ? <td className="p-4">{boat?.yacht.title}</td>
+                        : yachtsType === "new_year" ? <td className="p-4">{boat?.yacht.name}</td>
                           : ""}
 
                     <td className="p-4">{boat?.yacht.location}</td>
