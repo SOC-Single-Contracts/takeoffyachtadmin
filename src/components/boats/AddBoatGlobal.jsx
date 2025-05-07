@@ -258,7 +258,7 @@ const AddBoatGlobal = () => {
   }, []);
 
   const handleLocationSelect = useCallback((newLocation,type) => {
-    console.log("type",type,newLocation)
+    // console.log("type",type,newLocation)
     if(type == "yachtLocation"){
       let url = `https://www.google.com/maps/search/?api=1&query=${newLocation?.lat},${newLocation?.lng}`
       setLocation(newLocation);

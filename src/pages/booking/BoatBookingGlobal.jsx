@@ -15,12 +15,17 @@ import { format } from 'date-fns';
 import { Anchor, AnchorIcon, CalendarDaysIcon, ClipboardIcon, ClockIcon, MapPin, PhoneIcon, Users, UsersIcon } from 'lucide-react';
 import { FaXmark } from 'react-icons/fa6';
 import { BiGlobeAlt } from 'react-icons/bi';
+import { toast } from 'react-toastify';
+import { it } from 'date-fns/locale/it';
+import { th } from 'date-fns/locale/th';
+
 
 const BoatBookingGlobal
   = ({ yachtsType }) => {
     const [bookings, setBookings] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [paymentLoading, setpaymentLoading] = useState(false);
+    const [paymentApproveLoading, setpaymentApproveLoading] = useState(false);
+    const [paymenCancelLoading, setpaymenCancelLoading] = useState(false);
     const [error, setError] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedBooking, setSelectedBooking] = useState(null);
@@ -113,9 +118,10 @@ const BoatBookingGlobal
     );
 
     const handleBookingAction = async (action, bookingId) => {
-      setpaymentLoading(true);
-      console.log('Action:', action, 'Booking ID:', bookingId);
+      // console.log('Action:', action, 'Booking ID:', bookingId);
       if (action === "approved") {
+        setpaymentApproveLoading(true);
+
         try {
           let payload = {
             booking_id: bookingId,
@@ -124,17 +130,23 @@ const BoatBookingGlobal
 
           };
           const response = await updateBookingStatus(payload);
-          console.log('Response:', response);
-          if (response) {
-            fetchBookings(); // Refresh bookings after action
+          // console.log('Response:', response);
+          if (response?.error_code === "pass") {
+            fetchBookings();
+            toast.success(`Booking has been approved successfully`);
+
+          }else{
+            throw new Error("some thing went wrong");
           }
         } catch (err) {
-          setError('Failed to update booking status');
+          // setError('Failed to update booking status');
           console.error('Error updating booking status:', err);
+          toast.error('Error updating booking status');
         } finally {
-          setpaymentLoading(false);
+          setpaymentApproveLoading(false);
         }
-      }else  if (action === "rejected") {
+      } else if (action === "cancel") {
+        setpaymenCancelLoading(true);
         try {
           let payload = {
             booking_id: bookingId,
@@ -143,24 +155,30 @@ const BoatBookingGlobal
 
           };
           const response = await updateBookingStatus(payload);
-          if (response) {
-            fetchBookings(); // Refresh bookings after action
+          // console.log('Response:', response);
+          if (response?.error_code === "pass") {
+            fetchBookings();
+            toast.success(`Booking has been cancelled successfully`);
+
+          }else{
+            throw new Error("some thing went wrong");
           }
         } catch (err) {
-          setError('Failed to update booking status');
+          // setError('Failed to update booking status');
           console.error('Error updating booking status:', err);
+          toast.error('Error updating booking status');
         } finally {
-          setpaymentLoading(false);
+          setpaymenCancelLoading(false);
         }
       }
     }
 
     //test
 
-    // useEffect(()=>{
-    //   console.log("bookings",bookings);
-    //   console.log("selectedBooking",selectedBooking)
-    // },[bookings,selectedBooking])
+    // useEffect(() => {
+    //   console.log("bookings", bookings);
+    //   console.log("selectedBooking", selectedBooking)
+    // }, [bookings, selectedBooking])
 
 
     if (loading) {
@@ -213,18 +231,23 @@ const BoatBookingGlobal
                       <th className="border-b border-blue-gray-100 p-4">User Id</th>
                       <th className="border-b border-blue-gray-100 p-4">Yacht</th>
                       <th className="border-b border-blue-gray-100 p-4">Booking Date</th>
-                      {yachtsType == "yachts" ? <th className="border-b border-blue-gray-100 p-4">Duration</th> : yachtsType == "f1yachts" ? "" : ""}
+                      {/* {yachtsType == "yachts" ? <th className="border-b border-blue-gray-100 p-4">Duration</th> : yachtsType == "f1yachts" ? "" : ""} */}
 
 
-                      <th className="border-b border-blue-gray-100 p-4">Guests</th>
+                      {/* <th className="border-b border-blue-gray-100 p-4">Guests</th> */}
                       <th className="border-b border-blue-gray-100 p-4">Amount</th>
                       <th className="border-b border-blue-gray-100 p-4">Status</th>
+                      <th className="border-b border-blue-gray-100 p-4">Action</th>
+
                     </tr>
                   </thead>
                   <tbody>
                     {currentBookings.map((item) => {
                       const booking = item.booking[0];
                       const yacht = item.yacht[0];
+                      const isPending = item.booking[0]?.booking_status == "PENDING" ? true : false;
+                      const isApproved = item.booking[0]?.booking_status == "APPROVED" ? true : false;
+                      const isCancelled = item.booking[0]?.booking_status == "CANCELLED" ? true : false;
                       return (
                         <tr
                           key={booking?.id}
@@ -241,15 +264,15 @@ const BoatBookingGlobal
                           {yachtsType == "yachts" ? <td className="p-4">{formatDate(booking?.selected_date)}</td> : yachtsType == "f1yachts" ? <td className="p-4">{formatDate(booking?.start_date)}</td> : ""}
 
 
-                          {yachtsType == "yachts" ? booking?.booking_type == "hourly" ? <td className="p-4">{booking?.duration_hour} hours</td> : <td className="p-4">N/A</td> : yachtsType == "f1yachts" ? "" : ""}
+                          {/* {yachtsType == "yachts" ? booking?.booking_type == "hourly" ? <td className="p-4">{booking?.duration_hour} hours</td> : <td className="p-4">N/A</td> : yachtsType == "f1yachts" ? "" : ""} */}
 
-                          <td className="p-4">{(booking?.adults ?? 0) + (booking?.kids ?? 0)}</td>
+                          {/* <td className="p-4">{(booking?.adults ?? 0) + (booking?.kids ?? 0)}</td> */}
                           <td className="p-4">
                             <div>
                               <div className="font-medium">AED {booking?.total_cost}</div>
                               {booking?.is_partial_payment && (
                                 <div className="text-sm text-green-500">
-                                  Paid: AED{booking.paid_cost}
+                                  Paid: AED {booking.paid_cost}
                                 </div>
                               )}
                             </div>
@@ -261,6 +284,37 @@ const BoatBookingGlobal
                               value={getStatusText(booking)}
                               color={getStatusColor(booking)}
                             />
+                          </td>
+                          <td className="p-4 flex items-center gap-2">
+                            <button
+
+                              onClick={(e) => {
+                                e.stopPropagation(); // Prevents the row click from firing
+                                handleBookingAction("approved", booking?.id);
+                              }}
+
+                              disabled={paymentApproveLoading || paymenCancelLoading || isApproved || isCancelled}
+                              className={` ${isApproved ? "bg-[#228B22]" : "bg-[#BEA355]"} submitButton my-4 text-white px-6 py-2 float-right rounded-full  transition-colors disabled:opacity-50`}
+                            >
+
+
+                              {yachtsType == "yachts" ? isApproved ? "Approved" : paymentApproveLoading ? `Accept` : `Accept` : yachtsType == "f1yachts" ? isApproved ? "Approved" : paymentApproveLoading ? `Accept` : `Accept` : ""}
+                            </button>
+
+                            <button
+
+                              onClick={(e) => {
+                                e.stopPropagation(); // Prevents the row click from firing
+                                handleBookingAction("cancel", booking?.id);
+                              }}
+
+                              disabled={paymenCancelLoading || paymentApproveLoading || isCancelled || isApproved}
+                              className="bg-black submitButton my-4 text-white px-6 py-2 float-right rounded-full hover:bg-black transition-colors disabled:opacity-50"
+                            >
+
+
+                              {yachtsType == "yachts" ? isCancelled ? "Cancelled" : paymenCancelLoading ? `Cancel` : `Cancel` : yachtsType == "f1yachts" ? isCancelled ? "Cancelled" : paymenCancelLoading ? `Cancel` : `Cancel` : ""}
+                            </button>
                           </td>
                         </tr>
                       );
@@ -418,38 +472,7 @@ const BoatBookingGlobal
                               </div>
                             </div>
                           </div>
-                          {/* <div className="md:col-span-2">
-                            <Typography variant="h6" color="blue-gray" className="mb-4">
-                              Payment Actions
-                            </Typography>
-                            <div className="bg-gray-50 rounded-lg p-4">
-                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <button
 
-                                  onClick={() => handleBookingAction("approved", selectedBooking?.booking?.id)}
-
-                                  disabled={paymentLoading}
-                                  className="bg-[#BEA355] submitButton my-4 text-white px-6 py-4 float-right rounded-full hover:bg-[#A58B3D] transition-colors disabled:opacity-50"
-                                >
-
-
-                                  {yachtsType == "yachts" ? paymentLoading ? `Approving` : `Approve` : yachtsType == "f1yachts" ? paymentLoading ? `Approving` : `Approve` : ""}
-                                </button>
-
-                                <button
-
-                                  onClick={() => handleBookingAction("rejected", selectedBooking?.booking?.id)}
-
-                                  disabled={paymentLoading}
-                                  className="bg-black submitButton my-4 text-white px-6 py-4 float-right rounded-full hover:bg-black transition-colors disabled:opacity-50"
-                                >
-
-
-                                  {yachtsType == "yachts" ? paymentLoading ? `Cancelling` : `Cancel` : yachtsType == "f1yachts" ? paymentLoading ? `Cancelling` : `Cancel` : ""}
-                                </button>
-                              </div>
-                            </div>
-                          </div> */}
                         </div>
                       </DialogBody>
                     </>
