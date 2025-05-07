@@ -486,7 +486,7 @@ const BoatsListingGlobal = ({ yachtsType }) => {
               <ArrowRightIcon strokeWidth={2} className="h-4 w-4" />
 
             </IconButton>
-          </div> : "No yacht found"}
+          </div> : yachtsType == "f1yachts" ? "No F1 yacht found" : "No yacht found"}
 
 
 
