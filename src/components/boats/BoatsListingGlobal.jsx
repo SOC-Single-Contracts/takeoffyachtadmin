@@ -8,6 +8,7 @@ import { BsCurrencyDollar } from "react-icons/bs";
 import { da } from 'date-fns/locale/da';
 import { CustomPagination } from '../common/customPagination/customPagination';
 import { formatDate } from '../../utils/helper';
+import { set } from 'date-fns';
 
 const PAGE_SIZE = 10;
 
@@ -32,8 +33,9 @@ const BoatsListingGlobal = ({ yachtsType }) => {
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
   const [totalYachts, settotalYachts] = useState(0);
+  const [paginateYachts, setpaginateYachts] = useState(0);
   const [query, setQuery] = useState('');
-  const [debouncedQuery, setDebouncedQuery] = useState('');
+  const [searchValue, setsearchValue] = useState('');
 
   // const yachtsTypee = useLocation().pathname.split('/')[2];
   // console.log(yachtsTypee)
@@ -49,27 +51,15 @@ const BoatsListingGlobal = ({ yachtsType }) => {
     setSelectedYacht(null);
   };
 
-  const fetchBoats = async () => {
+  const handlePagination = async () => {
     try {
-      // Pass 'new_year' as the feature to filter New Year boats
 
       if (yachtsType == "yachts") {
-
-        // const response = await fetch(`${baseUrl}/yacht/get_yacht/${1}`);
-        // const data = await response.json();
-        // const sortedData = data?.data.sort((a, b) => {
-        //   const dateA = new Date(a.yacht.created_on);
-        //   const dateB = new Date(b.yacht.created_on);
-        //   return dateB - dateA; // latest date first
-        // });
-        // setBoats(sortedData);
-
-
-
         let payload = {
           reqType: "handlePagination",
           YachtType: yachtsType == "f1yachts" ? "f1yachts" : "regular",
           user_id: 1,
+          name: searchValue,
         }
 
         let response = await fetch(`${baseUrl}/yacht/check_yacht/?page=${page}`, {
@@ -91,6 +81,7 @@ const BoatsListingGlobal = ({ yachtsType }) => {
           });
           setBoats(sortedData);
           settotalYachts(responseData?.total_yachts)
+          setpaginateYachts(responseData?.paginate_count ? responseData?.paginate_count : 0)
 
           if (sortedData?.length < PAGE_SIZE) {
             setHasMore(false)
@@ -102,19 +93,11 @@ const BoatsListingGlobal = ({ yachtsType }) => {
           console.error('API Error:', responseData.error);
         }
       } else if (yachtsType == "f1yachts") {
-        // const data = await getf1AllBoats();
-        // const sortedData = data.sort((a, b) => {
-        //   const dateA = new Date(a.yacht.created_on);
-        //   const dateB = new Date(b.yacht.created_on);
-        //   return dateB - dateA; // latest date first
-        // });
-        // setBoats(sortedData);
-
-
         let payload = {
           reqType: "handlePagination",
           YachtType: yachtsType == "f1yachts" ? "f1yachts" : "regular",
           user_id: 1,
+          name: searchValue,
         }
 
         let response = await fetch(`${baseUrl}/yacht/check_yacht/?page=${page}`, {
@@ -136,6 +119,8 @@ const BoatsListingGlobal = ({ yachtsType }) => {
           });
           setBoats(sortedData);
           settotalYachts(responseData?.total_yachts)
+          setpaginateYachts(responseData?.paginate_count ? responseData?.paginate_count : 0)
+
 
           if (sortedData?.length < PAGE_SIZE) {
             setHasMore(false)
@@ -148,14 +133,114 @@ const BoatsListingGlobal = ({ yachtsType }) => {
         }
 
       } else if (yachtsType == "new_year") {
-        const data = await getAllBoats('new_year');
-        setBoats(data);
+        // const data = await getAllBoats('new_year');
+        // setBoats(data);
       }
 
     } catch (error) {
       console.error('Error fetching New Year boats:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleFilterChange = async () => {
+    try {
+      // Pass 'new_year' as the feature to filter New Year boats
+
+      if (yachtsType == "yachts") {
+        let payload = {
+          reqType: "handleFilterChange",
+          YachtType: yachtsType == "f1yachts" ? "f1yachts" : "regular",
+          user_id: 1,
+          name: searchValue,
+        }
+
+        let response = await fetch(`${baseUrl}/yacht/check_yacht/?page=1`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
+
+
+        const responseData = await response.json();
+        if (responseData.error_code === 'pass') {
+          // Sort the filtered yachts if needed
+          const sortedData = responseData?.data.sort((a, b) => {
+            const dateA = new Date(a.yacht.created_on);
+            const dateB = new Date(b.yacht.created_on);
+            return dateB - dateA; // latest date first
+          });
+          setBoats(sortedData);
+          settotalYachts(responseData?.total_yachts)
+          setpaginateYachts(responseData?.paginate_count ? responseData?.paginate_count : 0)
+
+
+          if (sortedData?.length < PAGE_SIZE) {
+            setHasMore(false)
+          } else {
+            setHasMore(true)
+          }
+        } else {
+          setHasMore(false);
+          console.error('API Error:', responseData.error);
+        }
+      } else if (yachtsType == "f1yachts") {
+
+        let payload = {
+          reqType: "handleFilterChange",
+          YachtType: yachtsType == "f1yachts" ? "f1yachts" : "regular",
+          user_id: 1,
+          name: searchValue
+        }
+
+        let response = await fetch(`${baseUrl}/yacht/check_yacht/?page=1`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
+
+
+        const responseData = await response.json();
+        if (responseData.error_code === 'pass') {
+          // Sort the filtered yachts if needed
+          const sortedData = responseData?.data.sort((a, b) => {
+            const dateA = new Date(a.yacht.created_on);
+            const dateB = new Date(b.yacht.created_on);
+            return dateB - dateA; // latest date first
+          });
+          setBoats(sortedData);
+          settotalYachts(responseData?.total_yachts)
+          setpaginateYachts(responseData?.paginate_count ? responseData?.paginate_count : 0)
+
+
+
+
+          if (sortedData?.length < PAGE_SIZE) {
+            setHasMore(false)
+          } else {
+            setHasMore(true)
+          }
+        } else {
+          setHasMore(false);
+          console.error('API Error:', responseData.error);
+        }
+
+      } else if (yachtsType == "new_year") {
+        // const data = await getAllBoats('new_year');
+        // setBoats(data);
+      }
+
+    } catch (error) {
+      console.error('Error fetching New Year boats:', error);
+    } finally {
+      setLoading(false);
+      setPage(1)
+
     }
   };
 
@@ -166,131 +251,42 @@ const BoatsListingGlobal = ({ yachtsType }) => {
     setPage((prevPage) => prevPage - 1)
   }
 
-  const totalPages = Math.ceil(totalYachts / itemsPerPage);
+  const totalPages = Math.ceil(paginateYachts / itemsPerPage);
   useEffect(() => {
-    fetchBoats();
+    const handler = setTimeout(() => {
+      setsearchValue(query);
+      setPage(1); 
+    }, 500);
+
+    return () => {
+      clearTimeout(handler); // Clear the timeout if query changes before 500ms
+    };
+  }, [query]);
+
+  useEffect(() => {
+    if (page > 1) {
+      handlePagination();
+    }
   }, [page]);
-  // useEffect(() => {
-  //   const handler = setTimeout(() => {
-  //     setDebouncedQuery(query);
-  //   }, 500);
 
-  //   return () => {
-  //     clearTimeout(handler); // Clear the timeout if query changes before 500ms
-  //   };
-  // }, [query]);
-
-  // useEffect(() => {
-  //   const handleSearchFilter = async () => {
-
-  //     if (!debouncedQuery) {
-  //       setResults([]);
-  //       return;
-  //     }
-      
-  //     try {
-  //       // Pass 'new_year' as the feature to filter New Year boats
-  
-  //       if (yachtsType == "yachts") {
-  //         let payload = {
-  //           reqType: "handleSearchFilter",
-  //           YachtType: yachtsType == "f1yachts" ? "f1yachts" : "regular",
-  //           user_id: 1,
-  //           name: debouncedQuery,
-  //         }
-  
-  //         let response = await fetch(`${baseUrl}/yacht/check_yacht/?page=${page}`, {
-  //           method: 'POST',
-  //           headers: {
-  //             'Content-Type': 'application/json',
-  //           },
-  //           body: JSON.stringify(payload),
-  //         });
-  
-  
-  //         const responseData = await response.json();
-  //         if (responseData.error_code === 'pass') {
-  //           // Sort the filtered yachts if needed
-  //           const sortedData = responseData?.data.sort((a, b) => {
-  //             const dateA = new Date(a.yacht.created_on);
-  //             const dateB = new Date(b.yacht.created_on);
-  //             return dateB - dateA; // latest date first
-  //           });
-  //           setBoats(sortedData);
-  //           settotalYachts(responseData?.total_yachts)
-  
-  //           if (sortedData?.length < PAGE_SIZE) {
-  //             setHasMore(false)
-  //           } else {
-  //             setHasMore(true)
-  //           }
-  //         } else {
-  //           setHasMore(false);
-  //           console.error('API Error:', responseData.error);
-  //         }
-  //       } else if (yachtsType == "f1yachts") {
-  
-  //         let payload = {
-  //           reqType: "handleSearchFilter",
-  //           YachtType: yachtsType == "f1yachts" ? "f1yachts" : "regular",
-  //           user_id: 1,
-  //           name: debouncedQuery
-  //         }
-  
-  //         let response = await fetch(`${baseUrl}/yacht/check_yacht/?page=${page}`, {
-  //           method: 'POST',
-  //           headers: {
-  //             'Content-Type': 'application/json',
-  //           },
-  //           body: JSON.stringify(payload),
-  //         });
-  
-  
-  //         const responseData = await response.json();
-  //         if (responseData.error_code === 'pass') {
-  //           // Sort the filtered yachts if needed
-  //           const sortedData = responseData?.data.sort((a, b) => {
-  //             const dateA = new Date(a.yacht.created_on);
-  //             const dateB = new Date(b.yacht.created_on);
-  //             return dateB - dateA; // latest date first
-  //           });
-  //           setBoats(sortedData);
-  //           settotalYachts(responseData?.total_yachts)
-  
-  //           if (sortedData?.length < PAGE_SIZE) {
-  //             setHasMore(false)
-  //           } else {
-  //             setHasMore(true)
-  //           }
-  //         } else {
-  //           setHasMore(false);
-  //           console.error('API Error:', responseData.error);
-  //         }
-  
-  //       } else if (yachtsType == "new_year") {
-  //         const data = await getAllBoats('new_year');
-  //         setBoats(data);
-  //       }
-  
-  //     } catch (error) {
-  //       console.error('Error fetching New Year boats:', error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   handleSearchFilter();
-  // }, [debouncedQuery]);
+  useEffect(() => {
+    if (searchValue) {
+      handleFilterChange();
+    } else if (!searchValue && page == 1) {
+      handlePagination();
+    }
+  }, [searchValue]);
   //test
   // useEffect(() => {
   //   // console.log("loading", loading)
   //   // console.log("yachtsType", yachtsType)
-  //   // console.log("totalPages", [...Array(totalPages)])
+  //   console.log("totalPages", totalPages)
   //   // console.log("boats", boats)
   //   // console.log("totalYachts", totalYachts)
   //   // console.log("selectedYacht", selectedYacht)
-  //   console.log("debouncedQuery",Boolean(debouncedQuery) )
-  // }, [loading, boats, totalYachts, selectedYacht,debouncedQuery])
+  //   console.log("paginateYachts", paginateYachts)
+  //   console.log("searchValue",Boolean(searchValue) )
+  // }, [loading, boats, totalYachts, selectedYacht,searchValue,paginateYachts])
   if (loading) {
     return (
       <div className="p-6">
@@ -342,20 +338,20 @@ const BoatsListingGlobal = ({ yachtsType }) => {
               </Button>
             </Link>
 
-            
+
           </div>
-          {/* <div className="grid grid-cols-1 md:grid-cols-2">
-          <div>
-                          <Input 
-                          className='rounded-lg '
-                          placeholder='Search by name'
-                          type="text"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-                           />
-                        </div>
-          </div> */}
-    
+          <div className="grid grid-cols-1 md:grid-cols-2">
+            <div>
+              <Input
+                className='rounded-lg '
+                placeholder='Search by name'
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+              />
+            </div>
+          </div>
+
         </CardHeader>
         <CardBody className="overflow-auto px-0">
           {loading ? (
@@ -464,34 +460,36 @@ const BoatsListingGlobal = ({ yachtsType }) => {
           </Button> */}
 
 
+          {paginateYachts > 0 ? <div className="flex items-center gap-4 justify-center mt-4">
+            <IconButton
+              size="sm"
+              variant="outlined"
+              onClick={() => setPage((prevPage) => prevPage - 1)}
+              disabled={page == 1}
+              className="border-gray-300 text-gray-700 flex items-center justify-center"
+            >
+              <ArrowLeftIcon strokeWidth={2} className="h-4 w-4" />
 
-              <div className="flex items-center gap-4 justify-center mt-4">
-                          <IconButton
-                            size="sm"
-                            variant="outlined"
-                            onClick={() => setPage((prevPage) => prevPage - 1)}
-                            disabled={page == 1}
-                            className="border-gray-300 text-gray-700 flex items-center justify-center"
-                          >
-            <ArrowLeftIcon strokeWidth={2} className="h-4 w-4" />
-            
-                    
-                          </IconButton>
-                          <Typography color="gray" className="font-normal">
-                            Page <strong className="text-gray-900">{page}</strong> of{" "}
-                            <strong className="text-gray-900">{totalPages}</strong>
-                          </Typography>
-                          <IconButton
-                            size="sm"
-                            variant="outlined"
-                            onClick={() => setPage((prevPage) => prevPage + 1)}
-                            disabled={!hasMore}
-                            className="border-gray-300 text-gray-700 flex items-center justify-center"
-                          >
-                                   <ArrowRightIcon strokeWidth={2} className="h-4 w-4" />
 
-                          </IconButton>
-                        </div>
+            </IconButton>
+            <Typography color="gray" className="font-normal">
+              Page <strong className="text-gray-900">{page}</strong> of{" "}
+              <strong className="text-gray-900">{totalPages}</strong>
+            </Typography>
+            <IconButton
+              size="sm"
+              variant="outlined"
+              onClick={() => setPage((prevPage) => prevPage + 1)}
+              disabled={!hasMore}
+              className="border-gray-300 text-gray-700 flex items-center justify-center"
+            >
+              <ArrowRightIcon strokeWidth={2} className="h-4 w-4" />
+
+            </IconButton>
+          </div> : "No yacht found"}
+
+
+
 
 
 
@@ -607,7 +605,7 @@ const BoatsListingGlobal = ({ yachtsType }) => {
                   <>
                     <InfoRow
                       label="Available From"
-                      value={typeof selectedYacht.availability === 'string' ? JSON.parse(selectedYacht.availability.replace(/'/g, '"')).from || 'N/A' : formatDate(selectedYacht.availability?.from)  || 'N/A'}
+                      value={typeof selectedYacht.availability === 'string' ? JSON.parse(selectedYacht.availability.replace(/'/g, '"')).from || 'N/A' : formatDate(selectedYacht.availability?.from) || 'N/A'}
                     />
                     <InfoRow
                       label="Available To"
@@ -619,12 +617,12 @@ const BoatsListingGlobal = ({ yachtsType }) => {
 
 
               {/* Features */}
-              {yachtsType == "yachts" ?   <div className="mt-8">
+              {yachtsType == "yachts" ? <div className="mt-8">
                 <Typography variant="h6" color="blue-gray" className="mb-4">
                   Features:
                 </Typography>
                 <div className=" gap-4">
-                {selectedYacht?.features && selectedYacht?.features.length > 0 ? (
+                  {selectedYacht?.features && selectedYacht?.features.length > 0 ? (
                     selectedYacht?.features.map((feature, index) => (
                       <span key={index} className="text-gray-800 mx-2 dark:text-gray-200 font-medium">{feature}</span>
 
@@ -634,8 +632,8 @@ const BoatsListingGlobal = ({ yachtsType }) => {
                   )}
                 </div>
 
-              </div> : yachtsType == "f1yachts" ? "" :""}
-            
+              </div> : yachtsType == "f1yachts" ? "" : ""}
+
 
               {/* Description */}
               {selectedYacht.description && (
