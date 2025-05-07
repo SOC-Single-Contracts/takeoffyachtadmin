@@ -9,32 +9,32 @@ export const yachtData = (data) => {
     let obj = {
         user_id: 1,
         yacht: data?.yacht?.id,
-        name: data?.yacht?.name,
-        title: data?.yacht?.title,
-        location: data?.yacht?.location,
-        min_price: String(data?.yacht?.min_price),
-        max_price: String(data?.yacht?.max_price),
-        guest: String(data?.yacht?.guest),
-        cancel_time_in_hour: String(data?.yacht?.cancel_time_in_hour),
-        duration_hour: String(data?.yacht?.duration_hour),
+        name: data?.yacht?.name ?? "",
+        location: data?.yacht?.location ?? "",
+        // title: data?.yacht?.title,
+        min_price: data?.yacht?.min_price ?  String(data?.yacht?.min_price) : "",
+        max_price:data?.yacht?.max_price ?  String(data?.yacht?.max_price) : "",
+        guest: String(data?.yacht?.guest) ?? "",
+        cancel_time_in_hour: String(data?.yacht?.cancel_time_in_hour) ?? "",
+        duration_hour: String(data?.yacht?.duration_hour) ?? "",
         // duration_minutes: String(data?.yacht?.duration_minutes),
-        number_of_cabin: String(data?.yacht?.number_of_cabin),
-        capacity: String(data?.yacht?.capacity),
-        sleep_capacity: String(data?.yacht?.sleep_capacity),
-        per_day_price: String(data?.yacht?.per_day_price),
-        per_hour_price: String(data?.yacht?.per_hour_price),
-        power: data?.yacht?.power,
-        engine_type: data?.yacht?.type,
-        crew_member: data?.yacht?.crew_member,
-        description: data?.yacht?.description,
+        number_of_cabin: String(data?.yacht?.number_of_cabin) ?? "",
+        capacity: String(data?.yacht?.capacity) ?? "",
+        sleep_capacity: String(data?.yacht?.sleep_capacity) ?? "",
+        per_day_price: String(data?.yacht?.per_day_price) ?? "",
+        per_hour_price: String(data?.yacht?.per_hour_price) ?? "",
+        power: data?.yacht?.power ?? "",
+        engine_type: data?.yacht?.type ?? "",
+        crew_member: data?.yacht?.crew_member ?? "",
+        description: data?.yacht?.description ?? "",
         // from_date: data?.yacht?.from_date,
         // to_date: data?.yacht?.to_date,
-        length: data?.yacht?.length,
-        ny_price: data?.yacht?.ny_price,
-        ny_firework: data?.yacht?.ny_firework,
-        ny_status: data?.yacht?.ny_status,
-        ny_availability_from: data?.yacht?.ny_availability?.from,
-        ny_availability_to: data?.yacht?.ny_availability?.to,
+        length: data?.yacht?.length ?? "",
+        ny_price: data?.yacht?.ny_price ?? "",
+        ny_firework: data?.yacht?.ny_firework ?? false,
+        ny_status: data?.yacht?.ny_status ?? false,
+        ny_availability_from: data?.yacht?.ny_availability?.from ?? "",
+        ny_availability_to: data?.yacht?.ny_availability?.to ?? "", 
     }
     return obj
 };
@@ -45,26 +45,26 @@ export const f1yachtData = (data) => {
     let obj = {
         user_id: 1,
         yacht: data?.yacht?.id,
-        name: data?.yacht?.name,
-        title: data?.yacht?.title,
-        location: data?.yacht?.location,
-        min_price: String(data?.yacht?.min_price),
-        max_price: String(data?.yacht?.max_price),
-        guest: String(data?.yacht?.guest),
-        cancel_time_in_hour: String(data?.yacht?.cancel_time_in_hour),
-        // duration_hour: String(data?.yacht?.duration_hour),
+        name: data?.yacht?.name ?? "",
+        // title: data?.yacht?.title,
+        location: data?.yacht?.location ?? "",
+        min_price: data?.yacht?.min_price ?  String(data?.yacht?.min_price) : "",
+        max_price:data?.yacht?.max_price ?  String(data?.yacht?.max_price) : "",
+        guest: String(data?.yacht?.guest) ?? "",
+        cancel_time_in_hour: String(data?.yacht?.cancel_time_in_hour) ?? "",
+        // duration_hour: String(data?.yacht?.duration_hour) ?? "",,
         // duration_minutes: String(data?.yacht?.duration_minutes),
-        number_of_cabin: String(data?.yacht?.number_of_cabin),
-        capacity: String(data?.yacht?.capacity),
-        sleep_capacity: String(data?.yacht?.sleep_capacity),
-        per_day_price: String(data?.yacht?.per_day_price),
-        power: data?.yacht?.power,
-        engine_type: data?.yacht?.type,
-        crew_member: data?.yacht?.crew_member,
-        description: data?.yacht?.description,
+        number_of_cabin: String(data?.yacht?.number_of_cabin) ?? "",
+        capacity: String(data?.yacht?.capacity) ?? "",
+        sleep_capacity: String(data?.yacht?.sleep_capacity) ?? "",
+        per_day_price: String(data?.yacht?.per_day_price) ?? "",
+        power: data?.yacht?.power ?? "",
+        engine_type: data?.yacht?.type ?? "",
+        crew_member: data?.yacht?.crew_member ?? "",
+        description: data?.yacht?.description ?? "",
         // from_date: data?.yacht?.from_date,
         // to_date: data?.yacht?.to_date,
-        length: data?.yacht?.length,
+        length: data?.yacht?.length ?? "",
        
     }
     return obj
@@ -75,7 +75,7 @@ export const regularYachtsStatesUpdates = (data) => {
     const updates = {};
 
     if (data?.yacht?.latitude && data?.yacht?.longitude) {
-        updates.location = {
+        updates.locationLatLng = {
             lat: parseFloat(data?.yacht?.latitude),
             lng: parseFloat(data?.yacht?.longitude),
         };
@@ -177,7 +177,7 @@ export const f1YachtsStatesUpdates = (data) => {
     const updates = {};
 
     if (data?.yacht?.latitude && data?.yacht?.longitude) {
-        updates.location = {
+        updates.locationLatLng = {
             lat: parseFloat(data?.yacht?.latitude),
             lng: parseFloat(data?.yacht?.longitude),
         };

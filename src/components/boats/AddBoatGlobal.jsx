@@ -31,7 +31,7 @@ const AddBoatGlobal = () => {
   const yachtsType = useLocation().pathname.split('/')[2];
   const [mainImage, setMainImage] = useState(null);
   const [additionalImages, setAdditionalImages] = useState([]);
-  const [location, setLocation] = useState(null);
+  const [locationLatLng, setLocationLatLng] = useState(null);
   const [meetingPoint,setMeetingPoint] = useState("");
   const [yachtLocationLink, setyachtLocationLink] = useState("");
   const [carParking,setcarParking] = useState("")
@@ -94,7 +94,7 @@ const AddBoatGlobal = () => {
     
       const updates = regularYachtsStatesUpdates(data);
     
-      if (updates?.location) setLocation(updates?.location);
+      if (updates?.locationLatLng) setLocationLatLng(updates?.locationLatLng);
       if (updates?.meetingPoint) setMeetingPoint(updates?.meetingPoint);
       if (updates?.yachtLocationLink) setyachtLocationLink(updates?.yachtLocationLink);
       if (updates?.carParking) setcarParking(updates?.carParking);
@@ -137,7 +137,7 @@ const AddBoatGlobal = () => {
     
       const updates = f1YachtsStatesUpdates(data);
     
-      if (updates?.location) setLocation(updates?.location);
+      if (updates?.locationLatLng) setLocationLatLng(updates?.locationLatLng);
       if (updates?.meetingPoint) setMeetingPoint(updates?.meetingPoint);
       if (updates?.yachtLocationLink) setyachtLocationLink(updates?.yachtLocationLink);
       if (updates?.carParking) setcarParking(updates?.carParking);
@@ -261,7 +261,7 @@ const AddBoatGlobal = () => {
     // console.log("type",type,newLocation)
     if(type == "yachtLocation"){
       let url = `https://www.google.com/maps/search/?api=1&query=${newLocation?.lat},${newLocation?.lng}`
-      setLocation(newLocation);
+      setLocationLatLng(newLocation);
       setyachtLocationLink(url)
     }else if(type == "meetingPoint"){
       let url = `https://www.google.com/maps/search/?api=1&query=${newLocation?.lat},${newLocation?.lng}`
@@ -273,7 +273,7 @@ const AddBoatGlobal = () => {
       let url = `https://www.google.com/maps/search/?api=1&query=${newLocation?.lat},${newLocation?.lng}`
       settaxiDropOff(url)
     }else{
-      setLocation(newLocation);
+      setLocationLatLng(newLocation);
     }
   }, []);
 
@@ -285,27 +285,32 @@ const AddBoatGlobal = () => {
         toast.error('Please select a main yacht image');
         return;
       }
-      if (!location) {
-        toast.error('Please select a Yacht location on the map');
-        return;
-      }
-      if (!meetingPoint) {
-        toast.error('Please select a meetingPoint on the map');
-        return;
-      }
-      if (!carParking) {
-        toast.error('Please select a carParking on the map');
-        return;
-      }
-      if (!taxiDropOff) {
-        toast.error('Please select a taxiDropOff on the map');
-        return;
-      }
+      // if (!locationLatLng) {
+      //   toast.error('Please select a Yacht location on the map');
+      //   return;
+      // }
+      // if (!meetingPoint) {
+      //   toast.error('Please select a meetingPoint on the map');
+      //   return;
+      // }
+      // if (!carParking) {
+      //   toast.error('Please select a carParking on the map');
+      //   return;
+      // }
+      // if (!taxiDropOff) {
+      //   toast.error('Please select a taxiDropOff on the map');
+      //   return;
+      // }
 
       // if (!selectedBrand) {
       //   toast.error('Please select a brand');
       //   return;
       // }
+
+      // if (!data.length) {
+      //   toast.error('Length is required');
+      //   return;
+      // }  
 
       // Validate main image
       if (mainImage && mainImage?.file) {
@@ -330,10 +335,6 @@ const AddBoatGlobal = () => {
         return;
       }
 
-      if (!data.length) {
-        toast.error('Length is required');
-        return;
-      }  
 
       if (data.ny_status) {
         if (!data.ny_price) {
@@ -397,9 +398,9 @@ const AddBoatGlobal = () => {
       //   to: data?.ny_availability?.to,
       // };
       // formData.set('ny_availability', JSON.stringify(ny_availability));///remove
-       //location
-      formData.append('latitude', location.lat);
-      formData.append('longitude', location.lng);
+       //locationLatLng
+      formData.append('latitude', locationLatLng ? locationLatLng.lat : 25.180775);
+      formData.append('longitude', locationLatLng ? locationLatLng.lng : 55.336947);
       formData.append('meeting_point_link', meetingPoint);
       formData.append('car_parking_link', carParking);
       formData.append('taxi_drop_off_link', taxiDropOff);
@@ -529,28 +530,33 @@ const AddBoatGlobal = () => {
         return;
       }
 
-      if (!location) {
-        toast.error('Please select a Yacht location on the map');
-        return;
-      }
+      // if (!locationLatLng) {
+      //   toast.error('Please select a Yacht location on the map');
+      //   return;
+      // }
 
-      if (!meetingPoint) {
-        toast.error('Please select a meetingPoint on the map');
-        return;
-      }
-      if (!carParking) {
-        toast.error('Please select a carParking on the map');
-        return;
-      }
-      if (!taxiDropOff) {
-        toast.error('Please select a taxiDropOff on the map');
-        return;
-      }
+      // if (!meetingPoint) {
+      //   toast.error('Please select a meetingPoint on the map');
+      //   return;
+      // }
+      // if (!carParking) {
+      //   toast.error('Please select a carParking on the map');
+      //   return;
+      // }
+      // if (!taxiDropOff) {
+      //   toast.error('Please select a taxiDropOff on the map');
+      //   return;
+      // }
 
       // if (!selectedBrand) {
       //   toast.error('Please select a brand');
       //   return;
       // }
+
+      // if (!data.length) {
+      //   toast.error('Length is required');
+      //   return;
+      // } 
 
       // Validate main image
       if (mainImage && mainImage?.file) {
@@ -574,11 +580,7 @@ const AddBoatGlobal = () => {
         imageErrors.forEach(error => toast.error(error));
         return;
       }
-
-      if (!data.length) {
-        toast.error('Length is required');
-        return;
-      }  
+       
 
       if (data.ny_status) {
         if (!data.ny_price) {
@@ -620,31 +622,16 @@ const AddBoatGlobal = () => {
       });
 
       // Append ny_ keys only once
-      if (data.ny_status) {
-        formData.append('ny_price', data.ny_price);
-        formData.append('new_year_per_hour_price', data.ny_price);
-        formData.append('new_year_per_day_price', data.ny_price);
-        formData.append('ny_firework', data.ny_firework);
 
-        const new_availability = {
-          from:data?.ny_availability_from,
-          to:data?.ny_availability_to
-        };
-        const formattedFrom = format(parse(new_availability.from, 'HH:mm', new Date()), 'HH:mm:ss');
-        const formattedTo = format(parse(new_availability.to, 'HH:mm', new Date()), 'HH:mm:ss');
-        formData.append('ny_availability', JSON.stringify(new_availability));
-        formData.append('new_year_start_time', formattedFrom);
-        formData.append('new_year_end_time', formattedTo);
-        formData.append('ny_inclusion', JSON.stringify(selectednyInclusion));
-      }
+       formData.append('ny_status', false);
       // const ny_availability = {///remove
       //   from: data?.ny_availability?.from,
       //   to: data?.ny_availability?.to,
       // };
       // formData.set('ny_availability', JSON.stringify(ny_availability));///remove
 
-      formData.append('latitude', location.lat);
-      formData.append('longitude', location.lng);
+      formData.append('latitude', locationLatLng ? locationLatLng.lat : 25.180775);
+      formData.append('longitude', locationLatLng ? locationLatLng.lng : 55.336947);
       formData.append('meeting_point_link', meetingPoint);
       formData.append('car_parking_link', carParking);
       formData.append('taxi_drop_off_link', taxiDropOff);
@@ -782,7 +769,7 @@ const AddBoatGlobal = () => {
   // useEffect(() => {
   //   const newData = {
   //     ...watchedValues,
-  //     location,
+  //     locationLatLng,
   //     additionalImages,
   //     mainImage,
   //     notes,
@@ -808,7 +795,7 @@ const AddBoatGlobal = () => {
   //     return prev;
   //   });
   // }, [
-  //   watchedValues, errors, location, additionalImages, mainImage,
+  //   watchedValues, errors, locationLatLng, additionalImages, mainImage,
   //   selectedYacht, notes, flag, crewLanguage, fromDate, toDate,
   //   selectedFeatures, selectedInclusion, selectedCategories, selectedFoodOptions,
   //   meetingPoint,
@@ -845,11 +832,7 @@ const AddBoatGlobal = () => {
             : ""}
 
         <form onSubmit={handleSubmit(yachtsType === "f1yachts" ? handleSubmitf1Yachts : yachtsType === "yachts" ? handleSubmitYachts : "")} className=" ">
-          <div className="grid grid-cols-1 md:grid-cols-2 p-6  gap-6">
-            <div>
-              <label htmlFor="name">Name</label>
-              <Input className='rounded-lg' {...register('name')} error={!!errors.name} />
-            </div>
+          {/* <div className="grid grid-cols-1 md:grid-cols-2 p-6  gap-6"> */}
             {/* <div>
               <label htmlFor="brand_id">Brand</label>
               <div className="relative">
@@ -877,73 +860,76 @@ const AddBoatGlobal = () => {
                 )}
               </div>
             </div> */}
-            <div>
+            {/* <div>
               <label htmlFor="title">Title</label>
               <Input className='rounded-lg' {...register('title')} error={!!errors.title} />
-            </div>
-          </div>
+            </div> */}
+          {/* </div> */}
           <div className="grid grid-cols-1 md:grid-cols-2 p-6  gap-6">
-
+          <div>
+              <label htmlFor="name">Name</label>
+              <Input className='rounded-lg' {...register('name')} error={!!errors.name} />
+            </div>
             <div>
               <label htmlFor="location">Location</label>
               <Input className='rounded-lg' {...register('location')} error={!!errors.location} />
             </div>
             <div>
               <label htmlFor="min_price">Min Price</label>
-              <Input className='rounded-lg' type="number" {...register('min_price')} error={!!errors.min_price} />
+              <Input className='rounded-lg' type="number" step="any" {...register('min_price')} error={!!errors.min_price} />
             </div>
             <div>
               <label htmlFor="max_price">Max Price</label>
-              <Input className='rounded-lg' type="number" {...register('max_price')} error={!!errors.max_price} />
+              <Input className='rounded-lg' type="number" step="any" {...register('max_price')} error={!!errors.max_price} />
             </div>
             <div>
               <label htmlFor="guest">Guest Capacity</label>
-              <Input className='rounded-lg' type="number" {...register('guest')} error={!!errors.guest} />
+              <Input className='rounded-lg' type="number" step="any" {...register('guest')} error={!!errors.guest} />
             </div>
             <div>
               <label htmlFor="cancel_time_in_hour">Cancel Time (hours)</label>
-              <Input className='rounded-lg' type="number" {...register('cancel_time_in_hour')} error={!!errors.cancel_time_in_hour} />
+              <Input className='rounded-lg' type="number" step="any" {...register('cancel_time_in_hour')} error={!!errors.cancel_time_in_hour} />
             </div>
             {yachtsType == "yachts" &&  <div>
               <label htmlFor="duration_hour">Duration (hours)</label>
-              <Input className='rounded-lg' type="number" {...register('duration_hour')} error={!!errors.duration_hour} />
+              <Input className='rounded-lg' type="number" step="any" {...register('duration_hour')} error={!!errors.duration_hour} />
             </div>}
            
             {/* <div>
               <label htmlFor="duration_minutes">Duration (minutes)</label>
-              <Input className='rounded-lg' type="number" {...register('duration_minutes')} error={!!errors.duration_minutes} />
+              <Input className='rounded-lg' type="number" step="any" {...register('duration_minutes')} error={!!errors.duration_minutes} />
             </div> */}
             <div>
               <label htmlFor="number_of_cabin">Number of Cabins</label>
-              <Input className='rounded-lg' type="number" {...register('number_of_cabin')} error={!!errors.number_of_cabin} />
+              <Input className='rounded-lg' type="number" step="any" {...register('number_of_cabin')} error={!!errors.number_of_cabin} />
             </div>
             <div>
               <label htmlFor="capacity">Capacity</label>
-              <Input className='rounded-lg' type="number" {...register('capacity')} error={!!errors.capacity} />
+              <Input className='rounded-lg' type="number" step="any" {...register('capacity')} error={!!errors.capacity} />
             </div>
             <div>
               <label htmlFor="sleep_capacity">Sleep Capacity</label>
-              <Input className='rounded-lg' type="number" {...register('sleep_capacity')} error={!!errors.sleep_capacity} />
+              <Input className='rounded-lg' type="number" step="any" {...register('sleep_capacity')} error={!!errors.sleep_capacity} />
             </div>
             <div>
               <label htmlFor="per_day_price">Per Day Price</label>
-              <Input className='rounded-lg' type="number" {...register('per_day_price')} error={!!errors.per_day_price} />
+              <Input className='rounded-lg' type="number" step="any" {...register('per_day_price')} error={!!errors.per_day_price} />
             </div>
             {yachtsType == "yachts" &&     <div>
               <label htmlFor="per_hour_price">Per Hour Price</label>
-              <Input className='rounded-lg' type="number" {...register('per_hour_price')} error={!!errors.per_hour_price} />
+              <Input className='rounded-lg' type="number" step="any" {...register('per_hour_price')} error={!!errors.per_hour_price} />
             </div>}
          
             <div>
               <label htmlFor="length">Length</label>
-              <Input className='rounded-lg' type="number" {...register('length')} error={!!errors.length} />
+              <Input className='rounded-lg'  type="number" step="any" {...register('length')} error={!!errors.length} />
               {errors.length && <p className="text-red-500 text-sm">{errors.length.message}</p>}
 
             </div>
 
             <div>
               <label htmlFor="power">Power</label>
-              <Input className='rounded-lg' type="number" {...register('power')} error={!!errors.power} />
+              <Input className='rounded-lg' type="number" step="any" {...register('power')} error={!!errors.power} />
             </div>
             <div>
               <label htmlFor="engine_type">Engine Type</label>
@@ -970,7 +956,7 @@ const AddBoatGlobal = () => {
               <>
                 <div>
                   <label htmlFor="ny_price">New Year Price</label>
-                  <Input className='rounded-lg' type="number" {...register('ny_price')} error={!!errors.ny_price} />
+                  <Input className='rounded-lg' type="number" step="any" {...register('ny_price')} error={!!errors.ny_price} />
                 </div>
                 <div className='flex items-center gap-2'>
                   <label htmlFor="ny_firework">New Year Firework</label>
@@ -1036,7 +1022,7 @@ const AddBoatGlobal = () => {
               <div className="h-[450px] w-full overflow-hidden">
                 <MapPicker
                     onLocationSelect={(newLocation) => handleLocationSelect(newLocation, "meetingPoint")}
-                  initialLocation={location}
+                  initialLocation={locationLatLng}
                 />
               </div>
             
@@ -1046,7 +1032,7 @@ const AddBoatGlobal = () => {
               <div className="h-[450px] w-full overflow-hidden">
                 <MapPicker
                     onLocationSelect={(newLocation) => handleLocationSelect(newLocation, "carParking")}
-                  initialLocation={location}
+                  initialLocation={locationLatLng}
                 />
               </div>
             
@@ -1056,7 +1042,7 @@ const AddBoatGlobal = () => {
               <div className="h-[450px] w-full overflow-hidden">
                 <MapPicker
                     onLocationSelect={(newLocation) => handleLocationSelect(newLocation, "taxiDropOff")}
-                  initialLocation={location}
+                  initialLocation={locationLatLng}
                 />
               </div>
             
@@ -1067,17 +1053,17 @@ const AddBoatGlobal = () => {
               <div className="h-[450px] w-full overflow-hidden">
                 <MapPicker
                     onLocationSelect={(newLocation) => handleLocationSelect(newLocation, "yachtLocation")}
-                  initialLocation={location}
+                  initialLocation={locationLatLng}
                 />
               </div>
-              {location && (
+              {locationLatLng && (
                 <div className="mt-2 flex flex-wrap gap-2">
                   Selected Coordinates:
                   <div className="bg-blue-100 text-blue-800 text-sm font-medium py-1 px-3 rounded-full shadow-md">
-                    Latitude: {location.lat.toFixed(6)}
+                    Latitude: {locationLatLng.lat.toFixed(6)}
                   </div>
                   <div className="bg-green-100 text-green-800 text-sm font-medium py-1 px-3 rounded-full shadow-md">
-                    Longitude: {location.lng.toFixed(6)}
+                    Longitude: {locationLatLng.lng.toFixed(6)}
                   </div>
                 </div>
               )}

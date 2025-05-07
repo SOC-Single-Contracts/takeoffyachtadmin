@@ -117,7 +117,7 @@ const BoatBookingGlobal
       </div>
     );
 
-    const handleBookingAction = async (action, bookingId) => {
+    const handleBookingAction = async (action, bookingId,userId) => {
       // console.log('Action:', action, 'Booking ID:', bookingId);
       if (action === "approved") {
         setpaymentApproveLoading(true);
@@ -125,6 +125,7 @@ const BoatBookingGlobal
         try {
           let payload = {
             booking_id: bookingId,
+            user_id: userId,
             booking_type: yachtsType == "f1yachts" ? "f1yachts" : "regular",
             action: "approved",
 
@@ -150,6 +151,7 @@ const BoatBookingGlobal
         try {
           let payload = {
             booking_id: bookingId,
+            user_id: userId,
             booking_type: yachtsType == "f1yachts" ? "f1yachts" : "regular",
             action: "cancel",
 
@@ -290,7 +292,7 @@ const BoatBookingGlobal
 
                               onClick={(e) => {
                                 e.stopPropagation(); // Prevents the row click from firing
-                                handleBookingAction("approved", booking?.id);
+                                handleBookingAction("approved", booking?.id, booking?.User);
                               }}
 
                               disabled={paymentApproveLoading || paymenCancelLoading || isApproved || isCancelled}
@@ -305,7 +307,7 @@ const BoatBookingGlobal
 
                               onClick={(e) => {
                                 e.stopPropagation(); // Prevents the row click from firing
-                                handleBookingAction("cancel", booking?.id);
+                                handleBookingAction("cancel", booking?.id, booking?.User);
                               }}
 
                               disabled={paymenCancelLoading || paymentApproveLoading || isCancelled || isApproved}
