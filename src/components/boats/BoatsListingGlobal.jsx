@@ -310,7 +310,7 @@ const BoatsListingGlobal = ({ yachtsType }) => {
 
 
   return (
-    <div className="p-6">
+    <div className="p-6 classForBoatsListingGlobal">
       <Card className="h-full w-full p-4">
         <CardHeader floated={false} shadow={false} className="rounded-none">
           <div className="mb-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">
@@ -340,7 +340,7 @@ const BoatsListingGlobal = ({ yachtsType }) => {
 
 
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2">
+          <div className="grid p-3 grid-cols-1 md:grid-cols-2">
             <div>
               <Input
                 className='rounded-lg '
