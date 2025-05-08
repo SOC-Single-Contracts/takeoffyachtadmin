@@ -9,6 +9,8 @@ import { da } from 'date-fns/locale/da';
 import { CustomPagination } from '../common/customPagination/customPagination';
 import { formatDate } from '../../utils/helper';
 import { set } from 'date-fns';
+import { useContext } from 'react';
+import { GlobalStateContext } from '../../store/GlobalStateContext.jsx';
 
 const PAGE_SIZE = 10;
 
@@ -36,6 +38,9 @@ const BoatsListingGlobal = ({ yachtsType }) => {
   const [paginateYachts, setpaginateYachts] = useState(0);
   const [query, setQuery] = useState('');
   const [searchValue, setsearchValue] = useState('');
+  // const { globalState: appState, dispatch: appDispatch } = useContext(GlobalStateContext);
+  // console.log("appState", appState)
+      // appDispatch({ type: "changeNumber", numberInc: page });
 
   // const yachtsTypee = useLocation().pathname.split('/')[2];
   // console.log(yachtsTypee)
@@ -267,6 +272,7 @@ const BoatsListingGlobal = ({ yachtsType }) => {
     if (page > 1) {
       handlePagination();
     }
+
   }, [page]);
 
   useEffect(() => {

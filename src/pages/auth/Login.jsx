@@ -102,11 +102,11 @@ const Login = () => {
               </div>
             </div>
 
-            <div className="text-right mb-4">
+            {/* <div className="text-right mb-4">
               <a href="/forgot-password" className="text-sm text-[#BEA355] hover:underline">
                 Forgot Password?
               </a>
-            </div>
+            </div> */}
 
             <Button
             size='md'

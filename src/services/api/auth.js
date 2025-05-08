@@ -12,6 +12,11 @@ export const login = async (email, password) => {
     return response.data;
 };
 
+export const adminLogin = async (email, password) => {
+    const response = await axios.post(`${API_BASE_URL}/admin/login/`, { Email: email, Password: password });
+    return response.data;
+};
+
 export const forgotPassword = async (email) => {
     const response = await axios.post(`${API_BASE_URL}/ForgetPassword/`, { Email: email });
     return response.data;
