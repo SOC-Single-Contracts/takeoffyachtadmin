@@ -123,7 +123,7 @@ const ActiveUsersTable = ({ limit }) => {
                     <span
                       className={`flex items-center justify-center gap-1 w-fit px-3 py-1 rounded-full text-xs font-semibold ${getStatusClass(
                         user.status
-                      )}`}
+                      )}`} 
                     >
                       <GoDotFill />{user.status}
                     </span>
