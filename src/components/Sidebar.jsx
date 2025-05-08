@@ -62,14 +62,14 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             { name: "Add User", path: "/users/add" }
           ]
         },
-        {
-          name: "Merchants",
-          icon: <FaUserTie className="text-xl" />,
-          items: [
-            { name: "All Merchants", path: "/merchants" },
-            { name: "Add Merchant", path: "/merchants/add" }
-          ]
-        }
+        // {
+        //   name: "Merchants",
+        //   icon: <FaUserTie className="text-xl" />,
+        //   items: [
+        //     { name: "All Merchants", path: "/merchants" },
+        //     { name: "Add Merchant", path: "/merchants/add" }
+        //   ]
+        // }
       ]
     },
     {
@@ -153,6 +153,21 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         }
       ]
     },
+    // {
+    //   name: "Wallet",
+    //   icon: <GiNotebook className="text-xl" />,
+    //   type: "accordion",
+    //   items: [
+    //     {
+    //       name: "Wallet",
+    //       icon: <GiNotebook className="text-xl" />,
+    //       items: [
+    //         // { name: "Wallet Details", path: "/wallet" },
+    //         { name: "Add Money", path: "/wallet/add-money" }
+    //       ]
+    //     }
+    //   ]
+    // },
     {
       name: "Brands",
       icon: <TbBrandAirbnb className="text-xl" />,

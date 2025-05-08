@@ -11,12 +11,15 @@ import {
 import { GoDotFill } from "react-icons/go";
 import avatar from "../assets/images/Avatar.png";
 import { getAllUsers } from '../services/api/userManagement';
+import { useNavigate } from "react-router-dom";
 
-const ActiveUsersTable = ({limit}) => {
+const ActiveUsersTable = ({ limit }) => {
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = limit || 10;
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     fetchUsers();
@@ -30,8 +33,8 @@ const ActiveUsersTable = ({limit}) => {
         id: user.ID,
         name: user.Username,
         email: user.Email,
-        status: user.user_type === 'ADM' ? 'Admin' : 
-                user.user_type === 'CLT' ? 'Client' : 'User'
+        status: user.user_type === 'ADM' ? 'Admin' :
+          user.user_type === 'CLT' ? 'Client' : 'User'
       }));
       setUsers(formattedUsers);
     } catch (error) {
@@ -61,6 +64,11 @@ const ActiveUsersTable = ({limit}) => {
   };
 
   const totalPages = Math.ceil(users.length / itemsPerPage);
+
+//test
+//   useEffect(()=>{
+// console.log(getCurrentPageUsers()) 
+//   },[ getCurrentPageUsers()])
 
   if (loading) {
     return (
@@ -95,7 +103,7 @@ const ActiveUsersTable = ({limit}) => {
                 <th className="py-3 px-4">Name</th>
                 <th className="py-3 px-4">Email</th>
                 <th className="py-3 px-4">Status</th>
-                <th className="py-3 px-4"></th>
+                <th className="py-3 px-4">Action</th>
               </tr>
             </thead>
             <tbody className="text-sm text-gray-800 rounded-b-lg font-bold">
@@ -106,7 +114,7 @@ const ActiveUsersTable = ({limit}) => {
                 >
                   <td className="py-4 px-4 flex items-center gap-2">
                     <div className="w-8 h-8 bg-gray-200 rounded-full">
-                      <img src={avatar} alt="avatar" className="w-full h-full object-cover"/>
+                      <img src={avatar} alt="avatar" className="w-full h-full object-cover" />
                     </div>
                     {user.name}
                   </td>
@@ -115,22 +123,34 @@ const ActiveUsersTable = ({limit}) => {
                     <span
                       className={`flex items-center justify-center gap-1 w-fit px-3 py-1 rounded-full text-xs font-semibold ${getStatusClass(
                         user.status
-                      )}`}
+                      )}`} 
                     >
                       <GoDotFill />{user.status}
                     </span>
                   </td>
-                  <td className="py-3 px-4 text-right">
-                    <button className="text-gray-500 hover:text-gray-700 rotate-90">•••</button>
+                  <td className="py-3 px-4 flex justify-center items-center">
+                    <button
+
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevents the row click from firing
+                        navigate(`/wallet/add-money?userId=${user.id}`);
+                      }}
+                      className="bg-[#BEA355] submitButton my-4 text-white px-6 py-2 float-right rounded-full  transition-colors disabled:opacity-50"
+                    >
+                      Add Money
+                    </button>
                   </td>
+                  {/* <td className="py-3 px-4 text-right">
+                    <button className="text-gray-500 hover:text-gray-700 rotate-90">•••</button>
+                  </td> */}
                 </tr>
               ))}
             </tbody>
           </table>
         </CardBody>
         <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-          <Button 
-            variant="outlined" 
+          <Button
+            variant="outlined"
             size="sm"
             onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
@@ -149,8 +169,8 @@ const ActiveUsersTable = ({limit}) => {
               </IconButton>
             ))}
           </div>
-          <Button 
-            variant="outlined" 
+          <Button
+            variant="outlined"
             size="sm"
             onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
             disabled={currentPage === totalPages}

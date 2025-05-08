@@ -74,6 +74,8 @@ import EditBoat from "../components/boats/EditBoat";
 import EditF1Boat from "../components/boats/EditF1Boat";
 import BoatBookingRegularyachts from "../pages/booking/BoatBookingRegularyachts";
 import BoatBookingf1yachts from "../pages/booking/BoatBookingf1yachts";
+// import WalletPage from "../pages/wallet/page.jsx";
+import AddMoneyWizard from "../pages/wallet/add-money/page.jsx";
 
 const AppRoutes = () => {
   return (
@@ -173,6 +175,11 @@ const AppRoutes = () => {
           <Route path="boat-bookings/f1yachts" element={<BoatBookingf1yachts />} />
 
           <Route path="event-bookings" element={<EventBookings />} />
+
+
+          {/* <Route path="/wallet/add-money" element={<WalletPage />} /> */}
+          <Route path="/wallet/add-money" element={<AddMoneyWizard />} />
+
         </Route>
 
         {/* 404 Route */}
