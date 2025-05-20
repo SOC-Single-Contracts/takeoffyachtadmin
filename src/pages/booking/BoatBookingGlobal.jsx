@@ -18,6 +18,7 @@ import { BiGlobeAlt } from 'react-icons/bi';
 import { toast } from 'react-toastify';
 import { it } from 'date-fns/locale/it';
 import { th } from 'date-fns/locale/th';
+import { formatDateWithTimes } from '../../utils/helper';
 
 
 const BoatBookingGlobal
@@ -250,6 +251,9 @@ const BoatBookingGlobal
                       const isPending = item.booking[0]?.booking_status == "PENDING" ? true : false;
                       const isApproved = item.booking[0]?.booking_status == "APPROVED" ? true : false;
                       const isCancelled = item.booking[0]?.booking_status == "CANCELLED" ? true : false;
+                      const selectedDate = item.booking[0]?.selected_date;
+                      const startingTime = item.booking[0]?.starting_time;
+                      const endingTime = item.booking[0]?.ending_time;
                       return (
                         <tr
                           key={booking?.id}
@@ -263,7 +267,7 @@ const BoatBookingGlobal
                               <div className="text-sm text-gray-500">{yacht?.location}</div>
                             </div>
                           </td>
-                          {yachtsType == "yachts" ? <td className="p-4">{formatDate(booking?.selected_date)}</td> : yachtsType == "f1yachts" ? <td className="p-4">{formatDate(booking?.start_date)}</td> : ""}
+                          {yachtsType == "yachts" ? <td className="p-4">{formatDateWithTimes(selectedDate,startingTime)}</td> : yachtsType == "f1yachts" ? <td className="p-4">{formatDateWithTimes(booking?.start_date,startingTime)}</td> : ""}
 
 
                           {/* {yachtsType == "yachts" ? booking?.booking_type == "hourly" ? <td className="p-4">{booking?.duration_hour} hours</td> : <td className="p-4">N/A</td> : yachtsType == "f1yachts" ? "" : ""} */}
@@ -399,11 +403,11 @@ const BoatBookingGlobal
                               {yachtsType == "yachts" ? <InfoRow
                                 icon={CalendarDaysIcon}
                                 label="Booking Date"
-                                value={formatDate(selectedBooking?.booking?.selected_date)}
+                                value={formatDateWithTimes(selectedBooking?.booking?.selected_date,selectedBooking?.booking?.starting_time)}
                               /> : yachtsType == "f1yachts" ? <InfoRow
                                 icon={CalendarDaysIcon}
                                 label="Booking Date"
-                                value={formatDate(selectedBooking?.booking?.start_date)}
+                                value={formatDateWithTimes(selectedBooking?.booking?.start_date,selectedBooking?.booking?.starting_time)}
                               /> : ""}
 
 
