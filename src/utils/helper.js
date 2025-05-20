@@ -1,3 +1,5 @@
+import { format, parse } from "date-fns";
+
 const handleNavigate = (path) => {
     window.location.href = path;
 }
@@ -44,3 +46,30 @@ export const formatFileSize = (size) => {
     return `${day}-${month}-${year}`
   
   }
+
+
+
+export const formatDateWithTimes = (dateString, startTime, endTime) => {
+  try {
+    const formattedDate = format(new Date(dateString), 'MMM dd, yyyy');
+
+    if (startTime) {
+      const startDateTime = new Date(`${dateString}T${startTime}`);
+      const formattedStart = format(startDateTime, 'hh:mm a');
+
+      if (endTime) {
+        const endDateTime = new Date(`${dateString}T${endTime}`);
+        const formattedEnd = format(endDateTime, 'hh:mm a');
+        return `${formattedDate} (${formattedStart} - ${formattedEnd})`;
+      }
+
+      return `${formattedDate} (${formattedStart})`;
+    }
+
+    return formattedDate;
+  } catch (err) {
+    return dateString || '-';
+  }
+};
+
+  

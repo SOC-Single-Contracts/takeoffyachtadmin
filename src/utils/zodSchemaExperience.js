@@ -1,0 +1,76 @@
+import { z } from 'zod';
+
+export const zodSchemaRegularExperiences = z.object({
+  yacht: z.any().optional(),
+  user_id: z.any().optional(),
+  name: z.string().min(1, "Name is required"),
+  location: z.any().optional(),
+  // title: z.any().min(1, "Title is required"),
+  min_price: z.any().optional(),
+  max_price: z.any().optional(),
+  guest: z.any().optional(),
+  cancel_time_in_hour: z.any().optional(),
+  status: z.any().optional(),
+  duration_hour: z.any().optional(),
+  // duration_minutes: z.any().optional(),
+  number_of_cabin: z.any().optional(),
+  capacity: z.any().optional(),
+  sleep_capacity: z.any().optional(),
+  per_day_price: z.any().optional(),
+  per_hour_price: z.any().optional(),
+  length: z.any().optional(),
+  power: z.any().optional(),
+  engine_type: z.any().optional(),
+  crew_member: z.any().optional(),
+  description: z.any().optional(),
+  category: z.any().optional(),
+  inclusion: z.array(z.any()).optional(),
+  category_name: z.any().optional(),
+  yacht_name: z.any().optional(),
+  ny_price: z.any().optional(),
+  ny_firework: z.any().optional(),
+  ny_status: z.any().optional(),
+  ny_availability_from: z.any().optional(),
+  ny_availability_to: z.any().optional(),
+
+});
+
+
+export const zodSchemaf1Experiences = z.object({
+
+  yacht: z.any().optional(),
+  user_id: z.any().optional(),
+  name: z.string().min(1, "Name is required"),
+  location: z.any().optional(),
+  // title: z.any().min(1, "Title is required"),
+  min_price: z.any().optional(),
+  max_price: z.any().optional(),
+  guest: z.any().optional(),
+  cancel_time_in_hour: z.any().optional(),
+  status: z.any().optional(),
+  // duration_hour: z.any().optional(),
+  // duration_minutes: z.any().optional(),
+  number_of_cabin: z.any().optional(),
+  capacity: z.any().optional(),
+  sleep_capacity: z.any().optional(),
+  per_day_price: z.any().optional(),
+  length: z.any().optional(),
+  power: z.any().optional(),
+  engine_type: z.any().optional(),
+  crew_member: z.any().optional(),
+  description: z.any().optional(),
+  category: z.any().optional(),
+  inclusion: z.array(z.any()).optional(),
+  category_name: z.any().optional(),
+  yacht_name: z.any().optional(),
+  // ny_price: z.any().optional(),
+  // ny_firework: z.any().optional(),
+  // ny_status: z.any().optional(),
+  //  ny_availability:z.any().optional() ,
+  // ny_inclusion: z.array(z.any()).optional(),
+});
+
+
+export const zodSchemaEmpty = z.object({});
+
+// min_price: z.any().optional(),

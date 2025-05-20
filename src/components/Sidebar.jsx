@@ -104,6 +104,31 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       ]
     },
     {
+      name: "Experiences",
+      icon: <FaShip className="text-xl" />,
+      type: "accordion",
+      items: [
+        {
+          name: "Experiences",
+          icon: <FaShip className="text-xl" />,
+          items: [
+            { name: "All Experiences", path: "/experiences/regular-exp" },
+            { name: "Add Experiences", path: "/experiences/regular-exp/add" }
+          ]
+        },
+        // {
+        //   name: "F1 Experiences",
+        //   icon: <FaShip className="text-xl" />,
+        //   items: [
+        //     { name: "All F1 Experiences", path: "/experiences/f1-exp" },
+        //     { name: "Add F1 Experiences", path: "/experiences/f1-exp/add" }
+        //   ]
+        // },
+     
+      ]
+    },
+ 
+    {
       name: "Bookings",
       icon: <MdOutlineEventNote className="text-xl" />,
       type: "accordion",
@@ -114,6 +139,8 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           items: [
             { name: "Boat Bookings", path: "/boat-bookings/yachts" },
             { name: "f1 Boat Bookings", path: "/boat-bookings/f1yachts" },
+            { name: "Experience Bookings", path: "/experience-bookings/regular-exp" },
+
             // { name: "Event Bookings", path: "/event-bookings" },
           ]
         }
@@ -169,6 +196,28 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     //   ]
     // },
     {
+      name: "Event Management",
+      icon: <MdOutlineEventNote className="text-xl" />,
+      type: "accordion",
+      items: [
+        {
+          name: "Events",
+          icon: <MdOutlineEventNote className="text-xl" />,
+          items: [
+            { name: "All Events", path: "/events" },
+            { name: "Add Event", path: "/events/add" }
+          ]
+        },
+        {
+          name: "Packages",
+          icon: <Package className="text-xl" />,
+          items: [
+            { name: "All Packages", path: "/packages" },
+          ]
+        }
+      ]
+    },
+    {
       name: "Brands",
       icon: <TbBrandAirbnb className="text-xl" />,
       type: "accordion",
@@ -183,6 +232,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         }
       ]
     },
+  
     {
       name: "Categories",
       icon: <BiCategoryAlt className="text-xl" />,
@@ -226,44 +276,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           items: [
             { name: "All Specifications", path: "/specifications" },
             { name: "Add Specification", path: "/specifications/add" }
-          ]
-        }
-      ]
-    },
- 
-    {
-      name: "Experiences",
-      icon: <MdOutlineEventNote className="text-xl" />,
-      type: "accordion",
-      items: [
-        {
-          name: "Experiences",
-          icon: <MdOutlineEventNote className="text-xl" />,
-          items: [
-            { name: "All Experiences", path: "/experiences" },
-            { name: "Add Experience", path: "/experiences/add" }
-          ]
-        }
-      ]
-    },
-    {
-      name: "Event Management",
-      icon: <MdOutlineEventNote className="text-xl" />,
-      type: "accordion",
-      items: [
-        {
-          name: "Events",
-          icon: <MdOutlineEventNote className="text-xl" />,
-          items: [
-            { name: "All Events", path: "/events" },
-            { name: "Add Event", path: "/events/add" }
-          ]
-        },
-        {
-          name: "Packages",
-          icon: <Package className="text-xl" />,
-          items: [
-            { name: "All Packages", path: "/packages" },
           ]
         }
       ]

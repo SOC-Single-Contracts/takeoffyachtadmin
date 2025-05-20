@@ -62,9 +62,7 @@ import AllExtras from "../components/extras/AllExtras";
 import TestimonialList from "../components/testimonials/TestimonialList";
 import AddEditTestimonial from "../components/testimonials/AddEditTestimonial";
 
-// Experience Components
-import AllExperiences from '../components/experiences/AllExperiences';
-import AddExperience from '../components/experiences/AddExperience';
+
 
 // Event Components
 import AllEvents from '../components/events/EventList';
@@ -76,6 +74,10 @@ import BoatBookingRegularyachts from "../pages/booking/BoatBookingRegularyachts"
 import BoatBookingf1yachts from "../pages/booking/BoatBookingf1yachts";
 // import WalletPage from "../pages/wallet/page.jsx";
 import AddMoneyWizard from "../pages/wallet/add-money/page.jsx";
+import AddExperience from "../components/experiences/AddExperience.jsx";
+import Experiences from "../components/experiences/Experiences.jsx";
+import BookingRegularExperience from "../pages/booking/BookingRegularExperience.jsx";
+import EditExperience from "../components/experiences/EditExperience.jsx";
 
 const AppRoutes = () => {
   return (
@@ -154,9 +156,14 @@ const AppRoutes = () => {
           <Route path="testimonials/edit/:id" element={<AddEditTestimonial />} />
           
           {/* Experience Routes */}
-          <Route path="experiences" element={<AllExperiences />} />
-          <Route path="experiences/add" element={<AddExperience />} />
-          <Route path="experiences/edit/:id" element={<AddExperience />} />
+          <Route path="experiences/regular-exp" element={<Experiences />} />
+          <Route path="experiences/regular-exp/add" element={<AddExperience />} />
+          <Route path="experiences/regular-exp/edit/:id" element={<EditExperience />} />
+          {/* <Route path="experiences/f1-exp" element={<AllExperiences />} />
+          <Route path="experiences/f1-exp/add" element={<AddExperience />} />
+          <Route path="experiences/f1-exp/edit/:id" element={<AddExperience />} /> */}
+          <Route path="experience-bookings/regular-exp" element={<BookingRegularExperience />} />
+
           
           {/* Event Routes */}
           <Route path="events" element={<AllEvents />} />
@@ -173,6 +180,7 @@ const AppRoutes = () => {
           <Route path="specifications/edit/:id" element={<AddSpecifications />} />
           <Route path="boat-bookings/yachts" element={<BoatBookingRegularyachts />} />
           <Route path="boat-bookings/f1yachts" element={<BoatBookingf1yachts />} />
+
 
           <Route path="event-bookings" element={<EventBookings />} />
 
