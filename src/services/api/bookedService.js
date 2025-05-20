@@ -20,6 +20,15 @@ export const getBookingsBaseType = async (yachtId,yachtsType) => {
   }
 };
 
+export const getExperienceBookingsBaseType = async (yachtId,yachtsType) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/get_exp_booking/${yachtId}/?BookingType=${yachtsType == "f1-exp" ? "date_range" : "duration"}`);
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 
 
 export const getEventBookings = async (eventId) => {
