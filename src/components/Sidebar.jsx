@@ -127,6 +127,30 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
      
       ]
     },
+    {
+      name: "Event Management",
+      icon: <MdOutlineEventNote className="text-xl" />,
+      type: "accordion",
+      items: [
+        {
+          name: "Events",
+          icon: <MdOutlineEventNote className="text-xl" />,
+          items: [
+            { name: "All Events", path: "/events" },
+            { name: "Add Event", path: "/events/add" }
+          ]
+        },
+        {
+          name: "Packages",
+          icon: <Package className="text-xl" />,
+          items: [
+            { name: "All Packages", path: "/packages" },
+            { name: "Add Package", path: "/packages/add" },
+
+          ]
+        }
+      ]
+    },
  
     {
       name: "Bookings",
@@ -140,6 +164,8 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             { name: "Boat Bookings", path: "/boat-bookings/yachts" },
             { name: "f1 Boat Bookings", path: "/boat-bookings/f1yachts" },
             { name: "Experience Bookings", path: "/experience-bookings/regular-exp" },
+            { name: "Events Bookings", path: "/events-bookings/all-events" },
+
 
             // { name: "Event Bookings", path: "/event-bookings" },
           ]
@@ -195,28 +221,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     //     }
     //   ]
     // },
-    {
-      name: "Event Management",
-      icon: <MdOutlineEventNote className="text-xl" />,
-      type: "accordion",
-      items: [
-        {
-          name: "Events",
-          icon: <MdOutlineEventNote className="text-xl" />,
-          items: [
-            { name: "All Events", path: "/events" },
-            { name: "Add Event", path: "/events/add" }
-          ]
-        },
-        {
-          name: "Packages",
-          icon: <Package className="text-xl" />,
-          items: [
-            { name: "All Packages", path: "/packages" },
-          ]
-        }
-      ]
-    },
+   
     {
       name: "Brands",
       icon: <TbBrandAirbnb className="text-xl" />,

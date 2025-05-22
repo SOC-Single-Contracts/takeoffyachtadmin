@@ -78,6 +78,9 @@ import AddExperience from "../components/experiences/AddExperience.jsx";
 import Experiences from "../components/experiences/Experiences.jsx";
 import BookingRegularExperience from "../pages/booking/BookingRegularExperience.jsx";
 import EditExperience from "../components/experiences/EditExperience.jsx";
+import AddPackage from "../components/events/AddPackage.jsx";
+import EditPackage from "../components/events/EditPackage.jsx";
+import EditEvent from "../components/events/EditEvent.jsx";
 
 const AppRoutes = () => {
   return (
@@ -168,7 +171,13 @@ const AppRoutes = () => {
           {/* Event Routes */}
           <Route path="events" element={<AllEvents />} />
           <Route path="events/add" element={<AddEvent />} />
-          <Route path="events/edit/:id" element={<AddEvent />} />
+          <Route path="events/edit/:id" element={<EditEvent />} />
+          <Route path="packages/add" element={<AddPackage />} />
+          <Route path="packages/edit/:id" element={<EditPackage />} />
+          <Route path="packages" element={<PackageList />} />
+          <Route path="events-bookings/all-events" element={<EventBookings />} />
+
+
           
           {/* Other Routes */}
           <Route path="chat" element={<Inbox />} />
@@ -182,7 +191,6 @@ const AppRoutes = () => {
           <Route path="boat-bookings/f1yachts" element={<BoatBookingf1yachts />} />
 
 
-          <Route path="event-bookings" element={<EventBookings />} />
 
 
           {/* <Route path="/wallet/add-money" element={<WalletPage />} /> */}

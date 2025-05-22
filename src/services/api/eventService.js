@@ -25,3 +25,41 @@ export const eventService = {
 };
 
 export default eventService;
+
+
+
+export const getSingleEventbyId = async (id) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/get_single_event/${id}/`);
+    if (response?.data?.success == true) {
+      return response?.data?.events;
+    }
+    throw new Error('Failed to fetch event ');
+  } catch (error) {
+    console.error('API Error:', error.response || error.message);
+    throw error.response?.data || error.message;
+  }
+};
+
+
+export const getSinglePackagebyId = async (id) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/package/?package_id=${id}`);
+    if (response?.data?.error_code == "pass") {
+      return response?.data?.package;
+    }
+    throw new Error('Failed to fetch package ');
+  } catch (error) {
+    console.error('API Error:', error.response || error.message);
+    throw error.response?.data || error.message;
+  }
+};
+
+export const getEventBookingsAll = async (yachtId) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/get_event_booking/${yachtId}`);
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
+};

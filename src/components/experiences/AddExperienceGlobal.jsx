@@ -1313,6 +1313,8 @@ const AddExperienceGlobal = () => {
               acceptedFileTypes="image/*"
               containerClassName="border border-gray-200 rounded-lg"
               apiImage={mainImage}
+              componentType={yachtsType  == "regular-exp" ? "Experience" : yachtsType == "f1-exp" ? "f1 Experience" :''}
+
             />
           </div>
           <div className="">
@@ -1323,6 +1325,8 @@ const AddExperienceGlobal = () => {
               acceptedFileTypes="image/*"
               containerClassName="border border-gray-200 rounded-lg"
               apiImages={additionalImages}
+              componentType={yachtsType  == "regular-exp" ? "Experience" : yachtsType == "f1-exp" ? "f1 Experience" :''}
+
             />
           </div>
         </div>

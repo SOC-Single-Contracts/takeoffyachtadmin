@@ -8,6 +8,7 @@ const FileUploadSingle = ({
   acceptedFileTypes = "*",
   containerClassName = "",
   apiImage,
+  componentType = "yacht"
 }) => {
   const [fileData, setFileData] = useState(null);
   const fileInputRef = useRef(null);
@@ -61,7 +62,7 @@ const FileUploadSingle = ({
       <div className="p-8">
         <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
           <p className="mb-3 text-gray-700">
-            <span>Upload Yacht Main Image</span>
+            <span>Upload {componentType} Main Image</span>
           </p>
           <input
             ref={fileInputRef}

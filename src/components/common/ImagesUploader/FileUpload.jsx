@@ -9,6 +9,7 @@ const FileUpload = ({
   acceptedFileTypes = "*",
   containerClassName = "",
   apiImages,
+  componentType="yacht"
 }) => {
   const [files, setFiles] = useState({});
   const [previewImages, setPreviewImages] = useState([]);
@@ -118,7 +119,7 @@ const FileUpload = ({
       <div className="p-8">
         <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
           <p className="mb-3 text-gray-700">
-            <span>Upload More Images of Yacht</span>
+            <span>Upload More Images of {componentType}</span>
           </p>
           <input
             ref={fileInputRef}

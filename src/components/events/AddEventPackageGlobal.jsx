@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -21,12 +21,15 @@ import { format, parse } from 'date-fns';
 import { getS3PathOnly } from '../../utils/helper';
 import { zodSchemaf1Experiences, zodSchemaRegularExperiences, zodSchemaEmpty } from '../../utils/zodSchemaExperience';
 import { experienceData, f1experienceData, f1experiencesStatesUpdates, regularexperiencesStatesUpdates } from '../../utils/customizeObjExperience';
+import { zodSchemaEvent, zodSchemaPackage } from '../../utils/zodSchemaEventPackage';
+import { getSingleEventbyId, getSinglePackagebyId } from '../../services/api/eventService';
+import { eventData, eventStatesUpdates, packageData, packageStatesUpdates } from '../../utils/customizeObjEventsPackage';
 
 
 
 
 
-const AddEventPackageGlobal = ({yachtsType}) => {
+const AddEventPackageGlobal = ({ yachtsType }) => {
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const [mainImage, setMainImage] = useState(null);
@@ -41,8 +44,12 @@ const AddEventPackageGlobal = ({yachtsType}) => {
   const [crewLanguage, setCrewLanguage] = useState('');
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
+  const [startTime, setStartTime] = useState('');
+  const [endTime, setEndTime] = useState('');
   const [selectedFeatures, setSelectedFeatures] = useState([]);
   const [inclusions, setInclusions] = useState([]);
+  const [packageList, setPackageList] = useState([]);
+  const [selectedPackages, setSelectedPackages] = useState([])
   const [selectedInclusion, setSelectedInclusion] = useState([]);
   const [selectednyInclusion, setSelectedNyInclusion] = useState([]);
   const [categoriesList, setCategoriesList] = useState([]);
@@ -61,11 +68,36 @@ const AddEventPackageGlobal = ({yachtsType}) => {
   const [nyStatusChecked, setNyStatusChecked] = useState(false);
   const [selectedYacht, setSelectedYacht] = useState({})
   const [debuggingObject, setDebuggingObject] = useState({})
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  const toggleDropdown = () => setIsOpen(!isOpen);
   const selectedSchema =
-    yachtsType === "event" ? zodSchemaRegularExperiences : yachtsType === "package" ? zodSchemaf1Experiences : zodSchemaEmpty;
+    yachtsType === "event" ? zodSchemaEvent : yachtsType === "package" ? zodSchemaPackage : zodSchemaEmpty;
   const navigate = useNavigate();
   const { id } = useParams();
   const isEditMode = !!id;
+
+  const eventCategories = [
+    // {
+    //   name: "Select Event Type",
+    //   value: ""
+    // },
+    {
+      name: "Year",
+      value: "YEAR"
+    },
+    {
+      name: "Normal",
+      value: "NORMAL"
+    },
+    {
+      name: "F1",
+      value: "F1"
+    }
+  ];
+
+
 
 
   const { register, handleSubmit, formState: { errors }, reset, watch } = useForm({
@@ -78,7 +110,7 @@ const AddEventPackageGlobal = ({yachtsType}) => {
   const watchedValues = watch(); // Watches all form fields
 
 
-  const fetchRegularBoatData = async () => {
+  const fetchEvent = async () => {
     if (!id) {
       setInitialLoading(false);
       return;
@@ -86,13 +118,14 @@ const AddEventPackageGlobal = ({yachtsType}) => {
 
     try {
       let data;
-      const response = await getSingleBoatById(id, yachtsType == "package" ? "package" : "regular");
-      data = response?.find(item => item.yacht && item.yacht.id.toString() == id);
+      const response = await getSingleEventbyId(id);
+      // console.log(response)
+      data = response;
 
       setSelectedYacht(data);
-      reset(experienceData(data));
+      reset(eventData(data));
 
-      const updates = regularexperiencesStatesUpdates(data);
+      const updates = eventStatesUpdates(data);
 
       if (updates?.locationLatLng) setLocationLatLng(updates?.locationLatLng);
       if (updates?.meetingPoint) setMeetingPoint(updates?.meetingPoint);
@@ -109,7 +142,11 @@ const AddEventPackageGlobal = ({yachtsType}) => {
       if (updates?.selectedFoodOptions) setSelectedFoodOptions(updates?.selectedFoodOptions);
       if (updates?.from_date) setFromDate(updates?.from_date);
       if (updates?.to_date) setToDate(updates?.to_date);
+      if (updates?.start_time) setStartTime(updates?.start_time);
+      if (updates?.end_time) setEndTime(updates?.end_time);
       if (updates?.selectednyInclusion) setSelectedNyInclusion(updates?.selectednyInclusion);
+      if (updates?.selectedPackages) setSelectedPackages(updates?.selectedPackages);
+
 
 
 
@@ -120,7 +157,7 @@ const AddEventPackageGlobal = ({yachtsType}) => {
       setInitialLoading(false);
     }
   };
-  const fetchf1BoatData = async () => {
+  const fetchSinglePackageData = async () => {
     if (!id) {
       setInitialLoading(false);
       return;
@@ -128,14 +165,13 @@ const AddEventPackageGlobal = ({yachtsType}) => {
 
     try {
       let data;
-      // const response = await getSingleF1BoatById(id);
-      // data = response;
-      const response = await getSingleBoatById(id, yachtsType == "package" ? "package" : "regular");
-      data = response?.find(item => item.yacht && item.yacht.id.toString() == id);
-      setSelectedYacht(data);
-      reset(f1experienceData(data));
 
-      const updates = f1experiencesStatesUpdates(data);
+      const response = await getSinglePackagebyId(id);
+      data = response;
+      setSelectedYacht(data);
+      reset(packageData(data));
+
+      const updates = packageStatesUpdates(data);
 
       if (updates?.locationLatLng) setLocationLatLng(updates?.locationLatLng);
       if (updates?.meetingPoint) setMeetingPoint(updates?.meetingPoint);
@@ -152,8 +188,10 @@ const AddEventPackageGlobal = ({yachtsType}) => {
       if (updates?.selectedFoodOptions) setSelectedFoodOptions(updates?.selectedFoodOptions);
       if (updates?.from_date) setFromDate(updates?.from_date);
       if (updates?.to_date) setToDate(updates?.to_date);
+      if (updates?.start_time) setStartTime(updates?.start_time);
+      if (updates?.end_time) setEndTime(updates?.end_time);
     } catch (error) {
-      console.error('Error fetching boat data:', error);
+      console.error('Error fetching package data:', error);
     } finally {
       setInitialLoading(false);
     }
@@ -164,10 +202,10 @@ const AddEventPackageGlobal = ({yachtsType}) => {
 
 
     if (yachtsType == "event") {
-      fetchRegularBoatData();
+      fetchEvent();
 
     } else if (yachtsType == "package") {
-      fetchf1BoatData()
+      fetchSinglePackageData()
 
     }
   }, [id, reset]);
@@ -181,7 +219,7 @@ const AddEventPackageGlobal = ({yachtsType}) => {
         console.error('Error fetching inclusions:', error);
       }
     };
-    fetchInclusions();
+    // fetchInclusions();
   }, []);
 
   useEffect(() => {
@@ -196,7 +234,26 @@ const AddEventPackageGlobal = ({yachtsType}) => {
         setCategoriesList([]);
       }
     };
-    fetchCategories();
+    // fetchCategories();
+  }, []);
+
+
+  useEffect(() => {
+    const fetchPackageList = async () => {
+      try {
+        const response = await axios.get('https://api.takeoffyachts.com/yacht/package/');
+        if (response?.data?.error_code === 'pass') {
+          setPackageList(response?.data?.package);
+        }
+      } catch (error) {
+        console.error('Error fetching PackageList:', error);
+        setPackageList([]);
+      }
+    };
+    if (yachtsType == "event") {
+      fetchPackageList();
+
+    }
   }, []);
 
   useEffect(() => {
@@ -216,7 +273,7 @@ const AddEventPackageGlobal = ({yachtsType}) => {
         setFeaturesList([]);
       }
     };
-    fetchFeaturesList();
+    // fetchFeaturesList();
   }, []);
 
   useEffect(() => {
@@ -239,7 +296,7 @@ const AddEventPackageGlobal = ({yachtsType}) => {
         console.error('Error fetching food options:', error);
       }
     };
-    fetchFoodOptions();
+    // fetchFoodOptions();
   }, []);
 
   useEffect(() => {
@@ -277,14 +334,19 @@ const AddEventPackageGlobal = ({yachtsType}) => {
     }
   }, []);
 
-  const handleSubmitYachts = async (data) => {
+  const handleSubmitEvent = async (data) => {
 
     // console.log(data)
     try {
-      if (!mainImage && !isEditMode) {
-        toast.error('Please select a main Experience image');
+      if (selectedPackages.length == 0) {
+        toast.error('Please select a Package');
         return;
       }
+      if (!mainImage && !isEditMode) {
+        toast.error('Please select a main Event image');
+        return;
+      }
+
       // if (!locationLatLng) {
       //   toast.error('Please select a Yacht location on the map');
       //   return;
@@ -365,9 +427,8 @@ const AddEventPackageGlobal = ({yachtsType}) => {
         };
         formData.append('availability', JSON.stringify(availability));
       }
-
       Object.keys(data).forEach(key => {
-        if (!['yacht_image'].includes(key)) {
+        if (!['event_image'].includes(key)) {
           const value = key === 'status' ? String(data[key]) : data[key];
           if (value !== null && value !== undefined && value !== '') {
             formData.append(key, value);
@@ -407,37 +468,50 @@ const AddEventPackageGlobal = ({yachtsType}) => {
       formData.append('location_url', yachtLocationLink);
 
       if (mainImage?.file instanceof File) {
-        formData.append('yacht_image', mainImage.file);
+        formData.append('event_image', mainImage.file);
       }
 
       // Append additional images
-      for (let i = 0; i < 20; i++) {
-        const img = additionalImages[i];
+      // for (let i = 0; i < 20; i++) {
+      //   const img = additionalImages[i];
 
-        if (img?.file instanceof File) {
-          formData.append(`image${i + 1}`, img.file);
-        } else if (img?.isFromApi && img.url) {
-          const urlPath = getS3PathOnly(img.url);
-          formData.append(`image${i + 1}`, urlPath);
-        } else {
-          // Append a null placeholder for missing images
-          formData.append(`image${i + 1}`, '');
-        }
-      }
+      //   if (img?.file instanceof File) {
+      //     formData.append(`image${i + 1}`, img.file);
+      //   } else if (img?.isFromApi && img.url) {
+      //     const urlPath = getS3PathOnly(img.url);
+      //     formData.append(`image${i + 1}`, urlPath);
+      //   } else {
+      //     formData.append(`image${i + 1}`, '');
+      //   }
+      // }
       formData.append('notes', notes);
-      formData.append('type', data?.engine_type);
-      formData.append('flag', flag);
-      formData.append('crew_language', crewLanguage);
+      // formData.append('type', data?.engine_type);
+      // formData.append('flag', flag);
+      // formData.append('crew_language', crewLanguage);
       formData.append('from_date', fromDate);
       formData.append('to_date', toDate);
-      formData.append('features', JSON.stringify(selectedFeatures));
-      formData.append('subcategory', JSON.stringify(selectedFeatures));
-      formData.append('inclusion', JSON.stringify(selectedInclusion));
-      formData.append('categories', JSON.stringify(selectedCategories));
-      // formData.append('food_name', foodName);
+      formData.append('start_time', startTime);
+      formData.append('end_time', endTime);
+      // formData.append('features', JSON.stringify(selectedFeatures));
+      // formData.append('subcategory', JSON.stringify(selectedFeatures));
+      // formData.append('inclusion', JSON.stringify(selectedInclusion));
+      // formData.append('categories', JSON.stringify(selectedCategories));
       // formData.append('food_price', foodPrice);
       // formData.append('brand_id', selectedBrand);
-      formData.append('food_name', JSON.stringify(selectedFoodOptions));
+      // formData.append('food_name', JSON.stringify(selectedFoodOptions));
+      formData.append('foods_list', JSON.stringify([]));
+
+
+      if (selectedPackages?.length > 0) {
+        const filteredPackages = selectedPackages.map(pkg => ({
+          price: pkg.price,
+          quantity_available: pkg.quantity_available,
+          package_type: pkg.package_type
+
+        }));
+
+        formData.append('packages_system', JSON.stringify(filteredPackages));
+      }
 
       // console.log("FormData contents:");
       // for (let pair of formData.entries()) {
@@ -447,8 +521,8 @@ const AddEventPackageGlobal = ({yachtsType}) => {
       let url;
 
       url = isEditMode
-        ? `https://api.takeoffyachts.com/yacht/yacht/`
-        : 'https://api.takeoffyachts.com/yacht/yacht/';
+        ? `https://api.takeoffyachts.com/yacht/event/`
+        : 'https://api.takeoffyachts.com/yacht/event/';
 
       const response = await axios({
         method: isEditMode ? 'put' : 'post',
@@ -460,8 +534,8 @@ const AddEventPackageGlobal = ({yachtsType}) => {
       });
 
       if (response?.data?.error_code === 'pass') {
-        toast.success(`Yacht successfully ${isEditMode ? 'updated' : 'added'}`);
-        navigate('/boats/yachts');
+        toast.success(`Event successfully ${isEditMode ? 'updated' : 'added'}`);
+        navigate('/events');
       } else {
         // Handle API validation errors
         if (response.error) {
@@ -521,14 +595,14 @@ const AddEventPackageGlobal = ({yachtsType}) => {
     }
 
   };
-  const handleSubmitf1Yachts = async (data) => {
+  const handleSubmitPackage = async (data) => {
 
     // console.log(data)
     try {
-      if (!mainImage && !isEditMode) {
-        toast.error('Please select a main Experience image');
-        return;
-      }
+      // if (!mainImage && !isEditMode) {
+      //   toast.error('Please select a main Experience image');
+      //   return;
+      // }
 
       // if (!locationLatLng) {
       //   toast.error('Please select a Yacht location on the map');
@@ -613,7 +687,7 @@ const AddEventPackageGlobal = ({yachtsType}) => {
       }
 
       Object.keys(data).forEach(key => {
-        if (!['yacht_image'].includes(key)) {
+        if (!['event_image'].includes(key)) {
           const value = key === 'status' ? String(data[key]) : data[key];
           if (value !== null && value !== undefined && value !== '') {
             formData.append(key, value);
@@ -630,44 +704,45 @@ const AddEventPackageGlobal = ({yachtsType}) => {
       // };
       // formData.set('ny_availability', JSON.stringify(ny_availability));///remove
 
-      formData.append('latitude', locationLatLng ? locationLatLng.lat : 25.180775);
-      formData.append('longitude', locationLatLng ? locationLatLng.lng : 55.336947);
-      formData.append('meeting_point_link', meetingPoint);
-      formData.append('car_parking_link', carParking);
-      formData.append('taxi_drop_off_link', taxiDropOff);
-      formData.append('location_url', yachtLocationLink);
-      if (mainImage?.file instanceof File) {
-        formData.append('yacht_image', mainImage.file);
-      }
+      // formData.append('latitude', locationLatLng ? locationLatLng.lat : 25.180775);
+      // formData.append('longitude', locationLatLng ? locationLatLng.lng : 55.336947);
+      // formData.append('meeting_point_link', meetingPoint);
+      // formData.append('car_parking_link', carParking);
+      // formData.append('taxi_drop_off_link', taxiDropOff);
+      // formData.append('location_url', yachtLocationLink);
+      // if (mainImage?.file instanceof File) {
+      //   formData.append('event_image', mainImage.file);
+      // }
 
       // Append additional images
-      for (let i = 0; i < 20; i++) {
-        const img = additionalImages[i];
+      // for (let i = 0; i < 20; i++) {
+      //   const img = additionalImages[i];
 
-        if (img?.file instanceof File) {
-          formData.append(`image${i + 1}`, img.file);
-        } else if (img?.isFromApi && img.url) {
-          const urlPath = getS3PathOnly(img.url);
-          formData.append(`image${i + 1}`, urlPath);
-        } else {
-          // Append a null placeholder for missing images
-          formData.append(`image${i + 1}`, '');
-        }
-      }
-      formData.append('notes', notes);
-      formData.append('type', data?.engine_type);
-      formData.append('flag', flag);
-      formData.append('crew_language', crewLanguage);
-      formData.append('from_date', fromDate);
-      formData.append('to_date', toDate);
-      formData.append('features', JSON.stringify(selectedFeatures));
-      formData.append('subcategory', JSON.stringify(selectedFeatures));
-      formData.append('inclusion', JSON.stringify(selectedInclusion));
-      formData.append('category', JSON.stringify(selectedCategories));
+      //   if (img?.file instanceof File) {
+      //     formData.append(`image${i + 1}`, img.file);
+      //   } else if (img?.isFromApi && img.url) {
+      //     const urlPath = getS3PathOnly(img.url);
+      //     formData.append(`image${i + 1}`, urlPath);
+      //   } else {
+      //     formData.append(`image${i + 1}`, '');
+      //   }
+      // }
+      // formData.append('notes', notes);
+      // formData.append('type', data?.engine_type);
+      // formData.append('flag', flag);
+      // formData.append('crew_language', crewLanguage);
+      // formData.append('from_date', fromDate);
+      // formData.append('to_date', toDate);
+      // formData.append('start_time', startTime);
+      // formData.append('end_time', endTime);
+      // formData.append('features', JSON.stringify(selectedFeatures));
+      // formData.append('subcategory', JSON.stringify(selectedFeatures));
+      // formData.append('inclusion', JSON.stringify(selectedInclusion));
+      // formData.append('category', JSON.stringify(selectedCategories));
       // formData.append('food_name', foodName);
       // formData.append('food_price', foodPrice);
       // formData.append('brand_id', selectedBrand);
-      formData.append('food_name', JSON.stringify(selectedFoodOptions));
+      // formData.append('food_name', JSON.stringify(selectedFoodOptions));
 
       // console.log("FormData contents:");
       // for (let pair of formData.entries()) {
@@ -677,8 +752,8 @@ const AddEventPackageGlobal = ({yachtsType}) => {
       let url;
 
       url = isEditMode
-        ? `https://api.takeoffyachts.com/yacht/f1-yachts-details/`
-        : 'https://api.takeoffyachts.com/yacht/f1-yachts/';
+        ? `https://api.takeoffyachts.com/yacht/package/`
+        : 'https://api.takeoffyachts.com/yacht/package/';
 
       const response = await axios({
         method: isEditMode ? 'put' : 'post',
@@ -690,8 +765,8 @@ const AddEventPackageGlobal = ({yachtsType}) => {
       });
 
       if (response?.data?.error_code === 'pass') {
-        toast.success(`f1 Yacht successfully ${isEditMode ? 'updated' : 'added'}`);
-        navigate('/boats/f1yachts');
+        toast.success(`Package successfully ${isEditMode ? 'updated' : 'added'}`);
+        navigate('/packages');
 
       } else {
         // Handle API validation errors
@@ -751,6 +826,25 @@ const AddEventPackageGlobal = ({yachtsType}) => {
     }
   }, []);
 
+
+  const handleCheckboxChange = (pkg) => {
+    setSelectedPackages(prev => {
+      const exists = prev.find(p => p.id === pkg.id);
+      if (exists) {
+        return prev.filter(p => p.id !== pkg.id);
+      } else {
+        return [...prev, pkg];
+      }
+    });
+  };
+
+  const handleClickOutside = (e) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+      setIsOpen(false);
+    }
+  };
+
+
   const handleAdditionalImagesChange = useCallback((files) => {
     // console.log(files)
     // Validate each file
@@ -777,10 +871,13 @@ const AddEventPackageGlobal = ({yachtsType}) => {
   //     crewLanguage,
   //     fromDate,
   //     toDate,
+  //     startTime,
+  //     endTime,
   //     selectedFeatures,
   //     selectedInclusion,
   //     selectedCategories,
   //     selectedFoodOptions,
+  //     selectedPackages,
   //     meetingPoint,
   //     taxiDropOff,
   //     carParking,
@@ -801,7 +898,10 @@ const AddEventPackageGlobal = ({yachtsType}) => {
   //   meetingPoint,
   //   taxiDropOff,
   //   yachtLocationLink,
-  //   carParking
+  //   carParking,
+  //   selectedPackages,
+  //   startTime,
+  //   endTime,
   // ]);
 
 
@@ -813,6 +913,11 @@ const AddEventPackageGlobal = ({yachtsType}) => {
   // useEffect(() => {
   //   console.log("debuggingObject", debuggingObject)
   // }, [debuggingObject])
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
 
 
@@ -831,276 +936,334 @@ const AddEventPackageGlobal = ({yachtsType}) => {
           : yachtsType == "package" ? <h1 className="text-3xl mt-4  px-6 font-bold mb-6 font-sora">{isEditMode ? 'Edit' : 'Add'} Package</h1>
             : ""}
 
-        <form onSubmit={handleSubmit(yachtsType === "package" ? handleSubmitf1Yachts : yachtsType === "event" ? handleSubmitYachts : "")} className=" ">
-          {/* <div className="grid grid-cols-1 md:grid-cols-2 p-6  gap-6"> */}
-          {/* <div>
-              <label htmlFor="brand_id">Brand</label>
-              <div className="relative">
-                <button
-                  className="block w-full bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#BEA355]"
-                  onClick={() => setDropdownOpen(!dropdownOpen)}
+        <form onSubmit={handleSubmit(yachtsType === "package" ? handleSubmitPackage : yachtsType === "event" ? handleSubmitEvent : "")} className=" ">
+          {yachtsType == "event" ? <>
+
+            {yachtsType == "event" && <div className="grid grid-cols-1 md:grid-cols-2 px-6  gap-6">
+              <div className=''>
+                <label className="block">Event Type<span className="text-red-700">*</span></label>
+                <select
+                  {...register("event_type")}
+                  className={`w-full border rounded-lg p-2 ${errors.event_type ? "border-red-500" : "border-gray-300"} focus:ring-1 focus:ring-[#BEA355] focus:outline-none`}
                 >
-                  {selectedBrand ? brandsList.find(brand => brand.id === selectedBrand)?.title : 'Select a brand'}
-                </button>
-                {dropdownOpen && (
-                  <div className="absolute z-10 w-full bg-white border border-gray-300 rounded-lg shadow-lg mt-1">
-                    {brandsList.map((brand, index) => (
-                      <div
-                        key={index}
-                        onClick={() => {
-                          setSelectedBrand(brand.id);
-                          setDropdownOpen(false);
-                        }}
-                        className="cursor-pointer hover:bg-gray-100 py-2 px-4 rounded-lg"
+                  <option value="">Select Event Type</option>
+                  {eventCategories?.map((type) => {
+                    return (
+                      <option value={type?.value}>{type?.name}</option>
+                    )
+                  })}
+
+
+
+
+                </select>
+                {errors.event_type && <p className="text-red-500 text-sm">{errors.event_type.message}</p>}
+              </div>
+              <div className="relative w-full" ref={dropdownRef}>
+                <label className="block mb-1 font-medium">Select Packages</label>
+
+                <div
+                  onClick={toggleDropdown}
+                  className="border border-gray-300 rounded-lg p-2 cursor-pointer w-full bg-white focus:ring-1 focus:ring-[#BEA355]"
+                >
+                  {selectedPackages.length > 0
+                    ? selectedPackages.map(pkg => pkg.package_type).join(', ')
+                    : 'Select Package(s)'}
+                </div>
+
+                {isOpen && (
+                  <div className="absolute z-10 mt-1 w-full bg-white border rounded-lg shadow-lg max-h-60 overflow-auto">
+                    {packageList?.map(pkg => (
+                      <label
+                        key={pkg.id}
+                        className="flex items-center  cursor-pointer px-4 py-2 hover:bg-gray-100"
                       >
-                        {brand.title}
-                      </div>
+                        <input
+                          type="checkbox"
+                          className="form-checkbox cursor-pointer mr-2 text-[#BEA355]"
+                          checked={selectedPackages.some(p => p.id === pkg.id)}
+                          onChange={() => handleCheckboxChange(pkg)}
+                        />
+                        {pkg.package_type} - AED {pkg.price}
+                      </label>
                     ))}
                   </div>
                 )}
               </div>
-            </div> */}
-          {/* <div>
-              <label htmlFor="title">Title</label>
-              <Input className='rounded-lg' {...register('title')} error={!!errors.title} />
-            </div> */}
-          {/* </div> */}
-          <div className="grid grid-cols-1 md:grid-cols-2 p-6  gap-6">
-            <div>
-              <label htmlFor="name">Name</label>
-              <Input className='rounded-lg' {...register('name')} error={!!errors.name} />
-            </div>
-            <div>
-              <label htmlFor="location">Location</label>
-              <Input className='rounded-lg' {...register('location')} error={!!errors.location} />
-            </div>
-            <div>
+
+
+            </div>}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 p-6  gap-6">
+              <div>
+                <label htmlFor="name">Name</label>
+                <Input className='rounded-lg' {...register('name')} error={!!errors.name} />
+              </div>
+
+              <div>
+                <label htmlFor="title">Title</label>
+                <Input className='rounded-lg' {...register('title')} error={!!errors.title} />
+              </div>
+
+
+              {yachtsType == "event" && <div>
+                <label htmlFor="location">Location</label>
+                <Input className='rounded-lg' {...register('location')} error={!!errors.location} />
+              </div>}
+
+              {/* <div>
               <label htmlFor="min_price">Min Price</label>
               <Input className='rounded-lg' type="number" step="any" {...register('min_price')} error={!!errors.min_price} />
             </div>
             <div>
               <label htmlFor="max_price">Max Price</label>
               <Input className='rounded-lg' type="number" step="any" {...register('max_price')} error={!!errors.max_price} />
-            </div>
-            <div>
+            </div> */}
+              {/* <div>
               <label htmlFor="guest">Guest Capacity</label>
               <Input className='rounded-lg' type="number" step="any" {...register('guest')} error={!!errors.guest} />
-            </div>
-            <div>
-              <label htmlFor="cancel_time_in_hour">Cancel Time (hours)</label>
-              <Input className='rounded-lg' type="number" step="any" {...register('cancel_time_in_hour')} error={!!errors.cancel_time_in_hour} />
-            </div>
-            {/* {yachtsType == "event" && <div>
-              <label htmlFor="duration_hour">Duration (hours)</label>
-              <Input className='rounded-lg' type="number" step="any" {...register('duration_hour')} error={!!errors.duration_hour} />
-            </div>} */}
+            </div> */}
+              {yachtsType == "event" && <div>
+                <label htmlFor="cancel_time_in_hours">Cancel Time (hours)</label>
+                <Input className='rounded-lg' type="number" step="any" {...register('cancel_time_in_hours')} error={!!errors.cancel_time_in_hours} />
+              </div>}
 
-            {/* <div>
+              {yachtsType == "event" && <div>
+                <label htmlFor="duration_hour">Duration (hours)</label>
+                <Input className='rounded-lg' type="number" step="any" {...register('duration_hour')} error={!!errors.duration_hour} />
+              </div>}
+
+              {/* <div>
               <label htmlFor="duration_minutes">Duration (minutes)</label>
               <Input className='rounded-lg' type="number" step="any" {...register('duration_minutes')} error={!!errors.duration_minutes} />
             </div> */}
-            <div>
+              {/* <div>
               <label htmlFor="number_of_cabin">Number of Cabins</label>
               <Input className='rounded-lg' type="number" step="any" {...register('number_of_cabin')} error={!!errors.number_of_cabin} />
-            </div>
-            <div>
+            </div> */}
+              {/* <div>
               <label htmlFor="capacity">Capacity</label>
               <Input className='rounded-lg' type="number" step="any" {...register('capacity')} error={!!errors.capacity} />
-            </div>
-            <div>
+            </div> */}
+              {/* <div>
               <label htmlFor="sleep_capacity">Sleep Capacity</label>
               <Input className='rounded-lg' type="number" step="any" {...register('sleep_capacity')} error={!!errors.sleep_capacity} />
-            </div>
-            <div>
-              <label htmlFor="per_day_price">Per Day Price</label>
-              <Input className='rounded-lg' type="number" step="any" {...register('per_day_price')} error={!!errors.per_day_price} />
-            </div>
-            {yachtsType == "event" && <div>
+            </div> */}
+              <div>
+                <label htmlFor="per_day_price">Per Day Price</label>
+                <Input className='rounded-lg' type="number" step="any" {...register('per_day_price')} error={!!errors.per_day_price} />
+              </div>
+              {/* {yachtsType == "event" && <div>
               <label htmlFor="per_hour_price">Per Hour Price</label>
               <Input className='rounded-lg' type="number" step="any" {...register('per_hour_price')} error={!!errors.per_hour_price} />
-            </div>}
+            </div>} */}
 
-            <div>
+              {/* <div>
               <label htmlFor="length">Length</label>
               <Input className='rounded-lg' type="number" step="any" {...register('length')} error={!!errors.length} />
               {errors.length && <p className="text-red-500 text-sm">{errors.length.message}</p>}
 
-            </div>
+            </div> */}
 
-            <div>
+              {/* <div>
               <label htmlFor="power">Power</label>
               <Input className='rounded-lg' type="number" step="any" {...register('power')} error={!!errors.power} />
-            </div>
-            <div>
+            </div> */}
+              {/* <div>
               <label htmlFor="engine_type">Engine Type</label>
               <Input className='rounded-lg' {...register('engine_type')} error={!!errors.engine_type} />
             </div>
             <div>
               <label htmlFor="crew_member">Crew Member</label>
               <Input className='rounded-lg' {...register('crew_member')} error={!!errors.crew_member} />
-            </div>
-            {false && yachtsType == "event" && <div className='flex items-center gap-2'>
-              <label htmlFor="ny_status">New Year Status</label>
-              <input
-                type="checkbox"
-                {...register('ny_status')}
-                // onChange={(e) => {
-                //   setNyStatusChecked(e.target.checked);
-                //   // console.log('NY Status Checked:', e.target.checked);
-                // }}
-                className="form-checkbox h-5 w-5 text-[#BEA355]"
-              />
-            </div>}
+            </div> */}
+              {false && yachtsType == "event" && <div className='flex items-center gap-2'>
+                <label htmlFor="ny_status">New Year Status</label>
+                <input
+                  type="checkbox"
+                  {...register('ny_status')}
+                  // onChange={(e) => {
+                  //   setNyStatusChecked(e.target.checked);
+                  //   // console.log('NY Status Checked:', e.target.checked);
+                  // }}
+                  className="form-checkbox h-5 w-5 text-[#BEA355]"
+                />
+              </div>}
 
-            {watchedValues?.ny_status && yachtsType == "event" && (
-              <>
-                <div>
-                  <label htmlFor="ny_price">New Year Price</label>
-                  <Input className='rounded-lg' type="number" step="any" {...register('ny_price')} error={!!errors.ny_price} />
-                </div>
-                <div className='flex items-center gap-2'>
-                  <label htmlFor="ny_firework">New Year Firework</label>
-                  <input
-                    type="checkbox"
-                    {...register('ny_firework')}
-                    onChange={(e) => {
-                      // console.log('NY Firework Checked:', e.target.checked);
-                    }}
-                    className="form-checkbox h-5 w-5 text-[#BEA355]"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="ny_availability">New Year Availability</label>
-                  <div className="flex space-x-2">
-                    <Input className='rounded-lg' type="time" {...register('ny_availability_from')}
-                    //  error={!!errors.ny_availability} 
-                    />
-                    <Input className='rounded-lg' type="time" {...register('ny_availability_to')}
-                    //  error={!!errors.ny_availability}
+              {watchedValues?.ny_status && yachtsType == "event" && (
+                <>
+                  <div>
+                    <label htmlFor="ny_price">New Year Price</label>
+                    <Input className='rounded-lg' type="number" step="any" {...register('ny_price')} error={!!errors.ny_price} />
+                  </div>
+                  <div className='flex items-center gap-2'>
+                    <label htmlFor="ny_firework">New Year Firework</label>
+                    <input
+                      type="checkbox"
+                      {...register('ny_firework')}
+                      onChange={(e) => {
+                        // console.log('NY Firework Checked:', e.target.checked);
+                      }}
+                      className="form-checkbox h-5 w-5 text-[#BEA355]"
                     />
                   </div>
-                  {/* {errors.ny_availability && <p className="text-red-500 text-sm">{errors.ny_availability.message}</p>} */}
-                </div>
-                <div>
-                  <label htmlFor="ny_inclusion" className="block text-sm font-medium text-gray-700 mb-2">New Year Inclusion</label>
-                  <div
-                    className="grid grid-cols-2 md:grid-cols-3 gap-2"
-
-
-                  >
-                    {inclusions?.map((inc) => (
-                      <button
-                        key={inc.id}
-                        type="button"
-                        onClick={() => {
-                          setSelectedNyInclusion(prev =>
-                            prev.includes(inc.name)
-                              ? prev.filter(i => i !== inc.name)
-                              : [...prev, inc.name]
-                          );
-                        }}
-                        className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${selectednyInclusion.includes(inc.name) ? 'bg-[#BEA355] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
-                      >
-                        {inc.name}
-                      </button>
-                    ))}
+                  <div>
+                    <label htmlFor="ny_availability">New Year Availability</label>
+                    <div className="flex space-x-2">
+                      <Input className='rounded-lg' type="time" {...register('ny_availability_from')}
+                      //  error={!!errors.ny_availability} 
+                      />
+                      <Input className='rounded-lg' type="time" {...register('ny_availability_to')}
+                      //  error={!!errors.ny_availability}
+                      />
+                    </div>
+                    {/* {errors.ny_availability && <p className="text-red-500 text-sm">{errors.ny_availability.message}</p>} */}
                   </div>
-                </div>
-              </>
-            )}
-            <div className="col-span-">
-              <label htmlFor="description">Description</label>
-              <Textarea className='rounded-lg' cols={30} rows={5} {...register('description')} error={!!errors.description} />
-            </div>
+                  <div>
+                    <label htmlFor="ny_inclusion" className="block text-sm font-medium text-gray-700 mb-2">New Year Inclusion</label>
+                    <div
+                      className="grid grid-cols-2 md:grid-cols-3 gap-2"
 
-            <div className="col-span- mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Notes</label>
-              <ReactQuill value={notes} onChange={setNotes} />
-            </div>
-            <div className="col-span- mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Meeting Point</label>
-              <div className="h-[450px] w-full overflow-hidden">
-                <MapPicker
-                  onLocationSelect={(newLocation) => handleLocationSelect(newLocation, "meetingPoint")}
-                  initialLocation={locationLatLng}
-                />
-              </div>
 
-            </div>
-            <div className="col-span- mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Car Parking</label>
-              <div className="h-[450px] w-full overflow-hidden">
-                <MapPicker
-                  onLocationSelect={(newLocation) => handleLocationSelect(newLocation, "carParking")}
-                  initialLocation={locationLatLng}
-                />
-              </div>
-
-            </div>
-            <div className="col-span- mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Taxi Drop Off</label>
-              <div className="h-[450px] w-full overflow-hidden">
-                <MapPicker
-                  onLocationSelect={(newLocation) => handleLocationSelect(newLocation, "taxiDropOff")}
-                  initialLocation={locationLatLng}
-                />
-              </div>
-
-            </div>
-
-            <div className="col-span- mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Yacht Location</label>
-              <div className="h-[450px] w-full overflow-hidden">
-                <MapPicker
-                  onLocationSelect={(newLocation) => handleLocationSelect(newLocation, "yachtLocation")}
-                  initialLocation={locationLatLng}
-                />
-              </div>
-              {locationLatLng && (
-                <div className="mt-2 flex flex-wrap gap-2">
-                  Selected Coordinates:
-                  <div className="bg-blue-100 text-blue-800 text-sm font-medium py-1 px-3 rounded-full shadow-md">
-                    Latitude: {locationLatLng.lat.toFixed(6)}
+                    >
+                      {inclusions?.map((inc) => (
+                        <button
+                          key={inc.id}
+                          type="button"
+                          onClick={() => {
+                            setSelectedNyInclusion(prev =>
+                              prev.includes(inc.name)
+                                ? prev.filter(i => i !== inc.name)
+                                : [...prev, inc.name]
+                            );
+                          }}
+                          className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${selectednyInclusion.includes(inc.name) ? 'bg-[#BEA355] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                        >
+                          {inc.name}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                  <div className="bg-green-100 text-green-800 text-sm font-medium py-1 px-3 rounded-full shadow-md">
-                    Longitude: {locationLatLng.lng.toFixed(6)}
-                  </div>
-                </div>
+                </>
               )}
-            </div>
+              <div className="col-span-">
+                <label htmlFor="description">Description</label>
+                <Textarea className='rounded-lg' cols={30} rows={5} {...register('description')} error={!!errors.description} />
+              </div>
 
-            <div>
+              {yachtsType == "event" && <div className="col-span- mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Notes</label>
+                <ReactQuill value={notes} onChange={setNotes} />
+              </div>}
+
+              {yachtsType == "event" && <>
+                <div className="col-span- mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Meeting Point</label>
+                  <div className="h-[450px] w-full overflow-hidden">
+                    <MapPicker
+                      onLocationSelect={(newLocation) => handleLocationSelect(newLocation, "meetingPoint")}
+                      initialLocation={locationLatLng}
+                    />
+                  </div>
+
+                </div>
+                <div className="col-span- mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Car Parking</label>
+                  <div className="h-[450px] w-full overflow-hidden">
+                    <MapPicker
+                      onLocationSelect={(newLocation) => handleLocationSelect(newLocation, "carParking")}
+                      initialLocation={locationLatLng}
+                    />
+                  </div>
+
+                </div>
+                <div className="col-span- mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Taxi Drop Off</label>
+                  <div className="h-[450px] w-full overflow-hidden">
+                    <MapPicker
+                      onLocationSelect={(newLocation) => handleLocationSelect(newLocation, "taxiDropOff")}
+                      initialLocation={locationLatLng}
+                    />
+                  </div>
+
+                </div>
+
+                <div className="col-span- mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Event Location</label>
+                  <div className="h-[450px] w-full overflow-hidden">
+                    <MapPicker
+                      onLocationSelect={(newLocation) => handleLocationSelect(newLocation, "yachtLocation")}
+                      initialLocation={locationLatLng}
+                    />
+                  </div>
+                  {locationLatLng && (
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      Selected Coordinates:
+                      <div className="bg-blue-100 text-blue-800 text-sm font-medium py-1 px-3 rounded-full shadow-md">
+                        Latitude: {locationLatLng.lat.toFixed(6)}
+                      </div>
+                      <div className="bg-green-100 text-green-800 text-sm font-medium py-1 px-3 rounded-full shadow-md">
+                        Longitude: {locationLatLng.lng.toFixed(6)}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </>}
+
+
+              {/* <div>
               <label htmlFor="flag">Flag</label>
               <Input className='rounded-lg' value={flag} onChange={(e) => setFlag(e.target.value)} />
             </div>
             <div>
               <label htmlFor="crew_language">Crew Language</label>
               <Input className='rounded-lg' value={crewLanguage} onChange={(e) => setCrewLanguage(e.target.value)} />
+            </div> */}
+              {yachtsType == "event" && <>
+                <div>
+                  <label htmlFor="from_date">From Date</label>
+                  <Input className='rounded-lg' type="date"
+                    value={fromDate ? fromDate.split('T')[0] : ''}
+                    onChange={(e) => setFromDate(e.target.value)} />
+                </div>
+                <div>
+                  <label htmlFor="to_date">To Date</label>
+                  <Input className='rounded-lg' type="date"
+                    value={toDate ? toDate.split('T')[0] : ''}
+
+                    onChange={(e) => setToDate(e.target.value)} />
+                </div>
+
+                <div>
+                  <label htmlFor="from_date">Start Time</label>
+                  <Input
+                    className="rounded-lg"
+                    type="time"
+                    value={startTime}
+                    onChange={(e) => setStartTime(prev => `${e.target.value}`)}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="to_date">End Time</label>
+                  <Input
+                    className="rounded-lg"
+                    type="time"
+                    value={endTime}
+                    onChange={(e) => setEndTime(prev => `${e.target.value}`)}
+                  />
+                </div>
+
+              </>}
+
+
+
             </div>
-            <div>
-              <label htmlFor="from_date">From Date</label>
-              <Input className='rounded-lg' type="date"
-                value={fromDate ? fromDate.split('T')[0] : ''}
-                onChange={(e) => setFromDate(e.target.value)} />
-            </div>
-            <div>
-              <label htmlFor="to_date">To Date</label>
-              <Input className='rounded-lg' type="date"
-                value={toDate ? toDate.split('T')[0] : ''}
 
-                onChange={(e) => setToDate(e.target.value)} />
-            </div>
-
-
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 p-6  gap-6">
-            <div>
+            <div className="grid grid-cols-1 md:grid-cols-2 p-6  gap-6">
+              {/* <div>
               <label htmlFor="features" className="block text-sm font-medium text-gray-700 mb-2">Features</label>
               <div
-                //  className={`rounded-lg object-cover  relative w-[80px] h-[80px] sm:w-[80px] md:w-[120px]   rounded-lg 
-                //   hover:opacity-100 
-                //  cursor-pointer opacity-100`}
+         
 
                 className="grid grid-cols-2 md:grid-cols-3 gap-2"
               >
@@ -1125,9 +1288,9 @@ const AddEventPackageGlobal = ({yachtsType}) => {
                   </button>
                 ))}
               </div>
-            </div>
+            </div> */}
 
-            <div>
+              {/* <div>
               <label htmlFor="inclusion" className="block text-sm font-medium text-gray-700 mb-2">Inclusion</label>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                 {inclusions?.map((inc) => (
@@ -1149,9 +1312,9 @@ const AddEventPackageGlobal = ({yachtsType}) => {
 
 
               </div>
-            </div>
+            </div> */}
 
-            {yachtsType == "event" ? <div>
+              {/* {yachtsType == "event" ? <div>
               <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">Category</label>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                 {categoriesList.map((category, index) => (
@@ -1199,12 +1362,11 @@ const AddEventPackageGlobal = ({yachtsType}) => {
                   </button>
                 ))}
               </div>
-            </div> : ""}
+            </div> : ""} */}
 
-            <div>
+              {/* <div>
               <label htmlFor="food_options" className="block text-sm font-medium text-gray-700 mb-2">Food Options</label>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                {/* remove duplicate names */}
                 {[...new Map(foodOptions?.map(f => [f.name, f])).values()]?.map((food) => (
                   <button
                     key={food.id}
@@ -1226,19 +1388,198 @@ const AddEventPackageGlobal = ({yachtsType}) => {
                   </button>
                 ))}
               </div>
+            </div> */}
             </div>
-          </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="bg-[#BEA355] submitButton my-4 text-white px-6 py-2 float-right rounded-full hover:bg-[#A58B3D] transition-colors disabled:opacity-50"
-          >
+            <button
+              type="submit"
+              disabled={loading}
+              className="bg-[#BEA355] submitButton my-4 text-white px-6 py-2 float-right rounded-full hover:bg-[#A58B3D] transition-colors disabled:opacity-50"
+            >
 
 
-            {yachtsType == "event" ? loading ? `${isEditMode ? 'Updating' : 'Adding'} Event...` : `${isEditMode ? 'Update' : 'Add'} Event` : yachtsType == "package" ? loading ? `${isEditMode ? 'Updating' : 'Adding'} Event...` : `${isEditMode ? 'Update' : 'Add'} package` : ""}
-          </button>
+              {yachtsType == "event" ? loading ? `${isEditMode ? 'Updating' : 'Adding'} Event...` : `${isEditMode ? 'Update' : 'Add'} Event` : yachtsType == "package" ? loading ? `${isEditMode ? 'Updating' : 'Adding'} Event...` : `${isEditMode ? 'Update' : 'Add'} package` : ""}
+            </button>
+
+          </> : yachtsType == "package" ? <>
+
+       
+
+            <div className="grid grid-cols-1 md:grid-cols-2 p-6  gap-6">
+              <div>
+                <label htmlFor="package_type">Package Type</label>
+                <Input className='rounded-lg' {...register('package_type')} error={!!errors.package_type} />
+              </div>
+
+              <div>
+                <label htmlFor="quantity_available">Package Quantity</label>
+                <Input className='rounded-lg'  type="number" step="any" 
+                {...register('quantity_available')}
+                 error={!!errors.quantity_available} />
+              </div>
+
+
+             
+              <div>
+                <label htmlFor="price">Package Price</label>
+                <Input className='rounded-lg' type="number" step="any" {...register('price')} error={!!errors.price} />
+              </div>
+             
+           
+              <div className="col-span-">
+                <label htmlFor="description">Package Description</label>
+                <Textarea className='rounded-lg' cols={30} rows={5} {...register('description')} error={!!errors.description} />
+              </div>
+
+
+
+
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 p-6  gap-6">
+              {/* <div>
+  <label htmlFor="features" className="block text-sm font-medium text-gray-700 mb-2">Features</label>
+  <div
+
+
+    className="grid grid-cols-2 md:grid-cols-3 gap-2"
+  >
+    {featureList?.map((feature, index) => (
+      <button
+        key={index}
+        type="button"
+        onClick={() => {
+          setSelectedFeatures(prev =>
+            prev.includes(feature?.name)
+              ? prev.filter(f => f !== feature?.name)
+              : [...prev, feature?.name]
+          )
+        }}
+        className={`px-4 py-2 rounded-full text-sm font-medium transition-colors
+          ${selectedFeatures.includes(feature?.name)
+            ? 'bg-[#BEA355] text-white'
+            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          }`}
+      >
+        {feature?.name}
+      </button>
+    ))}
+  </div>
+</div> */}
+
+              {/* <div>
+  <label htmlFor="inclusion" className="block text-sm font-medium text-gray-700 mb-2">Inclusion</label>
+  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+    {inclusions?.map((inc) => (
+      <button
+        key={inc.id}
+        type="button"
+        onClick={() => {
+          setSelectedInclusion(prev =>
+            prev.includes(inc.name)
+              ? prev.filter(i => i !== inc.name)
+              : [...prev, inc.name]
+          );
+        }}
+        className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${selectedInclusion.includes(inc.name) ? 'bg-[#BEA355] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+      >
+        {inc.name}
+      </button>
+    ))}
+
+
+  </div>
+</div> */}
+
+              {/* {yachtsType == "event" ? <div>
+  <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+    {categoriesList.map((category, index) => (
+      <button
+        key={index}
+        type="button"
+        onClick={() => {
+          setSelectedCategories(prev =>
+            prev.includes(category)
+              ? prev.filter(c => c !== category)
+              : [...prev, category]
+          )
+        }}
+        className={`px-4 py-2 rounded-full text-sm font-medium transition-colors
+          ${selectedCategories.includes(category)
+            ? 'bg-[#BEA355] text-white'
+            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          }`}
+      >
+        {category}
+      </button>
+    ))}
+  </div>
+</div> : yachtsType == "package" ? <div>
+  <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+    {categoriesList.map((category, index) => (
+      <button
+        key={index}
+        type="button"
+        onClick={() => {
+          setSelectedCategories(prev =>
+            prev.includes(category)
+              ? prev.filter(c => c !== category)
+              : [...prev, category]
+          )
+        }}
+        className={`px-4 py-2 rounded-full text-sm font-medium transition-colors
+          ${selectedCategories.includes(category)
+            ? 'bg-[#BEA355] text-white'
+            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          }`}
+      >
+        {category}
+      </button>
+    ))}
+  </div>
+</div> : ""} */}
+
+              {/* <div>
+  <label htmlFor="food_options" className="block text-sm font-medium text-gray-700 mb-2">Food Options</label>
+  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+    {[...new Map(foodOptions?.map(f => [f.name, f])).values()]?.map((food) => (
+      <button
+        key={food.id}
+        type="button"
+        onClick={() => {
+          setSelectedFoodOptions(prev =>
+            prev.includes(food.name)
+              ? prev.filter(f => f !== food.name)
+              : [...prev, food.name]
+          )
+        }}
+        className={`px-4 py-2 rounded-full text-sm font-medium transition-colors
+          ${selectedFoodOptions.includes(food.name)
+            ? 'bg-[#BEA355] text-white'
+            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          }`}
+      >
+        {food.name} - {import.meta.env.VITE_CURRENCY || "AED"} {food.price}
+      </button>
+    ))}
+  </div>
+</div> */}
+            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="bg-[#BEA355] submitButton my-4 text-white px-6 py-2 float-right rounded-full hover:bg-[#A58B3D] transition-colors disabled:opacity-50"
+            >
+
+
+              {yachtsType == "event" ? loading ? `${isEditMode ? 'Updating' : 'Adding'} Event...` : `${isEditMode ? 'Update' : 'Add'} Event` : yachtsType == "package" ? loading ? `${isEditMode ? 'Updating' : 'Adding'} Event...` : `${isEditMode ? 'Update' : 'Add'} package` : ""}
+            </button>
+
+          </> : ""}
+
         </form>
-        <div className="grid grid-cols-1 md:grid-cols-2 p-6  gap-6">
+        {yachtsType == "event" && <div className="grid grid-cols-1 md:grid-cols-2 p-6  gap-6">
           <div className="">
             <label className="block text-sm font-medium text-gray-700 mb-2">Main  Image (Required)</label>
             {/* <FileUploadOld
@@ -1253,9 +1594,10 @@ const AddEventPackageGlobal = ({yachtsType}) => {
               acceptedFileTypes="image/*"
               containerClassName="border border-gray-200 rounded-lg"
               apiImage={mainImage}
+              componentType={yachtsType == "event" ? "Event" : yachtsType == "package" ? "package" : ''}
             />
           </div>
-          <div className="">
+          {/* <div className="">
             <label className="block text-sm font-medium text-gray-700 mb-2">More  Images</label>
             <FileUpload
               onFilesChange={handleAdditionalImagesChange}
@@ -1264,8 +1606,9 @@ const AddEventPackageGlobal = ({yachtsType}) => {
               containerClassName="border border-gray-200 rounded-lg"
               apiImages={additionalImages}
             />
-          </div>
-        </div>
+          </div> */}
+        </div>}
+
       </Card>
     </div>
   );
