@@ -206,6 +206,21 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         }
       ]
     },
+    {
+      name: "Posts & Blogs",
+      icon: <FaBlog className="text-xl" />,
+      type: "accordion",
+      items: [
+        {
+          name: "Blogs",
+          icon: <FaBlog className="text-xl" />,
+          items: [
+            { name: "All Blogs", path: "/blogs" },
+            { name: "Add Blog", path: "/blogs/add" }
+          ]
+        }
+      ]
+    },
     // {
     //   name: "Wallet",
     //   icon: <GiNotebook className="text-xl" />,
@@ -281,21 +296,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           items: [
             { name: "All Specifications", path: "/specifications" },
             { name: "Add Specification", path: "/specifications/add" }
-          ]
-        }
-      ]
-    },
-    {
-      name: "Posts & Blogs",
-      icon: <FaBlog className="text-xl" />,
-      type: "accordion",
-      items: [
-        {
-          name: "Blogs",
-          icon: <FaBlog className="text-xl" />,
-          items: [
-            { name: "All Blogs", path: "/blogs" },
-            { name: "Add Blog", path: "/blogs/add" }
           ]
         }
       ]

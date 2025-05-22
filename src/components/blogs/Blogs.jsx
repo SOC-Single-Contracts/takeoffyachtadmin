@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardBody, Typography, Button } from "@material-tailwind/react";
 import { getAllBlogs } from '../../services/api/blogsService';
 import { Link, useNavigate } from 'react-router-dom';
+import { format } from 'date-fns';
 
 const Blogs = () => {
   const [blogs, setBlogs] = useState([]);
@@ -23,7 +24,7 @@ const Blogs = () => {
   }, []);
 
   const handleRowClick = (blogId) => {
-    navigate(`/blogs/add/${blogId}`);
+    navigate(`/blogs/edit/${blogId}`);
   };
 
   // Pagination logic
@@ -43,6 +44,15 @@ const Blogs = () => {
       setCurrentPage(curr => curr - 1);
     }
   };
+
+
+      const formatDate = (dateString) => {
+        try {
+          return format(new Date(dateString), 'MMM dd, yyyy hh:mm a');
+        } catch (err) {
+          return dateString;
+        }
+      };
 
   return (
     <div className="p-6">
@@ -69,10 +79,10 @@ const Blogs = () => {
             </thead>
             <tbody>
               {currentBlogs.map(blog => (
-                <tr key={blog.ID} className="hover:bg-gray-50" onClick={() => handleRowClick(blog.ID)}>
+                <tr key={blog.ID} className="hover:bg-gray-50 cursor-pointer" onClick={() => handleRowClick(blog.ID)}>
                   <td className="p-4">{blog.title}</td>
                   <td className="p-4">{blog.author_name}</td>
-                  <td className="p-4">{new Date(blog.created_at).toLocaleDateString()}</td>
+                  <td className="p-4">{formatDate(blog.created_at)}</td>
                 </tr>
               ))}
             </tbody>
