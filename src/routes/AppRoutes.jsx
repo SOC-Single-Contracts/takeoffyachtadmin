@@ -81,6 +81,7 @@ import EditExperience from "../components/experiences/EditExperience.jsx";
 import AddPackage from "../components/events/AddPackage.jsx";
 import EditPackage from "../components/events/EditPackage.jsx";
 import EditEvent from "../components/events/EditEvent.jsx";
+import EditBlogs from "../pages/blogs/EditBlogs.jsx";
 
 const AppRoutes = () => {
   return (
@@ -151,7 +152,7 @@ const AppRoutes = () => {
           {/* Blog Routes */}
           <Route path="blogs" element={<AllBlogs />} />
           <Route path="blogs/add" element={<AddBlogs />} />
-          <Route path="blogs/add/:id" element={<AddBlogs />} />
+          <Route path="blogs/edit/:id" element={<EditBlogs />} />
           
           {/* Testimonial Routes */}
           <Route path="testimonials" element={<TestimonialList />} />
