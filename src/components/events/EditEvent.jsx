@@ -6,7 +6,7 @@ import FileUpload from '../common/ImagesUploader/FileUpload';
 import AddEventPackageGlobal from './AddEventPackageGlobal';
 import AddPackage from './AddPackage';
 
-const AddEvent = () => {
+const EditEvent = () => {
   const [loading, setLoading] = useState(false);
   const [location, setLocation] = useState(null);
   const [eventImage, setEventImage] = useState(null);
@@ -52,6 +52,6 @@ const AddEvent = () => {
   );
 };
 
-export default AddEvent;
+export default EditEvent;
 
 

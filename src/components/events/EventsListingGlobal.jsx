@@ -24,7 +24,7 @@ const InfoRow = ({ label, value, icon }) => (
   </div>
 );
 
-const ExperienceListingGlobal = ({ yachtsType }) => {
+const EventsListingGlobal = ({ yachtsType }) => {
   const currency = 'AED';
   const baseUrl = 'https://api.takeoffyachts.com';
   const [boats, setBoats] = useState([]);
@@ -40,7 +40,7 @@ const ExperienceListingGlobal = ({ yachtsType }) => {
   const [searchValue, setsearchValue] = useState('');
   // const { globalState: appState, dispatch: appDispatch } = useContext(GlobalStateContext);
   // console.log("appState", appState)
-      // appDispatch({ type: "changeNumber", numberInc: page });
+  // appDispatch({ type: "changeNumber", numberInc: page });
 
   // const yachtsTypee = useLocation().pathname.split('/')[2];
   // console.log(yachtsTypee)
@@ -59,16 +59,16 @@ const ExperienceListingGlobal = ({ yachtsType }) => {
   const handlePagination = async () => {
     try {
 
-      if (yachtsType == "regular-exp") {
+      if (yachtsType == "event") {
         let payload = {
           reqType: "handlePagination",
-          experience_type: yachtsType == "f1-exp" ? "f1-exp" : "regular",
           user_id: 1,
-          experience_name: searchValue,
-          page:page
+          search: searchValue,
+          page: page,
+          callingFrom:"admin"
         }
 
-        let response = await fetch(`${baseUrl}/yacht/check_experience/?page=${page}`, {
+        let response = await fetch(`${baseUrl}/yacht/check_eventsystem/?page=${page}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -80,13 +80,9 @@ const ExperienceListingGlobal = ({ yachtsType }) => {
         const responseData = await response.json();
         if (responseData?.success == true) {
           // Sort the filtered yachts if needed
-          const sortedData = responseData?.experience.sort((a, b) => {
-            const dateA = new Date(a.experience.created_on);
-            const dateB = new Date(b.experience.created_on);
-            return dateB - dateA; // latest date first
-          });
+          const sortedData = [...responseData?.events]
           setBoats(sortedData);
-          settotalYachts(responseData?.total_experience)
+          settotalYachts(responseData?.total_events)
           setpaginateYachts(responseData?.paginated_count ? responseData?.paginated_count : 0)
 
           if (sortedData?.length < PAGE_SIZE) {
@@ -98,16 +94,15 @@ const ExperienceListingGlobal = ({ yachtsType }) => {
           setHasMore(false);
           console.error('API Error:', responseData.error);
         }
-      } else if (yachtsType == "f1-exp") {
+      } else if (yachtsType == "other-event") {
         let payload = {
           reqType: "handlePagination",
-          experience_type: yachtsType == "f1-exp" ? "f1-exp" : "regular",
           user_id: 1,
-          experience_name: searchValue,
-          page:page
+          search: searchValue,
+          page: page
         }
 
-        let response = await fetch(`${baseUrl}/yacht/check_experience/?page=${page}`, {
+        let response = await fetch(`${baseUrl}/yacht/check_eventsystem/?page=${page}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -119,13 +114,10 @@ const ExperienceListingGlobal = ({ yachtsType }) => {
         const responseData = await response.json();
         if (responseData?.success == true) {
           // Sort the filtered yachts if needed
-          const sortedData = responseData?.experience.sort((a, b) => {
-            const dateA = new Date(a.experience.created_on);
-            const dateB = new Date(b.experience.created_on);
-            return dateB - dateA; // latest date first
-          });
+          const sortedData = [...responseData?.events]
+
           setBoats(sortedData);
-          settotalYachts(responseData?.total_experience)
+          settotalYachts(responseData?.total_events)
           setpaginateYachts(responseData?.paginated_count ? responseData?.paginated_count : 0)
 
 
@@ -155,16 +147,17 @@ const ExperienceListingGlobal = ({ yachtsType }) => {
     try {
       // Pass 'new_year' as the feature to filter New Year boats
 
-      if (yachtsType == "regular-exp") {
+      if (yachtsType == "event") {
         let payload = {
           reqType: "handleFilterChange",
-          experience_type: yachtsType == "f1-exp" ? "f1-exp" : "regular",
           user_id: 1,
-          experience_name: searchValue,
-          page:1
+          search: searchValue,
+          page: 1,
+          callingFrom:"admin"
+
         }
 
-        let response = await fetch(`${baseUrl}/yacht/check_experience/?page=1`, {
+        let response = await fetch(`${baseUrl}/yacht/check_eventsystem/?page=1`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -176,13 +169,9 @@ const ExperienceListingGlobal = ({ yachtsType }) => {
         const responseData = await response.json();
         if (responseData?.success == true) {
           // Sort the filtered yachts if needed
-          const sortedData = responseData?.experience.sort((a, b) => {
-            const dateA = new Date(a.experience.created_on);
-            const dateB = new Date(b.experience.created_on);
-            return dateB - dateA; // latest date first
-          });
+          const sortedData = [...responseData?.events]
           setBoats(sortedData);
-          settotalYachts(responseData?.total_experience)
+          settotalYachts(responseData?.total_events)
           setpaginateYachts(responseData?.paginated_count ? responseData?.paginated_count : 0)
 
 
@@ -195,16 +184,15 @@ const ExperienceListingGlobal = ({ yachtsType }) => {
           setHasMore(false);
           console.error('API Error:', responseData.error);
         }
-      } else if (yachtsType == "f1-exp") {
+      } else if (yachtsType == "other-event") {
 
         let payload = {
           reqType: "handleFilterChange",
-          experience_type: yachtsType == "f1-exp" ? "f1-exp" : "regular",
           user_id: 1,
-          experience_name: searchValue
+          search: searchValue
         }
 
-        let response = await fetch(`${baseUrl}/yacht/check_experience/?page=1`, {
+        let response = await fetch(`${baseUrl}/yacht/check_eventsystem/?page=1`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -216,13 +204,9 @@ const ExperienceListingGlobal = ({ yachtsType }) => {
         const responseData = await response.json();
         if (responseData?.success == true) {
           // Sort the filtered yachts if needed
-          const sortedData = responseData?.experience.sort((a, b) => {
-            const dateA = new Date(a.experience.created_on);
-            const dateB = new Date(b.experience.created_on);
-            return dateB - dateA; // latest date first
-          });
+          const sortedData = [...responseData?.events]
           setBoats(sortedData);
-          settotalYachts(responseData?.total_experience)
+          settotalYachts(responseData?.total_events)
           setpaginateYachts(responseData?.paginated_count ? responseData?.paginated_count : 0)
 
 
@@ -263,7 +247,7 @@ const ExperienceListingGlobal = ({ yachtsType }) => {
   useEffect(() => {
     const handler = setTimeout(() => {
       setsearchValue(query);
-      setPage(1); 
+      setPage(1);
     }, 500);
 
     return () => {
@@ -295,7 +279,7 @@ const ExperienceListingGlobal = ({ yachtsType }) => {
     // console.log("selectedYacht", selectedYacht)
     // console.log("paginateYachts", paginateYachts)
     // console.log("searchValue",Boolean(searchValue) )
-  // }, [loading, boats, totalYachts, selectedYacht,searchValue,paginateYachts])
+  // }, [loading, boats, totalYachts, selectedYacht, searchValue, paginateYachts])
   if (loading) {
     return (
       <div className="p-6">
@@ -325,24 +309,24 @@ const ExperienceListingGlobal = ({ yachtsType }) => {
           <div className="mb-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">
             <div>
               <Typography variant="h3" className='font-sora' color="black">
-                {yachtsType === "f1-exp" ? " F1 Experiences" : yachtsType === "regular-exp" ? " All Experiences" : yachtsType === "new_year" ? "New Year Boats" : ""}
+                {yachtsType === "other-event" ? " F1 event" : yachtsType === "event" ? " All Events" : yachtsType === "new_year" ? "New Year Boats" : ""}
               </Typography>
               <Typography color="gray" className="mt-1 font-normal">
-                {yachtsType === "f1-exp" ? "Manage your F1 Experiences listings" : yachtsType === "regular-exp" ? "Manage your Experiences listings" : yachtsType === "new_year" ? "Manage your New Year boat listings" : ""}
+                {yachtsType === "other-event" ? "Manage your F1 event listings" : yachtsType === "event" ? "Manage your event listings" : yachtsType === "new_year" ? "Manage your New Year boat listings" : ""}
 
               </Typography>
             </div>
             <Link to={
-              yachtsType === "f1-exp"
-                ? "/experiences/f1-exp/add"
-                : yachtsType === "regular-exp"
-                  ? "/experiences/regular-exp/add"
+              yachtsType === "other-event"
+                ? "/event/f1-exp/add"
+                : yachtsType === "event"
+                  ? "/events/add"
                   : yachtsType === "new_year"
-                    ? "/experiences/newyear/add"
-                    : "/experiences/regular-exp/add" // fallback
+                    ? "/event/newyear/add"
+                    : "/events/add" // fallback
             }>
               <Button className="flex items-center bg-[#BEA355] gap-3 rounded-full capitalize font-medium" size="sm">
-                {yachtsType === "f1-exp" ? "Add F1 Experience" : yachtsType === "regular-exp" ? "Add Experience" : yachtsType === "new_year" ? "Add New Year Boat" : ""}
+                {yachtsType === "other-event" ? "Add F1 Event" : yachtsType === "event" ? "Add Event" : yachtsType === "new_year" ? "Add New Year Boat" : ""}
 
               </Button>
             </Link>
@@ -371,48 +355,56 @@ const ExperienceListingGlobal = ({ yachtsType }) => {
             <table className="w-full text-left border-collapse rounded-lg overflow-hidden shadow-sm bg-white">
               <thead className="bg-black text-white text-sm uppercase font-medium">
                 <tr>
+                  {yachtsType == "event" ? <th className="border-b border-blue-gray-100 p-4">Event Type</th> : yachtsType == "other-event" ? <th className="border-b border-blue-gray-100 p-4">Price per day</th> : ""}
+
                   <th className="border-b border-blue-gray-100 p-4">Name</th>
                   <th className="border-b border-blue-gray-100 p-4">Location</th>
-                  {yachtsType == "regular-exp" ? <th className="border-b border-blue-gray-100 p-4">Price per hour</th> : yachtsType == "f1-exp" ? <th className="border-b border-blue-gray-100 p-4">Price per day</th> : ""}
 
-                  <th className="border-b border-blue-gray-100 p-4">Status</th>
+                  <th className="border-b border-blue-gray-100 p-4">Packages</th>
+
                   <th className="border-b border-blue-gray-100 p-4">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {boats?.map((boat) => (
-                  <tr key={boat?.experience.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => openModal(boat?.experience)}>
-                    {yachtsType === "f1-exp" ? <td className="p-4">{boat?.experience.name}</td>
-                      : yachtsType === "regular-exp" ? <td className="p-4">{boat?.experience.name}</td>
-                        : yachtsType === "new_year" ? <td className="p-4">{boat?.experience.name}</td>
-                          : ""}
+                {boats?.map((boat) => {
+                  let packages = boat?.packages_system
+                  
+                  return (
+                    <tr key={boat?.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => openModal(boat)}>
+                      {yachtsType == "event" ? <td className="p-4">{boat?.event_type}</td> : yachtsType == "other-event" ? <td className="p-4">{boat?.per_day_price} AED</td> : ""}
 
-                    <td className="p-4">{boat?.experience.location}</td>
-                    {yachtsType == "regular-exp" ? <td className="p-4">{boat?.experience.per_hour_price} AED</td> : yachtsType == "f1-exp" ? <td className="p-4">{boat?.experience.per_day_price} AED</td> : ""}
+                      {yachtsType === "other-event" ? <td className="p-4">{boat?.name}</td>
+                        : yachtsType === "event" ? <td className="p-4">{boat?.name}</td>
+                          : yachtsType === "new_year" ? <td className="p-4">{boat?.name}</td>
+                            : ""}
+                      <td className="p-4">{boat?.location}</td>
 
-                    <td className="p-4">
-                      <span className={`px-2 py-1 rounded-full text-xs ${boat?.experience.status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                        }`}>
-                        {boat?.experience.status ? 'Active' : 'Inactive'}
-                      </span>
-                    </td>
-                    <td className="p-4">
-                      <Link
-                        to={
-                          yachtsType === "f1-exp"
-                            ? `/experiences/f1-exp/edit/${boat?.experience.id}`
-                            : yachtsType === "new_year"
-                              ? `/experiences/newyear/edit/${boat?.experience.id}`
-                              : `/experiences/regular-exp/edit/${boat?.experience.id}` // fallback for regular yachts
-                        }
-                      >
-                        <Button variant="text" className="text-[#BEA355]">
-                          Edit
-                        </Button>
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
+                      <td className="p-4">
+                        {packages?.length > 0 ? packages.map(pkg => (
+                          <div key={pkg.id}>{pkg.package_type} - AED {pkg.price}</div>
+                        )) : 'No packages available'}
+                      </td>
+
+
+                      <td className="p-4">
+                        <Link
+                          to={
+                            yachtsType === "other-event"
+                              ? `/event/f1-exp/edit/${boat?.id}`
+                              : yachtsType === "new_year"
+                                ? `/event/newyear/edit/${boat?.id}`
+                                : `/events/edit/${boat?.id}` // fallback for regular yachts
+                          }
+                        >
+                          <Button variant="text" className="text-[#BEA355]">
+                            Edit
+                          </Button>
+                        </Link>
+                      </td>
+                    </tr>
+                  )
+
+                })}
               </tbody>
             </table>
           )}
@@ -495,7 +487,7 @@ const ExperienceListingGlobal = ({ yachtsType }) => {
               <ArrowRightIcon strokeWidth={2} className="h-4 w-4" />
 
             </IconButton>
-          </div> : yachtsType == "f1-exp" ? "No F1 Experience found" : "No F1 Experience found"}
+          </div> : yachtsType == "other-event" ? "No F1 Event found" : "No Event found"}
 
 
 
@@ -515,10 +507,10 @@ const ExperienceListingGlobal = ({ yachtsType }) => {
         {selectedYacht && (
           <>
             <DialogHeader className="flex items-center justify-between">
-              {yachtsType == "regular-exp" ? <Typography variant="h4">
-                Yacht Details
-              </Typography> : yachtsType == "f1-exp" ? <Typography variant="h4">
-                F1 Yacht Details
+              {yachtsType == "event" ? <Typography variant="h4">
+                Event Details
+              </Typography> : yachtsType == "other-event" ? <Typography variant="h4">
+                F1 Event Details
               </Typography> : ""}
 
               <IconButton
@@ -534,44 +526,45 @@ const ExperienceListingGlobal = ({ yachtsType }) => {
                 {/* Yacht Information */}
                 <div>
                   <Typography variant="h6" color="blue-gray" className="mb-4">
-                    Yacht Information
+                    Event Information
                   </Typography>
                   <div className="space-y-3">
                     <InfoRow
                       icon={ShipIcon}
                       label="Name"
-                      value={selectedYacht.name}
+                      value={selectedYacht?.name}
                     />
                     <InfoRow
                       icon={LocateIcon}
                       label="Location"
-                      value={selectedYacht.location}
+                      value={selectedYacht?.location}
                     />
-                    {yachtsType == "regular-exp" ? <InfoRow
+                    {yachtsType == "event" ? <InfoRow
                       // icon={BsCurrencyDollar}
-                      label="Price per Hour"
-                      value={`${currency} ${selectedYacht.per_hour_price} `}
-                    /> : yachtsType == "f1-exp" ? <InfoRow
+                      label="Price"
+                      value={`${currency} ${selectedYacht?.total_days_price
+                      } `}
+                    /> : yachtsType == "other-event" ? <InfoRow
                       // icon={"AED"}
                       label="Price per Day"
-                      value={`${currency} ${selectedYacht.per_day_price}`}
+                      value={`${currency} ${selectedYacht?.per_day_price}`}
                     /> : ""}
 
                     <InfoRow
                       icon={TypeIcon}
                       label="Type"
-                      value={selectedYacht.type || 'N/A'}
+                      value={selectedYacht?.event_type || 'N/A'}
                     />
                     <InfoRow
                       icon={FlagIcon}
                       label="Status"
-                      value={selectedYacht.status ? 'Active' : 'Inactive'}
+                      value={selectedYacht?.status ? 'Active' : 'Inactive'}
                     />
                   </div>
                 </div>
 
                 {/* Additional Details */}
-                <div>
+                {/* <div>
                   <Typography variant="h6" color="blue-gray" className="mb-4">
                     Additional Details
                   </Typography>
@@ -579,90 +572,74 @@ const ExperienceListingGlobal = ({ yachtsType }) => {
                     <InfoRow
                       icon={PowerIcon}
                       label="Length"
-                      value={selectedYacht.length ? `${selectedYacht.length} ft` : 'N/A'}
+                      value={selectedYacht?.length ? `${selectedYacht?.length} ft` : 'N/A'}
                     />
                     <InfoRow
                       icon={PowerIcon}
                       label="Power"
-                      value={selectedYacht.power || 'N/A'}
+                      value={selectedYacht?.power || 'N/A'}
                     />
                     <InfoRow
                       icon={TypeIcon}
                       label="Crew Members"
-                      value={selectedYacht.crew_member || 'N/A'}
+                      value={selectedYacht?.crew_member || 'N/A'}
                     />
                     <InfoRow
                       icon={TypeIcon}
                       label="Guest Capacity"
-                      value={selectedYacht.guest ? `${selectedYacht.guest} guests` : 'N/A'}
+                      value={selectedYacht?.guest ? `${selectedYacht?.guest} guests` : 'N/A'}
                     />
                     <InfoRow
                       icon={TypeIcon}
                       label="Sleeping Capacity"
-                      value={selectedYacht.sleep_capacity ? `${selectedYacht.sleep_capacity} guests` : 'N/A'}
+                      value={selectedYacht?.sleep_capacity ? `${selectedYacht?.sleep_capacity} guests` : 'N/A'}
                     />
                   </div>
-                </div>
+                </div> */}
               </div>
 
               {/* Availability */}
-              {yachtsType == "regular-exp" ? <div className="mt-8">
+              {/* {yachtsType == "event" ? <div className="mt-8">
                 <Typography variant="h6" color="blue-gray" className="mb-4">
                   Availability
                 </Typography>
-                {selectedYacht.availability && (
+                {selectedYacht?.availability && (
                   <>
                     <InfoRow
                       label="Available From"
-                      value={typeof selectedYacht.availability === 'string' ? JSON.parse(selectedYacht.availability.replace(/'/g, '"')).from || 'N/A' : formatDate(selectedYacht.availability?.from) || 'N/A'}
+                      value={typeof selectedYacht?.availability === 'string' ? JSON.parse(selectedYacht?.availability.replace(/'/g, '"')).from || 'N/A' : formatDate(selectedYacht?.from_date) || 'N/A'}
                     />
                     <InfoRow
                       label="Available To"
-                      value={typeof selectedYacht.availability === 'string' ? JSON.parse(selectedYacht.availability.replace(/'/g, '"')).to || 'N/A' : formatDate(selectedYacht.availability?.to) || 'N/A'}
+                      value={typeof selectedYacht?.availability === 'string' ? JSON.parse(selectedYacht?.availability.replace(/'/g, '"')).to || 'N/A' : formatDate(selectedYacht?.to_date) || 'N/A'}
                     />
                   </>
                 )}
-              </div> : yachtsType == "f1-exp" ? "" : ""}
+              </div> : yachtsType == "other-event" ? "" : ""} */}
 
 
-              {/* Features */}
-              {yachtsType == "regular-exp" ? <div className="mt-8">
-                <Typography variant="h6" color="blue-gray" className="mb-4">
-                  Features:
-                </Typography>
-                <div className=" gap-4">
-                  {selectedYacht?.features && selectedYacht?.features.length > 0 ? (
-                    selectedYacht?.features.map((feature, index) => (
-                      <span key={index} className="text-gray-800 mx-2 dark:text-gray-200 font-medium">{feature?.name}</span>
-
-                    ))
-                  ) : (
-                    <p className="text-gray-500 dark:text-gray-400 text-xs">N/A</p>
-                  )}
-                </div>
-
-              </div> : yachtsType == "f1-exp" ? "" : ""}
+  
 
 
               {/* Description */}
-              {selectedYacht.description && (
+              {/* {selectedYacht?.description && (
                 <div className="mt-8">
                   <Typography variant="h6" color="blue-gray" className="mb-4">
                     Description
                   </Typography>
-                  <p className="text-gray-700">{selectedYacht.description}</p>
+                  <p className="text-gray-700">{selectedYacht?.description}</p>
                 </div>
-              )}
+              )} */}
 
               {/* Notes */}
-              {selectedYacht.notes && (
+              {selectedYacht?.notes && (
                 <div className="mt-8">
                   <Typography variant="h6" color="blue-gray" className="mb-4">
                     Notes
                   </Typography>
                   <div
                     className="text-gray-700"
-                    dangerouslySetInnerHTML={{ __html: selectedYacht.notes }}
+                    dangerouslySetInnerHTML={{ __html: selectedYacht?.notes }}
                   />
                 </div>
               )}
@@ -674,4 +651,4 @@ const ExperienceListingGlobal = ({ yachtsType }) => {
   );
 };
 
-export default ExperienceListingGlobal;
+export default EventsListingGlobal;
