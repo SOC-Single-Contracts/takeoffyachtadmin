@@ -210,11 +210,11 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       name: "Posts & Blogs",
       icon: <FaBlog className="text-xl" />,
       type: "accordion",
-      items: [
+      items: [  
         {
           name: "Blogs",
           icon: <FaBlog className="text-xl" />,
-          items: [
+          items: [  
             { name: "All Blogs", path: "/blogs" },
             { name: "Add Blog", path: "/blogs/add" }
           ]
