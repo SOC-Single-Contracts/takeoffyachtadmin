@@ -129,7 +129,7 @@ const EventBookingGlobal
           let payload = {
             booking_id: bookingId,
             user_id: userId,
-            booking_type: yachtsType == "f1-exp" ? "events" : "events",
+            booking_type: yachtsType == "f1-exp" ? "event" : "event",
             action: "approved",
 
           };
@@ -155,7 +155,7 @@ const EventBookingGlobal
           let payload = {
             booking_id: bookingId,
             user_id: userId,
-            booking_type: yachtsType == "f1-exp" ? "events" : "events",
+            booking_type: yachtsType == "f1-exp" ? "event" : "event",
             action: "cancel",
 
           };
