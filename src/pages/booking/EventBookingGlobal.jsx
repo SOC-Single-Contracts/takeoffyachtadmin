@@ -18,7 +18,7 @@ import { BiGlobeAlt } from 'react-icons/bi';
 import { toast } from 'react-toastify';
 import { it } from 'date-fns/locale/it';
 import { th } from 'date-fns/locale/th';
-import { formatDateWithTimes } from '../../utils/helper';
+import { formatDateWithTimes, formatSchedule } from '../../utils/helper';
 import { getEventBookingsAll } from '../../services/api/eventService';
 
 
@@ -59,7 +59,7 @@ const EventBookingGlobal
 
     const formatDate = (dateString) => {
       try {
-        return format(new Date(dateString), 'MMM dd, yyyy hh:mm a');
+        return format(new Date(dateString), 'MMM dd, yyyy');
       } catch (err) {
         return dateString;
       }
@@ -255,7 +255,7 @@ const EventBookingGlobal
                       const isCancelled = item.booking[0]?.booking_status == "CANCELLED" ? true : false;
                       const selectedDate = item.event[0]?.from_date;                      ;
                       const startingTime = item.event[0]?.start_time;
-                      const endingTime = item.booking[0]?.ending_time;
+                      const endingTime = item.event[0]?.end_time;
                       
 
                       return (
@@ -271,7 +271,7 @@ const EventBookingGlobal
                               <div className="text-sm text-gray-500">{event?.location}</div>
                             </div>
                           </td>
-                          {yachtsType == "all-events" ? <td className="p-4">{formatDate(selectedDate,startingTime)}</td> : yachtsType == "f1-exp" ? <td className="p-4">{formatDate(booking?.start_date)}</td> : ""}
+                          {yachtsType == "all-events" ? <td className="p-4">{formatSchedule(selectedDate,startingTime,endingTime)}</td> : yachtsType == "f1-exp" ? <td className="p-4">{formatDate(booking?.start_date)}</td> : ""}
 
 
                           {/* {yachtsType == "all-events" ? booking?.booking_type == "hourly" ? <td className="p-4">{booking?.duration_hour} hours</td> : <td className="p-4">N/A</td> : yachtsType == "f1-exp" ? "" : ""} */}
@@ -407,7 +407,7 @@ const EventBookingGlobal
                               {yachtsType == "all-events" ? <InfoRow
                                 icon={CalendarDaysIcon}
                                 label="Booking Date"
-                                value={formatDate(selectedBooking?.event?.from_date,selectedBooking?.event?.start_time,selectedBooking?.event.ending_time)}
+                                value={formatSchedule(selectedBooking?.event?.from_date,selectedBooking?.event?.start_time,selectedBooking?.event.end_time)}
                               /> : yachtsType == "f1-exp" ? <InfoRow
                                 icon={CalendarDaysIcon}
                                 label="Booking Date"

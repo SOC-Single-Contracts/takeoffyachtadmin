@@ -72,4 +72,42 @@ export const formatDateWithTimes = (dateString, startTime, endTime) => {
   }
 };
 
+
+
+export function formatSchedule(dateStr, startTime, endTime) {
+  if (!dateStr) return 'Invalid date';
+
+  const formatDate = new Date(dateStr).toLocaleDateString('en-US', {
+    month: 'short',
+    day: '2-digit',
+    year: 'numeric',
+  });
+
+  if (startTime && endTime) {
+    const start = new Date(`${dateStr.split('T')[0]}T${startTime}`).toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    });
+    const end = new Date(`${dateStr.split('T')[0]}T${endTime}`).toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    });
+    return `${formatDate}, ${start} - ${end}`;
+  }
+
+  if (startTime) {
+    const start = new Date(`${dateStr.split('T')[0]}T${startTime}`).toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    });
+    return `${formatDate}, ${start}`;
+  }
+
+  return formatDate;
+}
+
+
   
