@@ -12,8 +12,8 @@ export const yachtData = (data) => {
         name: data?.yacht?.name ?? "",
         location: data?.yacht?.location ?? "",
         // title: data?.yacht?.title,
-        min_price: data?.yacht?.min_price ?  String(data?.yacht?.min_price) : "",
-        max_price:data?.yacht?.max_price ?  String(data?.yacht?.max_price) : "",
+        min_price: data?.yacht?.min_price ? String(data?.yacht?.min_price) : "",
+        max_price: data?.yacht?.max_price ? String(data?.yacht?.max_price) : "",
         guest: String(data?.yacht?.guest) ?? "",
         cancel_time_in_hour: String(data?.yacht?.cancel_time_in_hour) ?? "",
         duration_hour: String(data?.yacht?.duration_hour) ?? "",
@@ -34,7 +34,7 @@ export const yachtData = (data) => {
         ny_firework: data?.yacht?.ny_firework ?? false,
         ny_status: data?.yacht?.ny_status ?? false,
         ny_availability_from: data?.yacht?.ny_availability?.from ?? "",
-        ny_availability_to: data?.yacht?.ny_availability?.to ?? "", 
+        ny_availability_to: data?.yacht?.ny_availability?.to ?? "",
     }
     return obj
 };
@@ -48,8 +48,8 @@ export const f1yachtData = (data) => {
         name: data?.yacht?.name ?? "",
         // title: data?.yacht?.title,
         location: data?.yacht?.location ?? "",
-        min_price: data?.yacht?.min_price ?  String(data?.yacht?.min_price) : "",
-        max_price:data?.yacht?.max_price ?  String(data?.yacht?.max_price) : "",
+        min_price: data?.yacht?.min_price ? String(data?.yacht?.min_price) : "",
+        max_price: data?.yacht?.max_price ? String(data?.yacht?.max_price) : "",
         guest: String(data?.yacht?.guest) ?? "",
         cancel_time_in_hour: String(data?.yacht?.cancel_time_in_hour) ?? "",
         // duration_hour: String(data?.yacht?.duration_hour) ?? "",,
@@ -65,7 +65,7 @@ export const f1yachtData = (data) => {
         // from_date: data?.yacht?.from_date,
         // to_date: data?.yacht?.to_date,
         length: data?.yacht?.length ?? "",
-       
+
     }
     return obj
 };
@@ -81,18 +81,67 @@ export const regularYachtsStatesUpdates = (data) => {
         };
     }
     if (data?.yacht?.meeting_point_link) {
-        updates.meetingPoint = data?.yacht?.meeting_point_link ;
+        updates.meetingPoint = data?.yacht?.meeting_point_link;
+
+        const urlObj = new URL(data?.yacht?.meeting_point_link);
+        const query = urlObj.searchParams.get("query");
+
+        if (query) {
+            const [lat, lng] = query.split(',').map(Number);
+            updates.meetPointLatLng = {
+                lat: parseFloat(lat),
+                lng: parseFloat(lng),
+            };
+        }else{
+            updates.meetPointLatLng = {
+                lat: parseFloat(25.180775),
+                lng: parseFloat(55.336947),
+            };
+        }
     }
     if (data?.yacht?.car_parking_link) {
-        updates.carParking = data?.yacht?.car_parking_link ;
+        updates.carParking = data?.yacht?.car_parking_link;
+
+        const urlObj = new URL(data?.yacht?.car_parking_link);
+        const query = urlObj.searchParams.get("query");
+
+        if (query) {
+            const [lat, lng] = query.split(',').map(Number);
+            updates.carParkingLatLng = {
+                lat: parseFloat(lat),
+                lng: parseFloat(lng),
+            };
+        }else{
+            updates.carParkingLatLng = {
+                lat: parseFloat(25.180775),
+                lng: parseFloat(55.336947),
+            };
+        }
     }
     if (data?.yacht?.taxi_drop_off_link) {
-        updates.taxiDropOff = data?.yacht?.taxi_drop_off_link ;
+        updates.taxiDropOff = data?.yacht?.taxi_drop_off_link;
+
+        
+        const urlObj = new URL(data?.yacht?.taxi_drop_off_link);
+        const query = urlObj.searchParams.get("query");
+
+        if (query) {
+            const [lat, lng] = query.split(',').map(Number);
+            updates.taxiLatLng = {
+                lat: parseFloat(lat),
+                lng: parseFloat(lng),
+            };
+        }else{
+            updates.taxiLatLng = {
+                lat: parseFloat(25.180775),
+                lng: parseFloat(55.336947),
+            };
+        }
     }
     if (data?.yacht?.location_url) {
-        updates.yachtLocationLink = data?.yacht?.location_url ;
+        updates.yachtLocationLink = data?.yacht?.location_url;
     }
-    
+
 
 
     if (data?.yacht?.crew_language) {
@@ -183,16 +232,65 @@ export const f1YachtsStatesUpdates = (data) => {
         };
     }
     if (data?.yacht?.meeting_point_link) {
-        updates.meetingPoint = data?.yacht?.meeting_point_link ;
+        updates.meetingPoint = data?.yacht?.meeting_point_link;
+
+        const urlObj = new URL(data?.yacht?.meeting_point_link);
+        const query = urlObj.searchParams.get("query");
+
+        if (query) {
+            const [lat, lng] = query.split(',').map(Number);
+            updates.meetPointLatLng = {
+                lat: parseFloat(lat),
+                lng: parseFloat(lng),
+            };
+        }else{
+            updates.meetPointLatLng = {
+                lat: parseFloat(25.180775),
+                lng: parseFloat(55.336947),
+            };
+        }
     }
     if (data?.yacht?.car_parking_link) {
-        updates.carParking = data?.yacht?.car_parking_link ;
+        updates.carParking = data?.yacht?.car_parking_link;
+
+        const urlObj = new URL(data?.yacht?.car_parking_link);
+        const query = urlObj.searchParams.get("query");
+
+        if (query) {
+            const [lat, lng] = query.split(',').map(Number);
+            updates.carParkingLatLng = {
+                lat: parseFloat(lat),
+                lng: parseFloat(lng),
+            };
+        }else{
+            updates.carParkingLatLng = {
+                lat: parseFloat(25.180775),
+                lng: parseFloat(55.336947),
+            };
+        }
     }
     if (data?.yacht?.taxi_drop_off_link) {
-        updates.taxiDropOff = data?.yacht?.taxi_drop_off_link ;
+        updates.taxiDropOff = data?.yacht?.taxi_drop_off_link;
+
+        
+        const urlObj = new URL(data?.yacht?.taxi_drop_off_link);
+        const query = urlObj.searchParams.get("query");
+
+        if (query) {
+            const [lat, lng] = query.split(',').map(Number);
+            updates.taxiLatLng = {
+                lat: parseFloat(lat),
+                lng: parseFloat(lng),
+            };
+        }else{
+            updates.taxiLatLng = {
+                lat: parseFloat(25.180775),
+                lng: parseFloat(55.336947),
+            };
+        }
     }
     if (data?.yacht?.location_url) {
-        updates.yachtLocationLink = data?.yacht?.location_url ;
+        updates.yachtLocationLink = data?.yacht?.location_url;
     }
     if (data?.yacht?.crew_language) {
         updates.crewLanguage = data?.yacht?.crew_language;
