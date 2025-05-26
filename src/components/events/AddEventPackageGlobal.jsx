@@ -35,6 +35,9 @@ const AddEventPackageGlobal = ({ yachtsType }) => {
   const [mainImage, setMainImage] = useState(null);
   const [additionalImages, setAdditionalImages] = useState([]);
   const [locationLatLng, setLocationLatLng] = useState(null);
+    const [meetPointLatLng, setMeetPointLatLng] = useState(null);
+    const [carParkingLatLng, setCarParkingLatLng] = useState(null);
+    const [taxiLatLng, setTaxiLatLng] = useState(null);
   const [meetingPoint, setMeetingPoint] = useState("");
   const [yachtLocationLink, setyachtLocationLink] = useState("");
   const [carParking, setcarParking] = useState("")
@@ -128,6 +131,9 @@ const AddEventPackageGlobal = ({ yachtsType }) => {
       const updates = eventStatesUpdates(data);
 
       if (updates?.locationLatLng) setLocationLatLng(updates?.locationLatLng);
+      if (updates?.meetPointLatLng) setMeetPointLatLng(updates?.meetPointLatLng);
+      if (updates?.carParkingLatLng) setCarParkingLatLng(updates?.carParkingLatLng);
+      if (updates?.taxiLatLng) setTaxiLatLng(updates?.taxiLatLng);
       if (updates?.meetingPoint) setMeetingPoint(updates?.meetingPoint);
       if (updates?.yachtLocationLink) setyachtLocationLink(updates?.yachtLocationLink);
       if (updates?.carParking) setcarParking(updates?.carParking);
@@ -174,6 +180,9 @@ const AddEventPackageGlobal = ({ yachtsType }) => {
       const updates = packageStatesUpdates(data);
 
       if (updates?.locationLatLng) setLocationLatLng(updates?.locationLatLng);
+      if (updates?.meetPointLatLng) setMeetPointLatLng(updates?.meetPointLatLng);
+      if (updates?.carParkingLatLng) setCarParkingLatLng(updates?.carParkingLatLng);
+      if (updates?.taxiLatLng) setTaxiLatLng(updates?.taxiLatLng);
       if (updates?.meetingPoint) setMeetingPoint(updates?.meetingPoint);
       if (updates?.yachtLocationLink) setyachtLocationLink(updates?.yachtLocationLink);
       if (updates?.carParking) setcarParking(updates?.carParking);
@@ -322,12 +331,15 @@ const AddEventPackageGlobal = ({ yachtsType }) => {
       setyachtLocationLink(url)
     } else if (type == "meetingPoint") {
       let url = `https://www.google.com/maps/search/?api=1&query=${newLocation?.lat},${newLocation?.lng}`
+      setMeetPointLatLng(newLocation);
       setMeetingPoint(url)
     } else if (type == "carParking") {
       let url = `https://www.google.com/maps/search/?api=1&query=${newLocation?.lat},${newLocation?.lng}`
+      setCarParkingLatLng(newLocation);
       setcarParking(url)
     } else if (type == "taxiDropOff") {
       let url = `https://www.google.com/maps/search/?api=1&query=${newLocation?.lat},${newLocation?.lng}`
+      setTaxiLatLng(newLocation);
       settaxiDropOff(url)
     } else {
       setLocationLatLng(newLocation);
@@ -864,6 +876,9 @@ const AddEventPackageGlobal = ({ yachtsType }) => {
   //   const newData = {
   //     ...watchedValues,
   //     locationLatLng,
+  // meetPointLatLng,
+  //     carParkingLatLng,
+  //     taxiLatLng,
   //     additionalImages,
   //     mainImage,
   //     notes,
@@ -892,7 +907,7 @@ const AddEventPackageGlobal = ({ yachtsType }) => {
   //     return prev;
   //   });
   // }, [
-  //   watchedValues, errors, locationLatLng, additionalImages, mainImage,
+  //   watchedValues, errors, locationLatLng,meetPointLatLng,carParkingLatLng,taxiLatLng, additionalImages, mainImage,
   //   selectedYacht, notes, flag, crewLanguage, fromDate, toDate,
   //   selectedFeatures, selectedInclusion, selectedCategories, selectedFoodOptions,
   //   meetingPoint,
@@ -1162,9 +1177,20 @@ const AddEventPackageGlobal = ({ yachtsType }) => {
                   <div className="h-[450px] w-full overflow-hidden">
                     <MapPicker
                       onLocationSelect={(newLocation) => handleLocationSelect(newLocation, "meetingPoint")}
-                      initialLocation={locationLatLng}
+                      initialLocation={meetPointLatLng}
                     />
                   </div>
+                  {meetPointLatLng && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  Selected Coordinates:
+                  <div className="bg-blue-100 text-blue-800 text-sm font-medium py-1 px-3 rounded-full shadow-md">
+                    Latitude: {meetPointLatLng.lat.toFixed(6)}
+                  </div>
+                  <div className="bg-green-100 text-green-800 text-sm font-medium py-1 px-3 rounded-full shadow-md">
+                    Longitude: {meetPointLatLng.lng.toFixed(6)}
+                  </div>
+                </div>
+              )}
 
                 </div>
                 <div className="col-span- mb-4">
@@ -1172,9 +1198,20 @@ const AddEventPackageGlobal = ({ yachtsType }) => {
                   <div className="h-[450px] w-full overflow-hidden">
                     <MapPicker
                       onLocationSelect={(newLocation) => handleLocationSelect(newLocation, "carParking")}
-                      initialLocation={locationLatLng}
+                      initialLocation={carParkingLatLng}
                     />
                   </div>
+                  {carParkingLatLng && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  Selected Coordinates:
+                  <div className="bg-blue-100 text-blue-800 text-sm font-medium py-1 px-3 rounded-full shadow-md">
+                    Latitude: {carParkingLatLng.lat.toFixed(6)}
+                  </div>
+                  <div className="bg-green-100 text-green-800 text-sm font-medium py-1 px-3 rounded-full shadow-md">
+                    Longitude: {carParkingLatLng.lng.toFixed(6)}
+                  </div>
+                </div>
+              )}
 
                 </div>
                 <div className="col-span- mb-4">
@@ -1182,9 +1219,20 @@ const AddEventPackageGlobal = ({ yachtsType }) => {
                   <div className="h-[450px] w-full overflow-hidden">
                     <MapPicker
                       onLocationSelect={(newLocation) => handleLocationSelect(newLocation, "taxiDropOff")}
-                      initialLocation={locationLatLng}
+                      initialLocation={taxiLatLng}
                     />
                   </div>
+                  {taxiLatLng && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  Selected Coordinates:
+                  <div className="bg-blue-100 text-blue-800 text-sm font-medium py-1 px-3 rounded-full shadow-md">
+                    Latitude: {taxiLatLng.lat.toFixed(6)}
+                  </div>
+                  <div className="bg-green-100 text-green-800 text-sm font-medium py-1 px-3 rounded-full shadow-md">
+                    Longitude: {taxiLatLng.lng.toFixed(6)}
+                  </div>
+                </div>
+              )}
 
                 </div>
 
