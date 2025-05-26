@@ -18,7 +18,7 @@ import { f1yachtData, f1YachtsStatesUpdates, regularYachtsStatesUpdates, yachtDa
 import ImageUploadGallery from '../common/imageGallery/imageuploadGallery';
 import FileUploadOld from '../common/FileUploadold';
 import FileUploadSingle from '../common/FileUploadSingle';
-import { format, parse } from 'date-fns';
+import { format, parse, set } from 'date-fns';
 import { getS3PathOnly } from '../../utils/helper';
 
 
@@ -32,6 +32,9 @@ const AddBoatGlobal = () => {
   const [mainImage, setMainImage] = useState(null);
   const [additionalImages, setAdditionalImages] = useState([]);
   const [locationLatLng, setLocationLatLng] = useState(null);
+  const [meetPointLatLng, setMeetPointLatLng] = useState(null);
+  const [carParkingLatLng, setCarParkingLatLng] = useState(null);
+  const [taxiLatLng, setTaxiLatLng] = useState(null);
   const [meetingPoint,setMeetingPoint] = useState("");
   const [yachtLocationLink, setyachtLocationLink] = useState("");
   const [carParking,setcarParking] = useState("")
@@ -93,8 +96,12 @@ const AddBoatGlobal = () => {
       reset(yachtData(data));
     
       const updates = regularYachtsStatesUpdates(data);
+      console.log("updates",updates)
     
       if (updates?.locationLatLng) setLocationLatLng(updates?.locationLatLng);
+      if (updates?.meetPointLatLng) setMeetPointLatLng(updates?.meetPointLatLng);
+      if (updates?.carParkingLatLng) setCarParkingLatLng(updates?.carParkingLatLng);
+      if (updates?.taxiLatLng) setTaxiLatLng(updates?.taxiLatLng);
       if (updates?.meetingPoint) setMeetingPoint(updates?.meetingPoint);
       if (updates?.yachtLocationLink) setyachtLocationLink(updates?.yachtLocationLink);
       if (updates?.carParking) setcarParking(updates?.carParking);
@@ -138,6 +145,9 @@ const AddBoatGlobal = () => {
       const updates = f1YachtsStatesUpdates(data);
     
       if (updates?.locationLatLng) setLocationLatLng(updates?.locationLatLng);
+      if (updates?.meetPointLatLng) setMeetPointLatLng(updates?.meetPointLatLng);
+      if (updates?.carParkingLatLng) setCarParkingLatLng(updates?.carParkingLatLng);
+      if (updates?.taxiLatLng) setTaxiLatLng(updates?.taxiLatLng);
       if (updates?.meetingPoint) setMeetingPoint(updates?.meetingPoint);
       if (updates?.yachtLocationLink) setyachtLocationLink(updates?.yachtLocationLink);
       if (updates?.carParking) setcarParking(updates?.carParking);
@@ -265,12 +275,15 @@ const AddBoatGlobal = () => {
       setyachtLocationLink(url)
     }else if(type == "meetingPoint"){
       let url = `https://www.google.com/maps/search/?api=1&query=${newLocation?.lat},${newLocation?.lng}`
+      setMeetPointLatLng(newLocation);
       setMeetingPoint(url)
     }else if(type == "carParking"){
       let url = `https://www.google.com/maps/search/?api=1&query=${newLocation?.lat},${newLocation?.lng}`
+      setCarParkingLatLng(newLocation);
       setcarParking(url)
     }else if(type == "taxiDropOff"){
       let url = `https://www.google.com/maps/search/?api=1&query=${newLocation?.lat},${newLocation?.lng}`
+      setTaxiLatLng(newLocation);
       settaxiDropOff(url)
     }else{
       setLocationLatLng(newLocation);
@@ -401,11 +414,16 @@ const AddBoatGlobal = () => {
        //locationLatLng
       formData.append('latitude', locationLatLng ? locationLatLng.lat : 25.180775);
       formData.append('longitude', locationLatLng ? locationLatLng.lng : 55.336947);
-      formData.append('meeting_point_link', meetingPoint);
-      formData.append('car_parking_link', carParking);
-      formData.append('taxi_drop_off_link', taxiDropOff);
       formData.append('location_url', yachtLocationLink);
 
+      // meetingPoint
+      formData.append('meeting_point_link', meetingPoint);
+      // carParking
+      formData.append('car_parking_link', carParking);
+
+      // taxiDropOff
+      formData.append('taxi_drop_off_link', taxiDropOff);
+    
       if (mainImage?.file instanceof File) {
         formData.append('yacht_image', mainImage.file);
       }
@@ -629,13 +647,18 @@ const AddBoatGlobal = () => {
       //   to: data?.ny_availability?.to,
       // };
       // formData.set('ny_availability', JSON.stringify(ny_availability));///remove
+       //locationLatLng
+       formData.append('latitude', locationLatLng ? locationLatLng.lat : 25.180775);
+       formData.append('longitude', locationLatLng ? locationLatLng.lng : 55.336947);
+       formData.append('location_url', yachtLocationLink);
+       // meetingPoint
+       formData.append('meeting_point_link', meetingPoint);
+       // carParking
+       formData.append('car_parking_link', carParking);
+       // taxiDropOff
+       formData.append('taxi_drop_off_link', taxiDropOff);
 
-      formData.append('latitude', locationLatLng ? locationLatLng.lat : 25.180775);
-      formData.append('longitude', locationLatLng ? locationLatLng.lng : 55.336947);
-      formData.append('meeting_point_link', meetingPoint);
-      formData.append('car_parking_link', carParking);
-      formData.append('taxi_drop_off_link', taxiDropOff);
-      formData.append('location_url', yachtLocationLink);
+
       if (mainImage?.file instanceof File) {
         formData.append('yacht_image', mainImage.file);
       }
@@ -770,6 +793,9 @@ const AddBoatGlobal = () => {
   //   const newData = {
   //     ...watchedValues,
   //     locationLatLng,
+  //     meetPointLatLng,
+  //     carParkingLatLng,
+  //     taxiLatLng,
   //     additionalImages,
   //     mainImage,
   //     notes,
@@ -795,7 +821,7 @@ const AddBoatGlobal = () => {
   //     return prev;
   //   });
   // }, [
-  //   watchedValues, errors, locationLatLng, additionalImages, mainImage,
+  //   watchedValues, errors, locationLatLng,meetPointLatLng,carParkingLatLng,taxiLatLng, additionalImages, mainImage,
   //   selectedYacht, notes, flag, crewLanguage, fromDate, toDate,
   //   selectedFeatures, selectedInclusion, selectedCategories, selectedFoodOptions,
   //   meetingPoint,
@@ -1022,9 +1048,20 @@ const AddBoatGlobal = () => {
               <div className="h-[450px] w-full overflow-hidden">
                 <MapPicker
                     onLocationSelect={(newLocation) => handleLocationSelect(newLocation, "meetingPoint")}
-                  initialLocation={locationLatLng}
+                  initialLocation={meetPointLatLng}
                 />
               </div>
+              {meetPointLatLng && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  Selected Coordinates:
+                  <div className="bg-blue-100 text-blue-800 text-sm font-medium py-1 px-3 rounded-full shadow-md">
+                    Latitude: {meetPointLatLng.lat.toFixed(6)}
+                  </div>
+                  <div className="bg-green-100 text-green-800 text-sm font-medium py-1 px-3 rounded-full shadow-md">
+                    Longitude: {meetPointLatLng.lng.toFixed(6)}
+                  </div>
+                </div>
+              )}
             
             </div>
             <div className="col-span- mb-4">
@@ -1032,9 +1069,20 @@ const AddBoatGlobal = () => {
               <div className="h-[450px] w-full overflow-hidden">
                 <MapPicker
                     onLocationSelect={(newLocation) => handleLocationSelect(newLocation, "carParking")}
-                  initialLocation={locationLatLng}
+                  initialLocation={carParkingLatLng}
                 />
               </div>
+              {carParkingLatLng && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  Selected Coordinates:
+                  <div className="bg-blue-100 text-blue-800 text-sm font-medium py-1 px-3 rounded-full shadow-md">
+                    Latitude: {carParkingLatLng.lat.toFixed(6)}
+                  </div>
+                  <div className="bg-green-100 text-green-800 text-sm font-medium py-1 px-3 rounded-full shadow-md">
+                    Longitude: {carParkingLatLng.lng.toFixed(6)}
+                  </div>
+                </div>
+              )}
             
             </div>
             <div className="col-span- mb-4">
@@ -1042,9 +1090,20 @@ const AddBoatGlobal = () => {
               <div className="h-[450px] w-full overflow-hidden">
                 <MapPicker
                     onLocationSelect={(newLocation) => handleLocationSelect(newLocation, "taxiDropOff")}
-                  initialLocation={locationLatLng}
+                  initialLocation={taxiLatLng}
                 />
               </div>
+              {taxiLatLng && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  Selected Coordinates:
+                  <div className="bg-blue-100 text-blue-800 text-sm font-medium py-1 px-3 rounded-full shadow-md">
+                    Latitude: {taxiLatLng.lat.toFixed(6)}
+                  </div>
+                  <div className="bg-green-100 text-green-800 text-sm font-medium py-1 px-3 rounded-full shadow-md">
+                    Longitude: {taxiLatLng.lng.toFixed(6)}
+                  </div>
+                </div>
+              )}
             
             </div>
 
