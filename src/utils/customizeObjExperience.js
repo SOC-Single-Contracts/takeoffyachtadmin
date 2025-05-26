@@ -81,13 +81,62 @@ export const regularexperiencesStatesUpdates = (data) => {
         };
     }
     if (data?.experience?.meeting_point_link) {
-        updates.meetingPoint = data?.experience?.meeting_point_link ;
+        updates.meetingPoint = data?.experience?.meeting_point_link;
+
+        const urlObj = new URL(data?.experience?.meeting_point_link);
+        const query = urlObj.searchParams.get("query");
+
+        if (query) {
+            const [lat, lng] = query.split(',').map(Number);
+            updates.meetPointLatLng = {
+                lat: parseFloat(lat),
+                lng: parseFloat(lng),
+            };
+        }else{
+            updates.meetPointLatLng = {
+                lat: parseFloat(25.180775),
+                lng: parseFloat(55.336947),
+            };
+        }
     }
     if (data?.experience?.car_parking_link) {
-        updates.carParking = data?.experience?.car_parking_link ;
+        updates.carParking = data?.experience?.car_parking_link;
+
+        const urlObj = new URL(data?.experience?.car_parking_link);
+        const query = urlObj.searchParams.get("query");
+
+        if (query) {
+            const [lat, lng] = query.split(',').map(Number);
+            updates.carParkingLatLng = {
+                lat: parseFloat(lat),
+                lng: parseFloat(lng),
+            };
+        }else{
+            updates.carParkingLatLng = {
+                lat: parseFloat(25.180775),
+                lng: parseFloat(55.336947),
+            };
+        }
     }
     if (data?.experience?.taxi_drop_off_link) {
-        updates.taxiDropOff = data?.experience?.taxi_drop_off_link ;
+        updates.taxiDropOff = data?.experience?.taxi_drop_off_link;
+
+        
+        const urlObj = new URL(data?.experience?.taxi_drop_off_link);
+        const query = urlObj.searchParams.get("query");
+
+        if (query) {
+            const [lat, lng] = query.split(',').map(Number);
+            updates.taxiLatLng = {
+                lat: parseFloat(lat),
+                lng: parseFloat(lng),
+            };
+        }else{
+            updates.taxiLatLng = {
+                lat: parseFloat(25.180775),
+                lng: parseFloat(55.336947),
+            };
+        }
     }
     if (data?.experience?.location_url) {
         updates.yachtLocationLink = data?.experience?.location_url ;
@@ -183,13 +232,62 @@ export const f1experiencesStatesUpdates = (data) => {
         };
     }
     if (data?.experience?.meeting_point_link) {
-        updates.meetingPoint = data?.experience?.meeting_point_link ;
+        updates.meetingPoint = data?.experience?.meeting_point_link;
+
+        const urlObj = new URL(data?.experience?.meeting_point_link);
+        const query = urlObj.searchParams.get("query");
+
+        if (query) {
+            const [lat, lng] = query.split(',').map(Number);
+            updates.meetPointLatLng = {
+                lat: parseFloat(lat),
+                lng: parseFloat(lng),
+            };
+        }else{
+            updates.meetPointLatLng = {
+                lat: parseFloat(25.180775),
+                lng: parseFloat(55.336947),
+            };
+        }
     }
     if (data?.experience?.car_parking_link) {
-        updates.carParking = data?.experience?.car_parking_link ;
+        updates.carParking = data?.experience?.car_parking_link;
+
+        const urlObj = new URL(data?.experience?.car_parking_link);
+        const query = urlObj.searchParams.get("query");
+
+        if (query) {
+            const [lat, lng] = query.split(',').map(Number);
+            updates.carParkingLatLng = {
+                lat: parseFloat(lat),
+                lng: parseFloat(lng),
+            };
+        }else{
+            updates.carParkingLatLng = {
+                lat: parseFloat(25.180775),
+                lng: parseFloat(55.336947),
+            };
+        }
     }
     if (data?.experience?.taxi_drop_off_link) {
-        updates.taxiDropOff = data?.experience?.taxi_drop_off_link ;
+        updates.taxiDropOff = data?.experience?.taxi_drop_off_link;
+
+        
+        const urlObj = new URL(data?.experience?.taxi_drop_off_link);
+        const query = urlObj.searchParams.get("query");
+
+        if (query) {
+            const [lat, lng] = query.split(',').map(Number);
+            updates.taxiLatLng = {
+                lat: parseFloat(lat),
+                lng: parseFloat(lng),
+            };
+        }else{
+            updates.taxiLatLng = {
+                lat: parseFloat(25.180775),
+                lng: parseFloat(55.336947),
+            };
+        }
     }
     if (data?.experience?.location_url) {
         updates.yachtLocationLink = data?.experience?.location_url ;

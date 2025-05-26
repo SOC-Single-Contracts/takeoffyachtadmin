@@ -96,7 +96,6 @@ const AddBoatGlobal = () => {
       reset(yachtData(data));
     
       const updates = regularYachtsStatesUpdates(data);
-      console.log("updates",updates)
     
       if (updates?.locationLatLng) setLocationLatLng(updates?.locationLatLng);
       if (updates?.meetPointLatLng) setMeetPointLatLng(updates?.meetPointLatLng);
