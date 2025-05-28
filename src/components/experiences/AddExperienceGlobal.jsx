@@ -23,6 +23,7 @@ import { zodSchemaf1Experiences, zodSchemaRegularExperiences, zodSchemaEmpty } f
 import { experienceData, f1experienceData, f1experiencesStatesUpdates, regularexperiencesStatesUpdates } from '../../utils/customizeObjExperience';
 
 
+const BASE_URL = import.meta.env.VITE_API_URL || 'https://api.takeoffyachts.com';
 
 
 
@@ -65,11 +66,30 @@ const AddExperienceGlobal = () => {
   const [nyStatusChecked, setNyStatusChecked] = useState(false);
   const [selectedYacht, setSelectedYacht] = useState({})
   const [debuggingObject, setDebuggingObject] = useState({})
+  const [cities, setCities] = useState([]);
+  const [isCitiesLoading, setIsCitiesLoading] = useState(true);
   const selectedSchema =
     yachtsType === "regular-exp" ? zodSchemaRegularExperiences : yachtsType === "f1-exp" ? zodSchemaf1Experiences : zodSchemaEmpty;
   const navigate = useNavigate();
   const { id } = useParams();
   const isEditMode = !!id;
+  const [durationMinutesList, setDurationMinutesList] = useState([{
+    name: "30 Mins",
+    value: 0.5
+  },
+  {
+    name: "60 Mins",
+    value: 1
+  },
+  {
+    name: "90 Mins",
+    value: 1.5
+  },
+  {
+    name: "120 Mins",
+    value: 2
+  }
+  ])
 
 
   const { register, handleSubmit, formState: { errors }, reset, watch } = useForm({
@@ -77,6 +97,7 @@ const AddExperienceGlobal = () => {
     defaultValues: {
       status: true,
       user_id: '1',
+      location: '',
     }
   });
   const watchedValues = watch(); // Watches all form fields
@@ -838,12 +859,35 @@ const AddExperienceGlobal = () => {
 
     setAdditionalImages([...additionalImages, ...validFiles.slice(0, 20)]);
   }, []);
+  // Fetch cities from City API
+  useEffect(() => {
+    const fetchCities = async () => {
+      try {
+        setIsCitiesLoading(true);
+        const response = await fetch(`${BASE_URL}/yacht/city/`);
+        const data = await response.json();
+
+        if (data.error_code === 'pass') {
+          setCities(data.data);
+        } else {
+          console.error('Failed to fetch cities:', data.error);
+        }
+      } catch (error) {
+        console.error('Error fetching cities:', error);
+        toast.error('Failed to fetch cities');
+      } finally {
+        setIsCitiesLoading(false);
+      }
+    };
+
+    fetchCities();
+  }, []);
   //test
   // useEffect(() => {
   //   const newData = {
   //     ...watchedValues,
   //     locationLatLng,
-  //       meetPointLatLng,
+  //     meetPointLatLng,
   //     carParkingLatLng,
   //     taxiLatLng,
   //     additionalImages,
@@ -871,7 +915,7 @@ const AddExperienceGlobal = () => {
   //     return prev;
   //   });
   // }, [
-  //   watchedValues, errors, locationLatLng,meetPointLatLng,carParkingLatLng,taxiLatLng, additionalImages, mainImage,
+  //   watchedValues, errors, locationLatLng, meetPointLatLng, carParkingLatLng, taxiLatLng, additionalImages, mainImage,
   //   selectedYacht, notes, flag, crewLanguage, fromDate, toDate,
   //   selectedFeatures, selectedInclusion, selectedCategories, selectedFoodOptions,
   //   meetingPoint,
@@ -947,16 +991,53 @@ const AddExperienceGlobal = () => {
             </div>
             <div>
               <label htmlFor="location">Location</label>
-              <Input className='rounded-lg' {...register('location')} error={!!errors.location} />
+              {/* <Input className='rounded-lg' {...register('location')} error={!!errors.location} /> */}
+              <select
+                {...register("location")}
+                error={!!errors.location}
+                className={`w-full border rounded-lg p-2 border-gray-300 focus:ring-1 focus:ring-[#BEA355] focus:outline-none`}
+              >
+                <option disabled value="">Select Location</option>
+                {cities?.length > 0 && cities?.map((city, index) => {
+                  return (
+                    <option key={index} value={city?.name}>{city?.name}</option>
+                  )
+                })}
+
+
+
+
+              </select>
             </div>
-            <div>
+            {yachtsType == "regular-exp" && <div>
+              <label htmlFor="location">Duration Min</label>
+              <select
+                {...register("min_duration_hour", { valueAsNumber: true })}
+
+                error={!!errors.min_duration_hour}
+                className={`w-full border rounded-lg p-2 border-gray-300 focus:ring-1 focus:ring-[#BEA355] focus:outline-none`}
+              >
+                <option disabled value="">Select Minimum Duration</option>
+                {durationMinutesList?.length > 0 && durationMinutesList?.map((duration, index) => {
+                  return (
+                    <option key={index} value={duration?.value}>{duration?.name}</option>
+                  )
+                })}
+
+
+
+
+              </select>
+            </div>}
+
+            {/* <div>
               <label htmlFor="min_price">Min Price</label>
               <Input className='rounded-lg' type="number" step="any" {...register('min_price')} error={!!errors.min_price} />
             </div>
             <div>
               <label htmlFor="max_price">Max Price</label>
               <Input className='rounded-lg' type="number" step="any" {...register('max_price')} error={!!errors.max_price} />
-            </div>
+            </div> */}
             <div>
               <label htmlFor="guest">Guest Capacity</label>
               <Input className='rounded-lg' type="number" step="any" {...register('guest')} error={!!errors.guest} />

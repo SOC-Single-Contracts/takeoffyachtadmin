@@ -22,6 +22,7 @@ import { format, parse, set } from 'date-fns';
 import { getS3PathOnly } from '../../utils/helper';
 
 
+const BASE_URL = import.meta.env.VITE_API_URL || 'https://api.takeoffyachts.com';
 
 
 
@@ -35,10 +36,10 @@ const AddBoatGlobal = () => {
   const [meetPointLatLng, setMeetPointLatLng] = useState(null);
   const [carParkingLatLng, setCarParkingLatLng] = useState(null);
   const [taxiLatLng, setTaxiLatLng] = useState(null);
-  const [meetingPoint,setMeetingPoint] = useState("");
+  const [meetingPoint, setMeetingPoint] = useState("");
   const [yachtLocationLink, setyachtLocationLink] = useState("");
-  const [carParking,setcarParking] = useState("")
-  const [taxiDropOff,settaxiDropOff] = useState("")
+  const [carParking, setcarParking] = useState("")
+  const [taxiDropOff, settaxiDropOff] = useState("")
   const [notes, setNotes] = useState('');
   const [flag, setFlag] = useState('');
   const [crewLanguage, setCrewLanguage] = useState('');
@@ -64,6 +65,9 @@ const AddBoatGlobal = () => {
   const [nyStatusChecked, setNyStatusChecked] = useState(false);
   const [selectedYacht, setSelectedYacht] = useState({})
   const [debuggingObject, setDebuggingObject] = useState({})
+  const [cities, setCities] = useState([]);
+  const [isCitiesLoading, setIsCitiesLoading] = useState(true);
+
   const selectedSchema =
     yachtsType === "yachts" ? zodSchemaRegularYachts : yachtsType === "f1yachts" ? zodSchemaf1Yachts : zodSchemaEmpty;
   const navigate = useNavigate();
@@ -76,6 +80,7 @@ const AddBoatGlobal = () => {
     defaultValues: {
       status: true,
       user_id: '1',
+      location: '',
     }
   });
   const watchedValues = watch(); // Watches all form fields
@@ -89,14 +94,14 @@ const AddBoatGlobal = () => {
 
     try {
       let data;
-      const response = await getSingleBoatById(id,yachtsType == "f1yachts" ? "f1yachts" : "regular");
+      const response = await getSingleBoatById(id, yachtsType == "f1yachts" ? "f1yachts" : "regular");
       data = response?.find(item => item.yacht && item.yacht.id.toString() == id);
-    
+
       setSelectedYacht(data);
       reset(yachtData(data));
-    
+
       const updates = regularYachtsStatesUpdates(data);
-    
+
       if (updates?.locationLatLng) setLocationLatLng(updates?.locationLatLng);
       if (updates?.meetPointLatLng) setMeetPointLatLng(updates?.meetPointLatLng);
       if (updates?.carParkingLatLng) setCarParkingLatLng(updates?.carParkingLatLng);
@@ -136,13 +141,13 @@ const AddBoatGlobal = () => {
       let data;
       // const response = await getSingleF1BoatById(id);
       // data = response;
-      const response = await getSingleBoatById(id,yachtsType == "f1yachts" ? "f1yachts" : "regular");
+      const response = await getSingleBoatById(id, yachtsType == "f1yachts" ? "f1yachts" : "regular");
       data = response?.find(item => item.yacht && item.yacht.id.toString() == id);
-            setSelectedYacht(data);
+      setSelectedYacht(data);
       reset(f1yachtData(data));
-    
+
       const updates = f1YachtsStatesUpdates(data);
-    
+
       if (updates?.locationLatLng) setLocationLatLng(updates?.locationLatLng);
       if (updates?.meetPointLatLng) setMeetPointLatLng(updates?.meetPointLatLng);
       if (updates?.carParkingLatLng) setCarParkingLatLng(updates?.carParkingLatLng);
@@ -233,15 +238,15 @@ const AddBoatGlobal = () => {
       try {
         const response = await axios.get('https://api.takeoffyachts.com/yacht/food/');
         if (response?.data?.error_code === 'pass') {
-          const categories = ['extra', 'food', 'sport','misc'];
+          const categories = ['extra', 'food', 'sport', 'misc'];
           const allOptions = [];
-          
+
           categories.forEach(category => {
             if (Array.isArray(response.data[category])) {
               allOptions.push(...response.data[category]);
             }
           });
-          
+
           setFoodOptions(allOptions);
         }
       } catch (error) {
@@ -266,25 +271,25 @@ const AddBoatGlobal = () => {
     // fetchBrands();
   }, []);
 
-  const handleLocationSelect = useCallback((newLocation,type) => {
+  const handleLocationSelect = useCallback((newLocation, type) => {
     // console.log("type",type,newLocation)
-    if(type == "yachtLocation"){
+    if (type == "yachtLocation") {
       let url = `https://www.google.com/maps/search/?api=1&query=${newLocation?.lat},${newLocation?.lng}`
       setLocationLatLng(newLocation);
       setyachtLocationLink(url)
-    }else if(type == "meetingPoint"){
+    } else if (type == "meetingPoint") {
       let url = `https://www.google.com/maps/search/?api=1&query=${newLocation?.lat},${newLocation?.lng}`
       setMeetPointLatLng(newLocation);
       setMeetingPoint(url)
-    }else if(type == "carParking"){
+    } else if (type == "carParking") {
       let url = `https://www.google.com/maps/search/?api=1&query=${newLocation?.lat},${newLocation?.lng}`
       setCarParkingLatLng(newLocation);
       setcarParking(url)
-    }else if(type == "taxiDropOff"){
+    } else if (type == "taxiDropOff") {
       let url = `https://www.google.com/maps/search/?api=1&query=${newLocation?.lat},${newLocation?.lng}`
       setTaxiLatLng(newLocation);
       settaxiDropOff(url)
-    }else{
+    } else {
       setLocationLatLng(newLocation);
     }
   }, []);
@@ -372,8 +377,8 @@ const AddBoatGlobal = () => {
         const availability = {
           // data: now.toISOString().split('T')[0],
           // time: now.toTimeString().split(' ')[0]
-          from:fromDate,
-          to:toDate
+          from: fromDate,
+          to: toDate
         };
         formData.append('availability', JSON.stringify(availability));
       }
@@ -395,8 +400,8 @@ const AddBoatGlobal = () => {
         formData.append('ny_firework', data.ny_firework);
 
         const new_availability = {
-          from:data?.ny_availability_from,
-          to:data?.ny_availability_to
+          from: data?.ny_availability_from,
+          to: data?.ny_availability_to
         };
         const formattedFrom = format(parse(new_availability.from, 'HH:mm', new Date()), 'HH:mm:ss');
         const formattedTo = format(parse(new_availability.to, 'HH:mm', new Date()), 'HH:mm:ss');
@@ -410,7 +415,7 @@ const AddBoatGlobal = () => {
       //   to: data?.ny_availability?.to,
       // };
       // formData.set('ny_availability', JSON.stringify(ny_availability));///remove
-       //locationLatLng
+      //locationLatLng
       formData.append('latitude', locationLatLng ? locationLatLng.lat : 25.180775);
       formData.append('longitude', locationLatLng ? locationLatLng.lng : 55.336947);
       formData.append('location_url', yachtLocationLink);
@@ -422,7 +427,7 @@ const AddBoatGlobal = () => {
 
       // taxiDropOff
       formData.append('taxi_drop_off_link', taxiDropOff);
-    
+
       if (mainImage?.file instanceof File) {
         formData.append('yacht_image', mainImage.file);
       }
@@ -430,7 +435,7 @@ const AddBoatGlobal = () => {
       // Append additional images
       for (let i = 0; i < 20; i++) {
         const img = additionalImages[i];
-      
+
         if (img?.file instanceof File) {
           formData.append(`image${i + 1}`, img.file);
         } else if (img?.isFromApi && img.url) {
@@ -455,7 +460,7 @@ const AddBoatGlobal = () => {
       // formData.append('food_price', foodPrice);
       // formData.append('brand_id', selectedBrand);
       formData.append('food_name', JSON.stringify(selectedFoodOptions));
-     
+
       // console.log("FormData contents:");
       // for (let pair of formData.entries()) {
       //   console.log(`${pair[0]}:`, pair[1]);
@@ -597,7 +602,7 @@ const AddBoatGlobal = () => {
         imageErrors.forEach(error => toast.error(error));
         return;
       }
-       
+
 
       if (data.ny_status) {
         if (!data.ny_price) {
@@ -617,14 +622,14 @@ const AddBoatGlobal = () => {
       setLoading(true);
       const formData = new FormData();
 
-      if (!isEditMode ||  isEditMode) {
+      if (!isEditMode || isEditMode) {
         // Current date and time for availability
         const now = new Date();
         const availability = {
           // data: now.toISOString().split('T')[0],
           // time: now.toTimeString().split(' ')[0]
-          from:fromDate,
-          to:toDate
+          from: fromDate,
+          to: toDate
         };
         formData.append('availability', JSON.stringify(availability));
       }
@@ -640,22 +645,22 @@ const AddBoatGlobal = () => {
 
       // Append ny_ keys only once
 
-       formData.append('ny_status', false);
+      formData.append('ny_status', false);
       // const ny_availability = {///remove
       //   from: data?.ny_availability?.from,
       //   to: data?.ny_availability?.to,
       // };
       // formData.set('ny_availability', JSON.stringify(ny_availability));///remove
-       //locationLatLng
-       formData.append('latitude', locationLatLng ? locationLatLng.lat : 25.180775);
-       formData.append('longitude', locationLatLng ? locationLatLng.lng : 55.336947);
-       formData.append('location_url', yachtLocationLink);
-       // meetingPoint
-       formData.append('meeting_point_link', meetingPoint);
-       // carParking
-       formData.append('car_parking_link', carParking);
-       // taxiDropOff
-       formData.append('taxi_drop_off_link', taxiDropOff);
+      //locationLatLng
+      formData.append('latitude', locationLatLng ? locationLatLng.lat : 25.180775);
+      formData.append('longitude', locationLatLng ? locationLatLng.lng : 55.336947);
+      formData.append('location_url', yachtLocationLink);
+      // meetingPoint
+      formData.append('meeting_point_link', meetingPoint);
+      // carParking
+      formData.append('car_parking_link', carParking);
+      // taxiDropOff
+      formData.append('taxi_drop_off_link', taxiDropOff);
 
 
       if (mainImage?.file instanceof File) {
@@ -665,7 +670,7 @@ const AddBoatGlobal = () => {
       // Append additional images
       for (let i = 0; i < 20; i++) {
         const img = additionalImages[i];
-      
+
         if (img?.file instanceof File) {
           formData.append(`image${i + 1}`, img.file);
         } else if (img?.isFromApi && img.url) {
@@ -690,7 +695,7 @@ const AddBoatGlobal = () => {
       // formData.append('food_price', foodPrice);
       // formData.append('brand_id', selectedBrand);
       formData.append('food_name', JSON.stringify(selectedFoodOptions));
-     
+
       // console.log("FormData contents:");
       // for (let pair of formData.entries()) {
       //   console.log(`${pair[0]}:`, pair[1]);
@@ -785,7 +790,31 @@ const AddBoatGlobal = () => {
       return true;
     });
 
-    setAdditionalImages([...additionalImages,...validFiles.slice(0, 20)]);
+    setAdditionalImages([...additionalImages, ...validFiles.slice(0, 20)]);
+  }, []);
+
+  // Fetch cities from City API
+  useEffect(() => {
+    const fetchCities = async () => {
+      try {
+        setIsCitiesLoading(true);
+        const response = await fetch(`${BASE_URL}/yacht/city/`);
+        const data = await response.json();
+
+        if (data.error_code === 'pass') {
+          setCities(data.data);
+        } else {
+          console.error('Failed to fetch cities:', data.error);
+        }
+      } catch (error) {
+        console.error('Error fetching cities:', error);
+        toast.error('Failed to fetch cities');
+      } finally {
+        setIsCitiesLoading(false);
+      }
+    };
+
+    fetchCities();
   }, []);
   //test
   // useEffect(() => {
@@ -811,7 +840,7 @@ const AddBoatGlobal = () => {
   //     carParking,
   //     yachtLocationLink
   //   };
-  
+
   //   setDebuggingObject((prev) => {
   //     const hasChanged = JSON.stringify(prev) !== JSON.stringify(newData);
   //     if (hasChanged) {
@@ -828,7 +857,7 @@ const AddBoatGlobal = () => {
   //   yachtLocationLink,
   //   carParking
   // ]);
-  
+
 
   // useEffect(() => {
   //   // console.log("Form values changed:", watchedValues);
@@ -858,7 +887,7 @@ const AddBoatGlobal = () => {
 
         <form onSubmit={handleSubmit(yachtsType === "f1yachts" ? handleSubmitf1Yachts : yachtsType === "yachts" ? handleSubmitYachts : "")} className=" ">
           {/* <div className="grid grid-cols-1 md:grid-cols-2 p-6  gap-6"> */}
-            {/* <div>
+          {/* <div>
               <label htmlFor="brand_id">Brand</label>
               <div className="relative">
                 <button
@@ -885,28 +914,44 @@ const AddBoatGlobal = () => {
                 )}
               </div>
             </div> */}
-            {/* <div>
+          {/* <div>
               <label htmlFor="title">Title</label>
               <Input className='rounded-lg' {...register('title')} error={!!errors.title} />
             </div> */}
           {/* </div> */}
           <div className="grid grid-cols-1 md:grid-cols-2 p-6  gap-6">
-          <div>
+            <div>
               <label htmlFor="name">Name</label>
               <Input className='rounded-lg' {...register('name')} error={!!errors.name} />
             </div>
             <div>
               <label htmlFor="location">Location</label>
-              <Input className='rounded-lg' {...register('location')} error={!!errors.location} />
+              {/* <Input className='rounded-lg' {...register('location')} error={!!errors.location} /> */}
+              <select
+                {...register("location")}
+                error={!!errors.location}
+                className={`w-full border rounded-lg p-2 border-gray-300 focus:ring-1 focus:ring-[#BEA355] focus:outline-none`}
+              >
+                <option disabled  value="">Select Location</option>
+                {cities?.length >0 && cities?.map((city,index) => {
+                  return (
+                    <option key={index} value={city?.name}>{city?.name}</option>
+                  )
+                })}
+
+
+
+
+              </select>
             </div>
-            <div>
+            {/* <div>
               <label htmlFor="min_price">Min Price</label>
               <Input className='rounded-lg' type="number" step="any" {...register('min_price')} error={!!errors.min_price} />
             </div>
             <div>
               <label htmlFor="max_price">Max Price</label>
               <Input className='rounded-lg' type="number" step="any" {...register('max_price')} error={!!errors.max_price} />
-            </div>
+            </div> */}
             <div>
               <label htmlFor="guest">Guest Capacity</label>
               <Input className='rounded-lg' type="number" step="any" {...register('guest')} error={!!errors.guest} />
@@ -915,11 +960,11 @@ const AddBoatGlobal = () => {
               <label htmlFor="cancel_time_in_hour">Cancel Time (hours)</label>
               <Input className='rounded-lg' type="number" step="any" {...register('cancel_time_in_hour')} error={!!errors.cancel_time_in_hour} />
             </div>
-            {yachtsType == "yachts" &&  <div>
+            {yachtsType == "yachts" && <div>
               <label htmlFor="duration_hour">Duration (hours)</label>
               <Input className='rounded-lg' type="number" step="any" {...register('duration_hour')} error={!!errors.duration_hour} />
             </div>}
-           
+
             {/* <div>
               <label htmlFor="duration_minutes">Duration (minutes)</label>
               <Input className='rounded-lg' type="number" step="any" {...register('duration_minutes')} error={!!errors.duration_minutes} />
@@ -940,14 +985,14 @@ const AddBoatGlobal = () => {
               <label htmlFor="per_day_price">Per Day Price</label>
               <Input className='rounded-lg' type="number" step="any" {...register('per_day_price')} error={!!errors.per_day_price} />
             </div>
-            {yachtsType == "yachts" &&     <div>
+            {yachtsType == "yachts" && <div>
               <label htmlFor="per_hour_price">Per Hour Price</label>
               <Input className='rounded-lg' type="number" step="any" {...register('per_hour_price')} error={!!errors.per_hour_price} />
             </div>}
-         
+
             <div>
               <label htmlFor="length">Length</label>
-              <Input className='rounded-lg'  type="number" step="any" {...register('length')} error={!!errors.length} />
+              <Input className='rounded-lg' type="number" step="any" {...register('length')} error={!!errors.length} />
               {errors.length && <p className="text-red-500 text-sm">{errors.length.message}</p>}
 
             </div>
@@ -964,7 +1009,7 @@ const AddBoatGlobal = () => {
               <label htmlFor="crew_member">Crew Member</label>
               <Input className='rounded-lg' {...register('crew_member')} error={!!errors.crew_member} />
             </div>
-            {yachtsType == "yachts"  && <div className='flex items-center gap-2'>
+            {yachtsType == "yachts" && <div className='flex items-center gap-2'>
               <label htmlFor="ny_status">New Year Status</label>
               <input
                 type="checkbox"
@@ -977,7 +1022,7 @@ const AddBoatGlobal = () => {
               />
             </div>}
 
-            {watchedValues?.ny_status &&  yachtsType == "yachts"  && (
+            {watchedValues?.ny_status && yachtsType == "yachts" && (
               <>
                 <div>
                   <label htmlFor="ny_price">New Year Price</label>
@@ -1009,10 +1054,10 @@ const AddBoatGlobal = () => {
                 <div>
                   <label htmlFor="ny_inclusion" className="block text-sm font-medium text-gray-700 mb-2">New Year Inclusion</label>
                   <div
-                   className="grid grid-cols-2 md:grid-cols-3 gap-2"
+                    className="grid grid-cols-2 md:grid-cols-3 gap-2"
 
-                
-                   >
+
+                  >
                     {inclusions?.map((inc) => (
                       <button
                         key={inc.id}
@@ -1046,7 +1091,7 @@ const AddBoatGlobal = () => {
               <label className="block text-sm font-medium text-gray-700 mb-2">Meeting Point</label>
               <div className="h-[450px] w-full overflow-hidden">
                 <MapPicker
-                    onLocationSelect={(newLocation) => handleLocationSelect(newLocation, "meetingPoint")}
+                  onLocationSelect={(newLocation) => handleLocationSelect(newLocation, "meetingPoint")}
                   initialLocation={meetPointLatLng}
                 />
               </div>
@@ -1061,13 +1106,13 @@ const AddBoatGlobal = () => {
                   </div>
                 </div>
               )}
-            
+
             </div>
             <div className="col-span- mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">Car Parking</label>
               <div className="h-[450px] w-full overflow-hidden">
                 <MapPicker
-                    onLocationSelect={(newLocation) => handleLocationSelect(newLocation, "carParking")}
+                  onLocationSelect={(newLocation) => handleLocationSelect(newLocation, "carParking")}
                   initialLocation={carParkingLatLng}
                 />
               </div>
@@ -1082,13 +1127,13 @@ const AddBoatGlobal = () => {
                   </div>
                 </div>
               )}
-            
+
             </div>
             <div className="col-span- mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">Taxi Drop Off</label>
               <div className="h-[450px] w-full overflow-hidden">
                 <MapPicker
-                    onLocationSelect={(newLocation) => handleLocationSelect(newLocation, "taxiDropOff")}
+                  onLocationSelect={(newLocation) => handleLocationSelect(newLocation, "taxiDropOff")}
                   initialLocation={taxiLatLng}
                 />
               </div>
@@ -1103,14 +1148,14 @@ const AddBoatGlobal = () => {
                   </div>
                 </div>
               )}
-            
+
             </div>
 
             <div className="col-span- mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">Yacht Location</label>
               <div className="h-[450px] w-full overflow-hidden">
                 <MapPicker
-                    onLocationSelect={(newLocation) => handleLocationSelect(newLocation, "yachtLocation")}
+                  onLocationSelect={(newLocation) => handleLocationSelect(newLocation, "yachtLocation")}
                   initialLocation={locationLatLng}
                 />
               </div>
@@ -1138,13 +1183,13 @@ const AddBoatGlobal = () => {
             <div>
               <label htmlFor="from_date">From Date</label>
               <Input className='rounded-lg' type="date"
-              value={fromDate ? fromDate.split('T')[0] : ''} 
+                value={fromDate ? fromDate.split('T')[0] : ''}
                 onChange={(e) => setFromDate(e.target.value)} />
             </div>
             <div>
               <label htmlFor="to_date">To Date</label>
               <Input className='rounded-lg' type="date"
-              value={toDate ? toDate.split('T')[0] : ''} 
+                value={toDate ? toDate.split('T')[0] : ''}
 
                 onChange={(e) => setToDate(e.target.value)} />
             </div>
@@ -1156,12 +1201,12 @@ const AddBoatGlobal = () => {
             <div>
               <label htmlFor="features" className="block text-sm font-medium text-gray-700 mb-2">Features</label>
               <div
-                  //  className={`rounded-lg object-cover  relative w-[80px] h-[80px] sm:w-[80px] md:w-[120px]   rounded-lg 
-                  //   hover:opacity-100 
-                  //  cursor-pointer opacity-100`}
-            
-               className="grid grid-cols-2 md:grid-cols-3 gap-2"
-               >
+                //  className={`rounded-lg object-cover  relative w-[80px] h-[80px] sm:w-[80px] md:w-[120px]   rounded-lg 
+                //   hover:opacity-100 
+                //  cursor-pointer opacity-100`}
+
+                className="grid grid-cols-2 md:grid-cols-3 gap-2"
+              >
                 {featureList?.map((feature, index) => (
                   <button
                     key={index}
@@ -1204,12 +1249,12 @@ const AddBoatGlobal = () => {
                     {inc.name}
                   </button>
                 ))}
-       
+
 
               </div>
             </div>
 
-            {yachtsType == "yachts" ?  <div>
+            {yachtsType == "yachts" ? <div>
               <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">Category</label>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                 {categoriesList.map((category, index) => (
@@ -1233,7 +1278,7 @@ const AddBoatGlobal = () => {
                   </button>
                 ))}
               </div>
-            </div> : yachtsType == "f1yachts" ?  <div>
+            </div> : yachtsType == "f1yachts" ? <div>
               <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">Category</label>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                 {categoriesList.map((category, index) => (
@@ -1257,8 +1302,8 @@ const AddBoatGlobal = () => {
                   </button>
                 ))}
               </div>
-            </div> :""}
-           
+            </div> : ""}
+
             <div>
               <label htmlFor="food_options" className="block text-sm font-medium text-gray-700 mb-2">Food Options</label>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
@@ -1297,33 +1342,33 @@ const AddBoatGlobal = () => {
           </button>
         </form>
         <div className="grid grid-cols-1 md:grid-cols-2 p-6  gap-6">
-            <div className="">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Main Yacht Image (Required)</label>
-              {/* <FileUploadOld
+          <div className="">
+            <label className="block text-sm font-medium text-gray-700 mb-2">Main Yacht Image (Required)</label>
+            {/* <FileUploadOld
                 onFilesChange={handleMainImageChange}
                 maxFiles={1}
                 acceptedFileTypes="image/*"
                 containerClassName="border border-gray-200 rounded-lg"
               /> */}
-                 <FileUploadSingle
-                onFilesChange={handleMainImageChange}
-                maxFiles={1}
-                acceptedFileTypes="image/*"
-                containerClassName="border border-gray-200 rounded-lg"
-                apiImage={mainImage}
-              />
-            </div>
-            <div className="">
-              <label className="block text-sm font-medium text-gray-700 mb-2">More Yacht Images</label>
-              <FileUpload
-                onFilesChange={handleAdditionalImagesChange}
-                maxFiles={20}
-                acceptedFileTypes="image/*"
-                containerClassName="border border-gray-200 rounded-lg"
-                apiImages={additionalImages} 
-              />
-            </div>
+            <FileUploadSingle
+              onFilesChange={handleMainImageChange}
+              maxFiles={1}
+              acceptedFileTypes="image/*"
+              containerClassName="border border-gray-200 rounded-lg"
+              apiImage={mainImage}
+            />
           </div>
+          <div className="">
+            <label className="block text-sm font-medium text-gray-700 mb-2">More Yacht Images</label>
+            <FileUpload
+              onFilesChange={handleAdditionalImagesChange}
+              maxFiles={20}
+              acceptedFileTypes="image/*"
+              containerClassName="border border-gray-200 rounded-lg"
+              apiImages={additionalImages}
+            />
+          </div>
+        </div>
       </Card>
     </div>
   );

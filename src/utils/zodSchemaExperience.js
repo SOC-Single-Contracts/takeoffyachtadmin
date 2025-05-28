@@ -11,7 +11,7 @@ export const zodSchemaRegularExperiences = z.object({
   guest: z.any().optional(),
   cancel_time_in_hour: z.any().optional(),
   status: z.any().optional(),
-  duration_hour: z.any().optional(),
+  min_duration_hour: z.any().optional(),
   // duration_minutes: z.any().optional(),
   number_of_cabin: z.any().optional(),
   capacity: z.any().optional(),

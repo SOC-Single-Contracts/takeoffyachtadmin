@@ -28,6 +28,7 @@ import { eventData, eventStatesUpdates, packageData, packageStatesUpdates } from
 
 
 
+const BASE_URL = import.meta.env.VITE_API_URL || 'https://api.takeoffyachts.com';
 
 const AddEventPackageGlobal = ({ yachtsType }) => {
   const [loading, setLoading] = useState(false);
@@ -73,7 +74,8 @@ const AddEventPackageGlobal = ({ yachtsType }) => {
   const [debuggingObject, setDebuggingObject] = useState({})
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
-
+  const [cities, setCities] = useState([]);
+  const [isCitiesLoading, setIsCitiesLoading] = useState(true);
   const toggleDropdown = () => setIsOpen(!isOpen);
   const selectedSchema =
     yachtsType === "event" ? zodSchemaEvent : yachtsType === "package" ? zodSchemaPackage : zodSchemaEmpty;
@@ -871,6 +873,31 @@ const AddEventPackageGlobal = ({ yachtsType }) => {
 
     setAdditionalImages([...additionalImages, ...validFiles.slice(0, 20)]);
   }, []);
+    // Fetch cities from City API
+    useEffect(() => {
+      const fetchCities = async () => {
+        try {
+          setIsCitiesLoading(true);
+          const response = await fetch(`${BASE_URL}/yacht/city/`);
+          const data = await response.json();
+  
+          if (data.error_code === 'pass') {
+            setCities(data.data);
+          } else {
+            console.error('Failed to fetch cities:', data.error);
+          }
+        } catch (error) {
+          console.error('Error fetching cities:', error);
+          toast.error('Failed to fetch cities');
+        } finally {
+          setIsCitiesLoading(false);
+        }
+      };
+  
+      if(yachtsType === "event"){
+        fetchCities();
+      }
+    }, []);
   //test
   // useEffect(() => {
   //   const newData = {
@@ -1023,7 +1050,23 @@ const AddEventPackageGlobal = ({ yachtsType }) => {
 
               {yachtsType == "event" && <div>
                 <label htmlFor="location">Location</label>
-                <Input className='rounded-lg' {...register('location')} error={!!errors.location} />
+                {/* <Input className='rounded-lg' {...register('location')} error={!!errors.location} /> */}
+                <select
+                {...register("location")}
+                error={!!errors.location}
+                className={`w-full border rounded-lg p-2 border-gray-300 focus:ring-1 focus:ring-[#BEA355] focus:outline-none`}
+              >
+                <option disabled  value="">Select Location</option>
+                {cities?.length >0 && cities?.map((city,index) => {
+                  return (
+                    <option key={index} value={city?.name}>{city?.name}</option>
+                  )
+                })}
+
+
+
+
+              </select>
               </div>}
 
               {/* <div>

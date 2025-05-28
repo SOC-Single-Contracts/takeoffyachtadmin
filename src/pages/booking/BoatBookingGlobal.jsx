@@ -118,7 +118,7 @@ const BoatBookingGlobal
       </div>
     );
 
-    const handleBookingAction = async (action, bookingId,userId) => {
+    const handleBookingAction = async (action, bookingId, userId) => {
       // console.log('Action:', action, 'Booking ID:', bookingId);
       if (action === "approved") {
         setpaymentApproveLoading(true);
@@ -137,7 +137,7 @@ const BoatBookingGlobal
             fetchBookings();
             toast.success(`Booking has been approved successfully`);
 
-          }else{
+          } else {
             throw new Error("some thing went wrong");
           }
         } catch (err) {
@@ -163,7 +163,7 @@ const BoatBookingGlobal
             fetchBookings();
             toast.success(`Booking has been cancelled successfully`);
 
-          }else{
+          } else {
             throw new Error("some thing went wrong");
           }
         } catch (err) {
@@ -267,7 +267,7 @@ const BoatBookingGlobal
                               <div className="text-sm text-gray-500">{yacht?.location}</div>
                             </div>
                           </td>
-                          {yachtsType == "yachts" ? <td className="p-4">{formatDateWithTimes(selectedDate,startingTime)}</td> : yachtsType == "f1yachts" ? <td className="p-4">{formatDateWithTimes(booking?.start_date,startingTime)}</td> : ""}
+                          {yachtsType == "yachts" ? <td className="p-4">{formatDateWithTimes(selectedDate, startingTime)}</td> : yachtsType == "f1yachts" ? <td className="p-4">{formatDateWithTimes(booking?.start_date, startingTime)}</td> : ""}
 
 
                           {/* {yachtsType == "yachts" ? booking?.booking_type == "hourly" ? <td className="p-4">{booking?.duration_hour} hours</td> : <td className="p-4">N/A</td> : yachtsType == "f1yachts" ? "" : ""} */}
@@ -403,11 +403,11 @@ const BoatBookingGlobal
                               {yachtsType == "yachts" ? <InfoRow
                                 icon={CalendarDaysIcon}
                                 label="Booking Date"
-                                value={formatDateWithTimes(selectedBooking?.booking?.selected_date,selectedBooking?.booking?.starting_time)}
+                                value={formatDateWithTimes(selectedBooking?.booking?.selected_date, selectedBooking?.booking?.starting_time)}
                               /> : yachtsType == "f1yachts" ? <InfoRow
                                 icon={CalendarDaysIcon}
                                 label="Booking Date"
-                                value={formatDateWithTimes(selectedBooking?.booking?.start_date,selectedBooking?.booking?.starting_time)}
+                                value={formatDateWithTimes(selectedBooking?.booking?.start_date, selectedBooking?.booking?.starting_time)}
                               /> : ""}
 
 
@@ -436,6 +436,20 @@ const BoatBookingGlobal
                                   icon={BiGlobeAlt}
                                   label="Country"
                                   value={selectedBooking?.booking?.country.toUpperCase()}
+                                />
+                              )}
+                              {selectedBooking?.booking?.email && (
+                                <InfoRow
+                                  icon={BiGlobeAlt}
+                                  label="Email"
+                                  value={selectedBooking?.booking?.email}
+                                />
+                              )}
+                              {selectedBooking?.booking?.full_name && (
+                                <InfoRow
+                                  icon={BiGlobeAlt}
+                                  label="Name"
+                                  value={selectedBooking?.booking?.full_name}
                                 />
                               )}
                               {selectedBooking?.booking?.message && (

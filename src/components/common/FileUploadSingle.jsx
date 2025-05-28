@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { formatFileSize } from "../../utils/helper";
 import LazyImage from "./ImagesUploader/LazyImage";
-import yachtImage from "../../assets/images/fycht.jpg"
+import yachtImage from "../../assets/images/LoadingGif.gif"
 
 const FileUploadSingle = ({
   onFilesChange,

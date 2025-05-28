@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardHeader, CardBody, CardFooter, Typography, Button, IconButton } from "@material-tailwind/react";
 import { Link } from 'react-router-dom';
-import { getAllBrands } from '../../services/api/brandService';
+import { getAllCities } from '../../services/api/cityService';
 
-const Brands = () => {
-  const [brands, setBrands] = useState([]);
+const Cities = () => {
+  const [Cities, setCities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -12,34 +12,34 @@ const Brands = () => {
 
 
   useEffect(() => {
-    fetchBrands();
+    fetchCities();
   }, []);
 
-  const fetchBrands = async () => {
+  const fetchCities = async () => {
     try {
       setLoading(true);
-      const data = await getAllBrands(token);
-      setBrands(data || []);
+      const data = await getAllCities(token);
+      setCities(data || []);
     } catch (error) {
-      console.error('Error fetching brands:', error);
-      setBrands([]);
+      console.error('Error fetching Cities:', error);
+      setCities([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const getCurrentPageBrands = () => {
+  const getCurrentPageCities = () => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    return brands.slice(startIndex, endIndex);
+    return Cities.slice(startIndex, endIndex);
   };
 
-  const totalPages = Math.ceil(brands.length / itemsPerPage);
+  const totalPages = Math.ceil(Cities.length / itemsPerPage);
 
 
   //test
 
-  // console.log("Brands data:", getCurrentPageBrands());
+  // console.log("Cities data:", getCurrentPageCities());
 
   return (
     <div className="p-6">
@@ -48,15 +48,15 @@ const Brands = () => {
           <div className="mb-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">
             <div>
               <Typography className='font-sora' variant="h3" color="blue-gray">
-                All Brands
+                All Cities
               </Typography>
               <Typography color="gray" className="mt-1 font-normal">
-                Manage your brands
+                Manage your Cities
               </Typography>
             </div>
-            <Link to="/brands/add">
+            <Link to="/cities/add">
               <Button className="flex items-center bg-[#BEA355] gap-3 rounded-full font-medium capitalize" size="md">
-                Add Brand
+                Add City
               </Button>
             </Link>
           </div>
@@ -74,16 +74,16 @@ const Brands = () => {
                 <tr>
                   <td colSpan="2" className="p-4 text-center">Loading...</td>
                 </tr>
-              ) : brands.length === 0 ? (
+              ) : Cities.length === 0 ? (
                 <tr>
-                  <td colSpan="2" className="p-4 text-center">No brands found</td>
+                  <td colSpan="2" className="p-4 text-center">No Cities found</td>
                 </tr>
               ) : (
-                getCurrentPageBrands().map((brand) => (
+                getCurrentPageCities().map((brand) => (
                   <tr key={brand.id} className="hover:bg-gray-50">
                     <td className="p-4">{brand.name}</td>
                     <td className="p-4">
-                      <Link to={`/brands/edit/${brand.id}`}> 
+                      <Link to={`/cities/edit/${brand.id}`}> 
                         <Button variant="text" className="text-[#BEA355]">Edit</Button>
                       </Link>
                     </td>
@@ -128,4 +128,4 @@ const Brands = () => {
   );
 };
 
-export default Brands;
+export default Cities;
