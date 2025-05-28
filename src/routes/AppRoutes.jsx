@@ -27,7 +27,7 @@ import AddNewYearBoat from "../components/boats/AddNewYearBoat";
 
 // Brand Components
 import Brands from "../components/brands/Brands";
-import AddBrand from "../components/brands/AddBrand";
+import { AddBrand } from "../components/brands/AddBrand";
 
 // Category Components
 import Categories from "../pages/categories/Categories";
@@ -82,6 +82,13 @@ import AddPackage from "../components/events/AddPackage.jsx";
 import EditPackage from "../components/events/EditPackage.jsx";
 import EditEvent from "../components/events/EditEvent.jsx";
 import EditBlogs from "../pages/blogs/EditBlogs.jsx";
+import { EditBrand } from "../components/brands/EditBrand.jsx";
+import Cities from "../components/cities/Cities.jsx";
+import { AddCity } from "../components/cities/AddCity.jsx";
+import { EditCity } from "../components/cities/EditCity.jsx";
+import Discounts from "../components/discounts/Discounts.jsx";
+import { AddDiscount } from "../components/discounts/AddDiscount.jsx";
+import { EditDiscount } from "../components/discounts/EditDiscount.jsx";
 
 const AppRoutes = () => {
   return (
@@ -112,7 +119,7 @@ const AppRoutes = () => {
           <Route path="inclusions" element={<Inclusions />} />
           <Route path="specifications" element={<Specifications />} />
           <Route path="packages" element={<PackageList />} />
-          
+
           {/* Boats Routes */}
           <Route path="boats/yachts" element={<Boats />} />
           <Route path="boats/yachts/add" element={<AddBoat />} />
@@ -123,20 +130,31 @@ const AppRoutes = () => {
           <Route path="boats/newyear" element={<NewYearBoats />} />
           <Route path="boats/newyear/add" element={<AddNewYearBoat />} />
           <Route path="boats/newyear/edit/:id" element={<AddNewYearBoat />} />
-          
+
           {/* Brands Routes */}
           <Route path="brands" element={<Brands />} />
           <Route path="brands/add" element={<AddBrand />} />
-          <Route path="brands/edit/:id" element={<AddBrand />} />
-          
+          <Route path="brands/edit/:id" element={<EditBrand />} />
+
+
+          {/* Discount Routes */}
+          <Route path="discounts" element={<Discounts />} />
+          <Route path="discounts/add" element={<AddDiscount />} />
+          <Route path="discounts/edit/:id" element={<EditDiscount />} />
+
+          {/* cities Routes */}
+          <Route path="cities" element={<Cities />} />
+          <Route path="cities/add" element={<AddCity />} />
+          <Route path="cities/edit/:id" element={<EditCity />} />
+
           {/* Categories Routes */}
           <Route path="categories" element={<Categories />} />
           <Route path="categories/add" element={<AddCategory />} />
-          
+
           {/* Features Routes */}
           <Route path="features" element={<Features />} />
           <Route path="features/add" element={<AddFeature />} />
-          
+
           {/* Food Menu Routes */}
           <Route path="extras/food-and-beverages" element={<FoodMenu />} />
           <Route path="extras/water-sports" element={<WaterSports />} />
@@ -144,21 +162,21 @@ const AppRoutes = () => {
           <Route path="extras/extra" element={<Extra />} />
           <Route path="extras/add" element={<AddExtras />} />
           <Route path="extras" element={<AllExtras />} />
-          
+
           {/* Merchants Routes */}
           <Route path="merchants" element={<Merchants />} />
           <Route path="merchants/add" element={<AddMerchant />} />
-          
+
           {/* Blog Routes */}
           <Route path="blogs" element={<AllBlogs />} />
           <Route path="blogs/add" element={<AddBlogs />} />
           <Route path="blogs/edit/:id" element={<EditBlogs />} />
-          
+
           {/* Testimonial Routes */}
           <Route path="testimonials" element={<TestimonialList />} />
           <Route path="testimonials/add" element={<AddEditTestimonial />} />
           <Route path="testimonials/edit/:id" element={<AddEditTestimonial />} />
-          
+
           {/* Experience Routes */}
           <Route path="experiences/regular-exp" element={<Experiences />} />
           <Route path="experiences/regular-exp/add" element={<AddExperience />} />
@@ -168,7 +186,7 @@ const AppRoutes = () => {
           <Route path="experiences/f1-exp/edit/:id" element={<AddExperience />} /> */}
           <Route path="experience-bookings/regular-exp" element={<BookingRegularExperience />} />
 
-          
+
           {/* Event Routes */}
           <Route path="events" element={<AllEvents />} />
           <Route path="events/add" element={<AddEvent />} />
@@ -179,7 +197,7 @@ const AppRoutes = () => {
           <Route path="events-bookings/all-events" element={<EventBookings />} />
 
 
-          
+
           {/* Other Routes */}
           <Route path="chat" element={<Inbox />} />
           <Route path="users" element={<Users />} />

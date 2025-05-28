@@ -1,6 +1,6 @@
 import AddBrandGlobal from "./AddBrandGlobal";
 
-export const AddBrand = () => {    
+export const EditBrand = () => {    
     return (
         <AddBrandGlobal/>
   

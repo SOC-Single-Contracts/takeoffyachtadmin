@@ -1,7 +1,7 @@
 import axios from 'axios';
-const API_URL = 'https://api.takeoffyachts.com/yacht/brands/';
+const API_URL = 'https://api.takeoffyachts.com/yacht/city/';
 
-export const getAllBrands = async (token) => {
+export const getAllCities = async (token) => {
   try {
     const response = await axios.get(API_URL,{
       headers: {
@@ -14,20 +14,20 @@ export const getAllBrands = async (token) => {
   }
 };
 
-export const getBrand = async (id,token) => {
+export const getCity = async (id,token) => {
   try {
-    const brands = await getAllBrands(token);
-    const brand = brands.find(b => b.id === parseInt(id));
-    if (!brand) {
-      throw new Error('Brand not found');
+    const cities = await getAllCities(token);
+    const city = cities.find(b => b.id === parseInt(id));
+    if (!city) {
+      throw new Error('City not found');
     }
-    return brand;
+    return city;
   } catch (error) {
     throw error;
   }
 };
 
-export const addBrand = async (payload,token) => {
+export const addCity = async (payload,token) => {
   try {
     const response = await axios.post(API_URL,  payload ,{
       headers: {
@@ -40,9 +40,9 @@ export const addBrand = async (payload,token) => {
   }
 };
 
-export const updateBrand = async (brand_id, payload,token) => {
+export const updateCity = async (city_id, payload,token) => {
   try {
-    const response = await axios.put(`${API_URL}${brand_id}/`, payload,{
+    const response = await axios.put(`${API_URL}`, payload,{
       headers: {
         Authorization: `Bearer ${token}`, // Add your token here
       },

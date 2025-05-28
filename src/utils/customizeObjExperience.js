@@ -16,7 +16,7 @@ export const experienceData = (data) => {
         max_price:data?.experience?.max_price ?  String(data?.experience?.max_price) : "",
         guest: String(data?.experience?.guest) ?? "",
         cancel_time_in_hour: String(data?.experience?.cancel_time_in_hour) ?? "",
-        duration_hour: String(data?.experience?.duration_hour) ?? "",
+        min_duration_hour: String(data?.experience?.min_duration_hour) ?? "",
         // duration_minutes: String(data?.experience?.duration_minutes),
         number_of_cabin: String(data?.experience?.number_of_cabin) ?? "",
         capacity: String(data?.experience?.capacity) ?? "",

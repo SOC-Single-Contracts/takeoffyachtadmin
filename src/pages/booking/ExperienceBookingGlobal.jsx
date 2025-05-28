@@ -118,7 +118,7 @@ const ExperienceBookingGlobal
       </div>
     );
 
-    const handleBookingAction = async (action, bookingId,userId) => {
+    const handleBookingAction = async (action, bookingId, userId) => {
       // console.log('Action:', action, 'Booking ID:', bookingId);
       if (action === "approved") {
         setpaymentApproveLoading(true);
@@ -137,7 +137,7 @@ const ExperienceBookingGlobal
             fetchBookings();
             toast.success(`Booking has been approved successfully`);
 
-          }else{
+          } else {
             throw new Error("some thing went wrong");
           }
         } catch (err) {
@@ -163,7 +163,7 @@ const ExperienceBookingGlobal
             fetchBookings();
             toast.success(`Booking has been cancelled successfully`);
 
-          }else{
+          } else {
             throw new Error("some thing went wrong");
           }
         } catch (err) {
@@ -268,7 +268,7 @@ const ExperienceBookingGlobal
                               <div className="text-sm text-gray-500">{experience?.location}</div>
                             </div>
                           </td>
-                          {yachtsType == "regular-exp" ? <td className="p-4">{formatDateWithTimes(selectedDate,startingTime)}</td> : yachtsType == "f1-exp" ? <td className="p-4">{formatDate(booking?.start_date)}</td> : ""}
+                          {yachtsType == "regular-exp" ? <td className="p-4">{formatDateWithTimes(selectedDate, startingTime)}</td> : yachtsType == "f1-exp" ? <td className="p-4">{formatDate(booking?.start_date)}</td> : ""}
 
 
                           {/* {yachtsType == "regular-exp" ? booking?.booking_type == "hourly" ? <td className="p-4">{booking?.duration_hour} hours</td> : <td className="p-4">N/A</td> : yachtsType == "f1-exp" ? "" : ""} */}
@@ -404,7 +404,7 @@ const ExperienceBookingGlobal
                               {yachtsType == "regular-exp" ? <InfoRow
                                 icon={CalendarDaysIcon}
                                 label="Booking Date"
-                                value={formatDateWithTimes(selectedBooking?.booking?.selected_date,selectedBooking?.booking?.starting_time,selectedBooking?.booking.ending_time)}
+                                value={formatDateWithTimes(selectedBooking?.booking?.selected_date, selectedBooking?.booking?.starting_time, selectedBooking?.booking.ending_time)}
                               /> : yachtsType == "f1-exp" ? <InfoRow
                                 icon={CalendarDaysIcon}
                                 label="Booking Date"
@@ -437,6 +437,20 @@ const ExperienceBookingGlobal
                                   icon={BiGlobeAlt}
                                   label="Country"
                                   value={selectedBooking?.booking?.country.toUpperCase()}
+                                />
+                              )}
+                              {selectedBooking?.booking?.email && (
+                                <InfoRow
+                                  icon={BiGlobeAlt}
+                                  label="Email"
+                                  value={selectedBooking?.booking?.email}
+                                />
+                              )}
+                              {selectedBooking?.booking?.full_name && (
+                                <InfoRow
+                                  icon={BiGlobeAlt}
+                                  label="Name"
+                                  value={selectedBooking?.booking?.full_name}
                                 />
                               )}
                               {selectedBooking?.booking?.message && (

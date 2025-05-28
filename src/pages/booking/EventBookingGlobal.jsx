@@ -120,7 +120,7 @@ const EventBookingGlobal
       </div>
     );
 
-    const handleBookingAction = async (action, bookingId,userId) => {
+    const handleBookingAction = async (action, bookingId, userId) => {
       // console.log('Action:', action, 'Booking ID:', bookingId);
       if (action === "approved") {
         setpaymentApproveLoading(true);
@@ -139,7 +139,7 @@ const EventBookingGlobal
             fetchBookings();
             toast.success(`Booking has been approved successfully`);
 
-          }else{
+          } else {
             throw new Error("some thing went wrong");
           }
         } catch (err) {
@@ -165,7 +165,7 @@ const EventBookingGlobal
             fetchBookings();
             toast.success(`Booking has been cancelled successfully`);
 
-          }else{
+          } else {
             throw new Error("some thing went wrong");
           }
         } catch (err) {
@@ -253,10 +253,10 @@ const EventBookingGlobal
                       const isPending = item.booking[0]?.booking_status == "PENDING" ? true : false;
                       const isApproved = item.booking[0]?.booking_status == "APPROVED" ? true : false;
                       const isCancelled = item.booking[0]?.booking_status == "CANCELLED" ? true : false;
-                      const selectedDate = item.event[0]?.from_date;                      ;
+                      const selectedDate = item.event[0]?.from_date;;
                       const startingTime = item.event[0]?.start_time;
                       const endingTime = item.event[0]?.end_time;
-                      
+
 
                       return (
                         <tr
@@ -271,7 +271,7 @@ const EventBookingGlobal
                               <div className="text-sm text-gray-500">{event?.location}</div>
                             </div>
                           </td>
-                          {yachtsType == "all-events" ? <td className="p-4">{formatSchedule(selectedDate,startingTime,endingTime)}</td> : yachtsType == "f1-exp" ? <td className="p-4">{formatDate(booking?.start_date)}</td> : ""}
+                          {yachtsType == "all-events" ? <td className="p-4">{formatSchedule(selectedDate, startingTime, endingTime)}</td> : yachtsType == "f1-exp" ? <td className="p-4">{formatDate(booking?.start_date)}</td> : ""}
 
 
                           {/* {yachtsType == "all-events" ? booking?.booking_type == "hourly" ? <td className="p-4">{booking?.duration_hour} hours</td> : <td className="p-4">N/A</td> : yachtsType == "f1-exp" ? "" : ""} */}
@@ -407,7 +407,7 @@ const EventBookingGlobal
                               {yachtsType == "all-events" ? <InfoRow
                                 icon={CalendarDaysIcon}
                                 label="Booking Date"
-                                value={formatSchedule(selectedBooking?.event?.from_date,selectedBooking?.event?.start_time,selectedBooking?.event.end_time)}
+                                value={formatSchedule(selectedBooking?.event?.from_date, selectedBooking?.event?.start_time, selectedBooking?.event.end_time)}
                               /> : yachtsType == "f1-exp" ? <InfoRow
                                 icon={CalendarDaysIcon}
                                 label="Booking Date"
@@ -421,7 +421,7 @@ const EventBookingGlobal
                                 value={`${selectedBooking?.booking?.booking_type == "hourly" ? selectedBooking?.booking?.duration_hour : "date-range"} hours`}
                               /> : yachtsType == "f1-exp" ? "" : ""} */}
 
-{/* 
+                              {/* 
                               <InfoRow
                                 icon={UsersIcon}
                                 label="Number of Guests"
@@ -440,6 +440,20 @@ const EventBookingGlobal
                                   icon={BiGlobeAlt}
                                   label="Country"
                                   value={selectedBooking?.booking?.country.toUpperCase()}
+                                />
+                              )}
+                              {selectedBooking?.booking?.email && (
+                                <InfoRow
+                                  icon={BiGlobeAlt}
+                                  label="Email"
+                                  value={selectedBooking?.booking?.email}
+                                />
+                              )}
+                              {selectedBooking?.booking?.name && (
+                                <InfoRow
+                                  icon={BiGlobeAlt}
+                                  label="Name"
+                                  value={selectedBooking?.booking?.name}
                                 />
                               )}
                               {selectedBooking?.booking?.message && (

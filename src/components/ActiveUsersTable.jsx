@@ -1,29 +1,38 @@
 import React, { useState, useEffect } from "react";
-import {
-  Card,
-  CardHeader,
-  Typography,
-  CardBody,
-  CardFooter,
-  Button,
-  IconButton,
-} from "@material-tailwind/react";
+
 import { GoDotFill } from "react-icons/go";
 import avatar from "../assets/images/Avatar.png";
 import { getAllUsers } from '../services/api/userManagement';
 import { useNavigate } from "react-router-dom";
+import { Card, CardHeader, CardBody, CardFooter, Typography, Button, IconButton, Dialog, DialogHeader, DialogBody, Input } from "@material-tailwind/react";
+import { ArrowLeftIcon, ArrowRightIcon, FlagIcon, LocateIcon, PowerIcon, ShipIcon, TypeIcon } from "lucide-react";
+import { FaXmark } from "react-icons/fa6";
+
+const InfoRow = ({ label, value, icon }) => (
+  <div className="flex justify-between">
+    <span className="font-semibold">{label}:</span>
+    <span className="flex items-center">
+      {icon && <icon className="h-5 w-5 mr-2" />}
+      {value}
+    </span>
+  </div>
+);
 
 const ActiveUsersTable = ({ limit }) => {
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState([]);
+  const [allUsers, setAllUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = limit || 10;
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedYacht, setSelectedYacht] = useState(null);
+  const [query, setQuery] = useState('');
+  const [searchValue, setsearchValue] = useState('');
 
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
+
+
 
   const fetchUsers = async () => {
     try {
@@ -34,8 +43,10 @@ const ActiveUsersTable = ({ limit }) => {
         name: user.Username,
         email: user.Email,
         status: user.user_type === 'ADM' ? 'Admin' :
-          user.user_type === 'CLT' ? 'Client' : 'User'
+          user.user_type === 'CLT' ? 'Client' : 'User',
+        wallet: user?.wallet
       }));
+      setAllUsers(formattedUsers);
       setUsers(formattedUsers);
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -44,6 +55,15 @@ const ActiveUsersTable = ({ limit }) => {
     }
   };
 
+  const openModal = (yacht) => {
+    setSelectedYacht(yacht);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedYacht(null);
+  };
   const getStatusClass = (status) => {
     switch (status) {
       case 'Admin':
@@ -65,10 +85,46 @@ const ActiveUsersTable = ({ limit }) => {
 
   const totalPages = Math.ceil(users.length / itemsPerPage);
 
-//test
-//   useEffect(()=>{
-// console.log(getCurrentPageUsers()) 
-//   },[ getCurrentPageUsers()])
+  const handleFilterChange = () => {
+    const filtered = allUsers.filter((user) =>
+      user.name.toLowerCase().includes(searchValue.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchValue.toLowerCase())
+    );
+    setUsers(filtered);
+  };
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setsearchValue(query);
+    }, 500);
+
+    return () => {
+      clearTimeout(handler); // Clear the timeout if query changes before 500ms
+    };
+  }, [query]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+    if (searchValue) {
+      handleFilterChange();
+    } else if (!searchValue) {
+      setUsers(allUsers);
+    }
+  }, [searchValue]);
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  //test
+  //   useEffect(()=>{
+  // console.log(getCurrentPageUsers()) 
+  //   },[ getCurrentPageUsers()])
+  // console.log(selectedYacht)
+
+  // useEffect(()=>{
+  // console.log("searchValue",searchValue)
+  // },[searchValue])
 
   if (loading) {
     return (
@@ -95,6 +151,18 @@ const ActiveUsersTable = ({ limit }) => {
               </Typography>
             </div>
           </div>
+
+          <div className="grid p-3 grid-cols-1 md:grid-cols-2">
+            <div>
+              <Input
+                className='rounded-lg '
+                placeholder='Search'
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+              />
+            </div>
+          </div>
         </CardHeader>
         <CardBody className="overflow-auto px-0">
           <table className="w-full text-left border-collapse rounded-lg overflow-hidden shadow-sm bg-white">
@@ -111,6 +179,7 @@ const ActiveUsersTable = ({ limit }) => {
                 <tr
                   key={user.id}
                   className="hover:bg-[#BEA35514] hover:cursor-pointer"
+                  onClick={() => openModal(user)}
                 >
                   <td className="py-4 px-4 flex items-center gap-2">
                     <div className="w-8 h-8 bg-gray-200 rounded-full">
@@ -123,7 +192,7 @@ const ActiveUsersTable = ({ limit }) => {
                     <span
                       className={`flex items-center justify-center gap-1 w-fit px-3 py-1 rounded-full text-xs font-semibold ${getStatusClass(
                         user.status
-                      )}`} 
+                      )}`}
                     >
                       <GoDotFill />{user.status}
                     </span>
@@ -179,6 +248,70 @@ const ActiveUsersTable = ({ limit }) => {
           </Button>
         </CardFooter>
       </Card>
+      <Dialog
+        size="xxl"
+        open={isModalOpen}
+        handler={closeModal}
+        className="bg-white rounded-lg"
+      >
+        {selectedYacht && (
+          <>
+            <DialogHeader className="flex items-center justify-between">
+              <Typography variant="h4">
+                User Details
+              </Typography>
+
+              <IconButton
+                variant="text"
+                onClick={closeModal}
+                className="text-gray-700 flex items-center justify-center"
+              >
+                <FaXmark className="h-6 w-6" />
+              </IconButton>
+            </DialogHeader>
+            <DialogBody divider className="overflow-y-auto max-h-[80vh]">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Yacht Information */}
+                <div>
+                  <Typography variant="h6" color="blue-gray" className="mb-4">
+                    User Information
+                  </Typography>
+                  <div className="space-y-3">
+                    <InfoRow
+                      icon={ShipIcon}
+                      label="Name"
+                      value={selectedYacht?.name}
+                    />
+                    <InfoRow
+                      icon={LocateIcon}
+                      label="Email"
+                      value={selectedYacht?.email}
+                    />
+                    <InfoRow
+                      icon={LocateIcon}
+                      label="Type"
+                      value={selectedYacht?.status || 'N/A'}
+                    />
+                    <InfoRow
+                      icon={TypeIcon}
+                      label="Wallet Balance"
+                      value={
+                        selectedYacht?.wallet?.balance != null
+                          ? `AED ${selectedYacht.wallet.balance}`
+                          : 'N/A'
+                      }
+                    />
+
+                  </div>
+                </div>
+
+              </div>
+
+
+            </DialogBody>
+          </>
+        )}
+      </Dialog>
     </div>
   );
 };

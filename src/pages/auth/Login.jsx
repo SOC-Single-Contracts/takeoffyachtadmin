@@ -1,7 +1,7 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { login, logo } from '../../assets/images';
 import React, { useState, useEffect } from "react";
-import { login as loginApi } from '../../services/api/auth';
+import { adminLogin as loginApi } from '../../services/api/auth';
 import { useAuth } from '../../context/AuthContext';
 import { Button } from '@material-tailwind/react';
 

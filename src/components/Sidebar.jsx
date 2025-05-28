@@ -252,6 +252,36 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         }
       ]
     },
+    {
+      name: "Discount",
+      icon: <AiFillStar className="text-xl" />,
+      type: "accordion",
+      items: [
+        {
+          name: "Discount",
+          icon: <AiFillStar className="text-xl" />,
+          items: [
+            { name: "All Discounts", path: "/discounts" },
+            { name: "Add Discount", path: "/discounts/add" }
+          ]
+        }
+      ]
+    },
+    {
+      name: "Cities",
+      icon: <MdCategory className="text-xl" />,
+      type: "accordion",
+      items: [
+        {
+          name: "Cities",
+          icon: <MdCategory className="text-xl" />,
+          items: [
+            { name: "All Cities", path: "/cities" },
+            { name: "Add city", path: "/cities/add" }
+          ]
+        }
+      ]
+    },
   
     {
       name: "Categories",

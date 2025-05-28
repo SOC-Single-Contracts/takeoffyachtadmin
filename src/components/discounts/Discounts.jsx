@@ -1,45 +1,39 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardHeader, CardBody, CardFooter, Typography, Button, IconButton } from "@material-tailwind/react";
 import { Link } from 'react-router-dom';
-import { getAllBrands } from '../../services/api/brandService';
+import { getAllDiscounts } from '../../services/api/discountService'; // ✅ Update the API service
 
-const Brands = () => {
-  const [brands, setBrands] = useState([]);
+const Discounts = () => {
+  const [discounts, setDiscounts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const token = localStorage.getItem('token');
 
-
   useEffect(() => {
-    fetchBrands();
+    fetchDiscounts();
   }, []);
 
-  const fetchBrands = async () => {
+  const fetchDiscounts = async () => {
     try {
       setLoading(true);
-      const data = await getAllBrands(token);
-      setBrands(data || []);
+      const data = await getAllDiscounts(token); // ✅ Use discount API
+      setDiscounts(data || []);
     } catch (error) {
-      console.error('Error fetching brands:', error);
-      setBrands([]);
+      console.error('Error fetching discounts:', error);
+      setDiscounts([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const getCurrentPageBrands = () => {
+  const getCurrentPageDiscounts = () => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    return brands.slice(startIndex, endIndex);
+    return discounts.slice(startIndex, endIndex);
   };
 
-  const totalPages = Math.ceil(brands.length / itemsPerPage);
-
-
-  //test
-
-  // console.log("Brands data:", getCurrentPageBrands());
+  const totalPages = Math.ceil(discounts.length / itemsPerPage);
 
   return (
     <div className="p-6">
@@ -48,15 +42,15 @@ const Brands = () => {
           <div className="mb-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">
             <div>
               <Typography className='font-sora' variant="h3" color="blue-gray">
-                All Brands
+                All Discounts
               </Typography>
               <Typography color="gray" className="mt-1 font-normal">
-                Manage your brands
+                Manage your discounts
               </Typography>
             </div>
-            <Link to="/brands/add">
+            <Link to="/discounts/add">
               <Button className="flex items-center bg-[#BEA355] gap-3 rounded-full font-medium capitalize" size="md">
-                Add Brand
+                Add Discount
               </Button>
             </Link>
           </div>
@@ -65,7 +59,8 @@ const Brands = () => {
           <table className="w-full text-left border-collapse rounded-lg overflow-hidden shadow-sm bg-white">
             <thead className="bg-black text-white text-sm uppercase font-medium">
               <tr>
-                <th className="border-b border-blue-gray-100 p-4">Name</th>
+                <th className="border-b border-blue-gray-100 p-4">Code</th>
+                <th className="border-b border-blue-gray-100 p-4">Status</th>
                 <th className="border-b border-blue-gray-100 p-4">Action</th>
               </tr>
             </thead>
@@ -74,16 +69,22 @@ const Brands = () => {
                 <tr>
                   <td colSpan="2" className="p-4 text-center">Loading...</td>
                 </tr>
-              ) : brands.length === 0 ? (
+              ) : discounts.length === 0 ? (
                 <tr>
-                  <td colSpan="2" className="p-4 text-center">No brands found</td>
+                  <td colSpan="2" className="p-4 text-center">No discounts found</td>
                 </tr>
               ) : (
-                getCurrentPageBrands().map((brand) => (
-                  <tr key={brand.id} className="hover:bg-gray-50">
-                    <td className="p-4">{brand.name}</td>
+                getCurrentPageDiscounts().map((discount) => (
+                  <tr key={discount.id} className="hover:bg-gray-50">
+                    <td className="p-4">{discount.code}</td>
                     <td className="p-4">
-                      <Link to={`/brands/edit/${brand.id}`}> 
+                      <span className={`px-2 py-1 rounded-full text-xs ${!discount?.is_expired || !discount?.is_active  ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                        }`}>
+                        {!discount?.is_expired || discount?.is_active ? 'Active' : 'Inactive'}
+                      </span>
+                    </td>
+                    <td className="p-4">
+                      <Link to={`/discounts/edit/${discount.id}`}>
                         <Button variant="text" className="text-[#BEA355]">Edit</Button>
                       </Link>
                     </td>
@@ -94,8 +95,8 @@ const Brands = () => {
           </table>
         </CardBody>
         <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-          <Button 
-            variant="outlined" 
+          <Button
+            variant="outlined"
             size="sm"
             onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
@@ -114,8 +115,8 @@ const Brands = () => {
               </IconButton>
             ))}
           </div>
-          <Button 
-            variant="outlined" 
+          <Button
+            variant="outlined"
             size="sm"
             onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
             disabled={currentPage === totalPages}
@@ -128,4 +129,4 @@ const Brands = () => {
   );
 };
 
-export default Brands;
+export default Discounts;
