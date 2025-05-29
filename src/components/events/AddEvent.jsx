@@ -20,9 +20,9 @@ const AddEvent = () => {
   return (
     <div className="p-6">
       <div className="bg-white rounded-lg shadow-md p-6">
-        {/* <h1 className="text-3xl font-bold mb-6 font-sora">Manage Event & Package</h1> */}
+        <h1 className="text-3xl font-bold mb-6 font-sora">Manage Event & Package</h1>
 
-        {/* <div className="flex space-x-4 mb-4">
+        <div className="flex space-x-4 mb-4">
           <button
             className={`py-2 px-4 rounded-md ${activeTab === 'event' ? 'bg-[#BEA355] text-white' : 'bg-gray-200'}`}
             onClick={() => setActiveTab('event')}
@@ -37,16 +37,16 @@ const AddEvent = () => {
           >
             Add Package
           </button>
-        </div> */}
+        </div>
 
         {activeTab === 'event' && (
-          <AddEventPackageGlobal yachtsType="event" />
+          <AddEventPackageGlobal setActiveTab={setActiveTab} yachtsType="event" />
         )}
 
-        {/* {activeTab === 'package' && (
+        {activeTab === 'package' && (
           <AddPackage />
 
-        )} */}
+        )}
       </div>
     </div>
   );

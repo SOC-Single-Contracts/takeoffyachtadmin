@@ -393,7 +393,7 @@ const EventsListingGlobal = ({ yachtsType }) => {
                               ? `/event/f1-exp/edit/${boat?.id}`
                               : yachtsType === "new_year"
                                 ? `/event/newyear/edit/${boat?.id}`
-                                : `/events/edit/${boat?.id}` // fallback for regular yachts
+                                : `/events/edit/${boat?.id}?eventId=${boat?.id}` // fallback for regular yachts
                           }
                         >
                           <Button variant="text" className="text-[#BEA355]">

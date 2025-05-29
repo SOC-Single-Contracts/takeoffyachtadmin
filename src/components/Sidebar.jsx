@@ -145,7 +145,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           icon: <Package className="text-xl" />,
           items: [
             { name: "All Packages", path: "/packages" },
-            { name: "Add Package", path: "/packages/add" },
+            // { name: "Add Package", path: "/packages/add" },
 
           ]
         }

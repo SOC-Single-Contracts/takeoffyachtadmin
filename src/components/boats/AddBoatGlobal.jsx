@@ -927,10 +927,11 @@ const AddBoatGlobal = () => {
             <div>
               <label htmlFor="location">Location</label>
               {/* <Input className='rounded-lg' {...register('location')} error={!!errors.location} /> */}
-              <select
+              {!isCitiesLoading &&   <select
                 {...register("location")}
                 error={!!errors.location}
                 className={`w-full border rounded-lg p-2 border-gray-300 focus:ring-1 focus:ring-[#BEA355] focus:outline-none`}
+
               >
                 <option disabled  value="">Select Location</option>
                 {cities?.length >0 && cities?.map((city,index) => {
@@ -942,7 +943,8 @@ const AddBoatGlobal = () => {
 
 
 
-              </select>
+              </select> }
+            
             </div>
             {/* <div>
               <label htmlFor="min_price">Min Price</label>
@@ -1099,10 +1101,10 @@ const AddBoatGlobal = () => {
                 <div className="mt-2 flex flex-wrap gap-2">
                   Selected Coordinates:
                   <div className="bg-blue-100 text-blue-800 text-sm font-medium py-1 px-3 rounded-full shadow-md">
-                    Latitude: {meetPointLatLng.lat.toFixed(6)}
+                    Latitude: {meetPointLatLng.lat}
                   </div>
                   <div className="bg-green-100 text-green-800 text-sm font-medium py-1 px-3 rounded-full shadow-md">
-                    Longitude: {meetPointLatLng.lng.toFixed(6)}
+                    Longitude: {meetPointLatLng.lng}
                   </div>
                 </div>
               )}
@@ -1120,10 +1122,10 @@ const AddBoatGlobal = () => {
                 <div className="mt-2 flex flex-wrap gap-2">
                   Selected Coordinates:
                   <div className="bg-blue-100 text-blue-800 text-sm font-medium py-1 px-3 rounded-full shadow-md">
-                    Latitude: {carParkingLatLng.lat.toFixed(6)}
+                    Latitude: {carParkingLatLng.lat}
                   </div>
                   <div className="bg-green-100 text-green-800 text-sm font-medium py-1 px-3 rounded-full shadow-md">
-                    Longitude: {carParkingLatLng.lng.toFixed(6)}
+                    Longitude: {carParkingLatLng.lng}
                   </div>
                 </div>
               )}
@@ -1141,10 +1143,10 @@ const AddBoatGlobal = () => {
                 <div className="mt-2 flex flex-wrap gap-2">
                   Selected Coordinates:
                   <div className="bg-blue-100 text-blue-800 text-sm font-medium py-1 px-3 rounded-full shadow-md">
-                    Latitude: {taxiLatLng.lat.toFixed(6)}
+                    Latitude: {taxiLatLng.lat}
                   </div>
                   <div className="bg-green-100 text-green-800 text-sm font-medium py-1 px-3 rounded-full shadow-md">
-                    Longitude: {taxiLatLng.lng.toFixed(6)}
+                    Longitude: {taxiLatLng.lng}
                   </div>
                 </div>
               )}
@@ -1163,10 +1165,10 @@ const AddBoatGlobal = () => {
                 <div className="mt-2 flex flex-wrap gap-2">
                   Selected Coordinates:
                   <div className="bg-blue-100 text-blue-800 text-sm font-medium py-1 px-3 rounded-full shadow-md">
-                    Latitude: {locationLatLng.lat.toFixed(6)}
+                    Latitude: {locationLatLng.lat}
                   </div>
                   <div className="bg-green-100 text-green-800 text-sm font-medium py-1 px-3 rounded-full shadow-md">
-                    Longitude: {locationLatLng.lng.toFixed(6)}
+                    Longitude: {locationLatLng.lng}
                   </div>
                 </div>
               )}

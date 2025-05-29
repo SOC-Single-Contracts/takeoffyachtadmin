@@ -97,7 +97,7 @@ export const eventStatesUpdates = (data) => {
                 lat: parseFloat(lat),
                 lng: parseFloat(lng),
             };
-        }else{
+        } else {
             updates.meetPointLatLng = {
                 lat: parseFloat(25.180775),
                 lng: parseFloat(55.336947),
@@ -116,7 +116,7 @@ export const eventStatesUpdates = (data) => {
                 lat: parseFloat(lat),
                 lng: parseFloat(lng),
             };
-        }else{
+        } else {
             updates.carParkingLatLng = {
                 lat: parseFloat(25.180775),
                 lng: parseFloat(55.336947),
@@ -126,7 +126,7 @@ export const eventStatesUpdates = (data) => {
     if (data?.taxi_drop_off_link) {
         updates.taxiDropOff = data?.taxi_drop_off_link;
 
-        
+
         const urlObj = new URL(data?.taxi_drop_off_link);
         const query = urlObj.searchParams.get("query");
 
@@ -136,7 +136,7 @@ export const eventStatesUpdates = (data) => {
                 lat: parseFloat(lat),
                 lng: parseFloat(lng),
             };
-        }else{
+        } else {
             updates.taxiLatLng = {
                 lat: parseFloat(25.180775),
                 lng: parseFloat(55.336947),
@@ -240,6 +240,10 @@ export const eventStatesUpdates = (data) => {
 
 export const packageStatesUpdates = (data) => {
     const updates = {};
+    // console.log(data)
+
+    updates.packageSold = data?.sold
+
 
     if (data?.latitude && data?.longitude) {
         updates.locationLatLng = {
@@ -259,7 +263,7 @@ export const packageStatesUpdates = (data) => {
                 lat: parseFloat(lat),
                 lng: parseFloat(lng),
             };
-        }else{
+        } else {
             updates.meetPointLatLng = {
                 lat: parseFloat(25.180775),
                 lng: parseFloat(55.336947),
@@ -278,7 +282,7 @@ export const packageStatesUpdates = (data) => {
                 lat: parseFloat(lat),
                 lng: parseFloat(lng),
             };
-        }else{
+        } else {
             updates.carParkingLatLng = {
                 lat: parseFloat(25.180775),
                 lng: parseFloat(55.336947),
@@ -288,7 +292,7 @@ export const packageStatesUpdates = (data) => {
     if (data?.taxi_drop_off_link) {
         updates.taxiDropOff = data?.taxi_drop_off_link;
 
-        
+
         const urlObj = new URL(data?.taxi_drop_off_link);
         const query = urlObj.searchParams.get("query");
 
@@ -298,7 +302,7 @@ export const packageStatesUpdates = (data) => {
                 lat: parseFloat(lat),
                 lng: parseFloat(lng),
             };
-        }else{
+        } else {
             updates.taxiLatLng = {
                 lat: parseFloat(25.180775),
                 lng: parseFloat(55.336947),

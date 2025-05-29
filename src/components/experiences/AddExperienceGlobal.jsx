@@ -992,7 +992,7 @@ const AddExperienceGlobal = () => {
             <div>
               <label htmlFor="location">Location</label>
               {/* <Input className='rounded-lg' {...register('location')} error={!!errors.location} /> */}
-              <select
+              {!isCitiesLoading &&      <select
                 {...register("location")}
                 error={!!errors.location}
                 className={`w-full border rounded-lg p-2 border-gray-300 focus:ring-1 focus:ring-[#BEA355] focus:outline-none`}
@@ -1007,7 +1007,8 @@ const AddExperienceGlobal = () => {
 
 
 
-              </select>
+              </select>}
+         
             </div>
             {yachtsType == "regular-exp" && <div>
               <label htmlFor="location">Duration Min</label>
