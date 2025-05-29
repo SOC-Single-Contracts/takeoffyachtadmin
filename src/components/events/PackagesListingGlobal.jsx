@@ -10,6 +10,7 @@ const BASE_URL = import.meta.env.VITE_S3_URL || 'https://images-yacht.s3.us-east
 
 const PackagesListingGlobal = () => {
   const [allItems, setAllItems] = useState([]);
+  const [originalItems, setOriginalItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate()
   const [currentPage, setCurrentPage] = useState(1);
@@ -17,13 +18,56 @@ const PackagesListingGlobal = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [newPrice, setNewPrice] = useState("");
   const itemsPerPage = 5;
+  const [query, setQuery] = useState('');
+  const [searchValue, setsearchValue] = useState('');
 
+
+
+
+
+
+
+  const handleFilterChange = () => {
+    const filtered = originalItems.filter((pkg) => {
+      const packageType = pkg?.package_type?.toLowerCase() || "";
+      const description = pkg?.description?.toLowerCase() || "";
+      const price = pkg?.price?.toString().toLowerCase() || "";
+
+      return (
+        packageType.includes(searchValue.toLowerCase()) ||
+        description.includes(searchValue.toLowerCase()) ||
+        price.includes(searchValue.toLowerCase())
+      );
+    });
+
+    setAllItems(filtered);
+  };
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setsearchValue(query);
+    }, 500);
+
+    return () => {
+      clearTimeout(handler); // Clear the timeout if query changes before 500ms
+    };
+  }, [query]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+    if (searchValue) {
+      handleFilterChange();
+    } else if (!searchValue) {
+      setAllItems(originalItems);
+    }
+  }, [searchValue]);
   useEffect(() => {
     const fetchPackageList = async () => {
       try {
         const response = await axios.get('https://api.takeoffyachts.com/yacht/package/');
         if (response?.data?.error_code === 'pass') {
           setAllItems(response?.data?.package);
+          setOriginalItems(response?.data?.package);
           setLoading(false)
         }
       } catch (error) {
@@ -141,11 +185,23 @@ const PackagesListingGlobal = () => {
                 Manage all your Package items
               </Typography>
             </div>
-            <Link to="/packages/add">
+
+            {/* <Link to="/packages/add">
               <Button className="flex items-center bg-[#BEA355] rounded-full capitalize gap-3 font-medium" size="sm">
                 Add New Package
               </Button>
-            </Link>
+            </Link> */}
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2">
+            <div>
+              <Input
+                className='rounded-lg '
+                placeholder='Search'
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+              />
+            </div>
           </div>
         </CardHeader>
         <CardBody className="overflow-auto px-0">
@@ -163,14 +219,14 @@ const PackagesListingGlobal = () => {
                 <tr key={item.id} className="hover:bg-gray-50">
                   <td className="p-4">{item?.package_type}</td>
                   <td className="p-4">
-                  {import.meta.env.VITE_CURRENCY || "AED"}   {item?.price}
+                    {import.meta.env.VITE_CURRENCY || "AED"}   {item?.price}
 
                   </td>
                   <td className="p-4">{item.description}</td>
-              
+
                   <td className="p-4">
-                    <Button 
-                      variant="text" 
+                    <Button
+                      variant="text"
                       className="text-[#BEA355]"
                       onClick={() => navigate(`/packages/edit/${item?.id}`)}
                     >
@@ -181,7 +237,7 @@ const PackagesListingGlobal = () => {
               ))}
             </tbody>
           </table>
-          
+
           {/* Pagination */}
           <div className="flex items-center gap-4 justify-center mt-4">
             <Button
@@ -254,16 +310,16 @@ const PackagesListingGlobal = () => {
           </div>
         </DialogBody>
         <DialogFooter className="space-x-2 justify-center">
-          <Button 
-            variant="text" 
-            color="gray" 
+          <Button
+            variant="text"
+            color="gray"
             onClick={handleClose}
             className="rounded-full"
           >
             Cancel
           </Button>
-          <Button 
-            className="rounded-full bg-[#BEA355]" 
+          <Button
+            className="rounded-full bg-[#BEA355]"
             onClick={handleEdit}
           >
             Update Price
