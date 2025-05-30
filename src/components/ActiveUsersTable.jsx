@@ -298,7 +298,7 @@ const ActiveUsersTable = ({ limit }) => {
                       value={
                         selectedYacht?.wallet?.balance != null
                           ? `AED ${selectedYacht.wallet.balance}`
-                          : 'N/A'
+                          : '0'
                       }
                     />
 
