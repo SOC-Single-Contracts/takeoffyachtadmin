@@ -229,10 +229,10 @@ const AddcityGlobal = () => {
 
   //test 
 
-  useEffect(() => {
-    console.log(watchedValues, mainImage);
+  // useEffect(() => {
+  //   console.log(watchedValues, mainImage);
 
-  }, [watchedValues, mainImage]);
+  // }, [watchedValues, mainImage]);
 
 
   return (
