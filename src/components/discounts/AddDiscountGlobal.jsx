@@ -15,6 +15,7 @@ const discountSchema = z.object({
   valid_to: z.string().optional(),
   max_uses: z.any().optional(),
   is_active: z.boolean().optional(),
+  valid_hours: z.any().optional(),
 });
 
 const AddDiscountGlobal = () => {
@@ -41,6 +42,7 @@ const AddDiscountGlobal = () => {
       valid_to: '',
       max_uses: 1,
       is_active: true,
+      valid_hours: 0,
     }
   });
   const watchedValues = watch(); // Watches all form fields
@@ -54,14 +56,15 @@ const AddDiscountGlobal = () => {
       reset({
         code: data.code,
         discount: data.discount,
-        valid_from: data.valid_from ? data.valid_from.slice(0,10) : '',
-        valid_to: data.valid_to ? data.valid_to.slice(0,10) : '',
+        valid_from: data.valid_from ? data.valid_from.slice(0, 10) : '',
+        valid_to: data.valid_to ? data.valid_to.slice(0, 10) : '',
         max_uses: data.max_uses,
         is_active: data.is_active,
+        valid_hours: data.valid_hours,
       });
       if (data.brands) {
         // Assuming brandList is fetched later, you can sync selectedBrands after brandList loaded
-        setSelectedBrands(data.brands.map(id => ( id ))); 
+        setSelectedBrands(data.brands.map(id => (id)));
       }
     } catch (error) {
       console.error('Error fetching discount:', error);
@@ -118,7 +121,7 @@ const AddDiscountGlobal = () => {
       setLoading(true);
 
       const payload = {
-        id:isEditMode? id:null,
+        id: isEditMode ? id : null,
         code: data.code,
         discount: data.discount,
         valid_from: data.valid_from || "",
@@ -126,6 +129,7 @@ const AddDiscountGlobal = () => {
         max_uses: data.max_uses || 1,
         is_active: data.is_active ?? true,
         brand_ids: selectedBrands.map(b => b.id),
+        valid_hours: data.valid_hours || 0,
       };
 
       if (isEditMode) {
@@ -149,10 +153,10 @@ const AddDiscountGlobal = () => {
   const isActiveValue = watch("is_active");
 
   //test
-  useEffect(()=>{
-console.log("watchedValues,selectedBrands",watchedValues,selectedBrands)
-console.log("errors",errors)
-  },[watchedValues,selectedBrands,errors])
+  useEffect(() => {
+    console.log("watchedValues,selectedBrands", watchedValues, selectedBrands)
+    console.log("errors", errors)
+  }, [watchedValues, selectedBrands, errors])
 
   return (
     <div className="p-6">
@@ -208,7 +212,7 @@ console.log("errors",errors)
                         checked={selectedBrands.some(p => p.id === pkg.id)}
                         onChange={() => handleCheckboxChange(pkg)}
                       />
-                      {pkg.name} 
+                      {pkg.name}
                     </label>
                   ))}
                 </div>
@@ -246,14 +250,14 @@ console.log("errors",errors)
             </div> */}
 
             <div>
-              <label className="block mb-2">Max Uses</label>
+              <label className="block mb-2">Valid Hours <span className="text-red-700">*</span></label>
               <input
                 type="number"
-                step="any"
-                {...register("max_uses", { valueAsNumber: true })}
-                className="w-full border rounded-lg p-2 border-gray-300"
-                placeholder="100"
+                {...register("valid_hours")}
+                className={`w-full border rounded-lg p-2 ${errors.valid_hours ? "border-red-500" : "border-gray-300"}`}
+                placeholder="Discount Code"
               />
+              {errors.valid_hours && <p className="text-red-500 text-sm">{errors.code.message}</p>}
             </div>
 
             {/* <div className="flex items-center gap-2">
@@ -266,7 +270,6 @@ console.log("errors",errors)
               <label htmlFor="is_active">Active</label>
             </div> */}
 
-      
 
             <div className="mt-6 flex justify-end gap-4">
               <button
