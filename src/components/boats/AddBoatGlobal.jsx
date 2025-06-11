@@ -67,6 +67,10 @@ const AddBoatGlobal = () => {
   const [debuggingObject, setDebuggingObject] = useState({})
   const [cities, setCities] = useState([]);
   const [isCitiesLoading, setIsCitiesLoading] = useState(true);
+  const [features, setFeatures] = useState(false);
+  const [hosts, setHosts] = useState([]);
+  const [selectedHost, setSelectedHost] = useState('');
+  const [isHostsLoading, setIsHostsLoading] = useState(true);
 
   const selectedSchema =
     yachtsType === "yachts" ? zodSchemaRegularYachts : yachtsType === "f1yachts" ? zodSchemaf1Yachts : zodSchemaEmpty;
@@ -99,6 +103,8 @@ const AddBoatGlobal = () => {
 
       setSelectedYacht(data);
       reset(yachtData(data));
+      setFeatures(data?.yacht?.is_featured);
+      setSelectedHost(data?.yacht?.host_info?.id);
 
       const updates = regularYachtsStatesUpdates(data);
 
@@ -460,6 +466,8 @@ const AddBoatGlobal = () => {
       // formData.append('food_price', foodPrice);
       // formData.append('brand_id', selectedBrand);
       formData.append('food_name', JSON.stringify(selectedFoodOptions));
+      formData.append('is_featured', features);
+      formData.append('host_id', selectedHost);
 
       // console.log("FormData contents:");
       // for (let pair of formData.entries()) {
@@ -816,6 +824,25 @@ const AddBoatGlobal = () => {
 
     fetchCities();
   }, []);
+
+  // Add this useEffect to fetch hosts
+  useEffect(() => {
+    const fetchHosts = async () => {
+      try {
+        setIsHostsLoading(true);
+        const response = await axios.get(`${BASE_URL}/yacht/hostby/?user_id=1`);
+        setHosts(response.data.data);
+      } catch (error) {
+        console.error('Error fetching hosts:', error);
+        toast.error('Failed to fetch hosts');
+      } finally {
+        setIsHostsLoading(false);
+      }
+    };
+
+    fetchHosts();
+  }, []);
+
   //test
   // useEffect(() => {
   //   const newData = {
@@ -927,14 +954,14 @@ const AddBoatGlobal = () => {
             <div>
               <label htmlFor="location">Location</label>
               {/* <Input className='rounded-lg' {...register('location')} error={!!errors.location} /> */}
-              {!isCitiesLoading &&   <select
+              {!isCitiesLoading && <select
                 {...register("location")}
                 error={!!errors.location}
                 className={`w-full border rounded-lg p-2 border-gray-300 focus:ring-1 focus:ring-[#BEA355] focus:outline-none`}
 
               >
-                <option disabled  value="">Select Location</option>
-                {cities?.length >0 && cities?.map((city,index) => {
+                <option disabled value="">Select Location</option>
+                {cities?.length > 0 && cities?.map((city, index) => {
                   return (
                     <option key={index} value={city?.name}>{city?.name}</option>
                   )
@@ -943,8 +970,8 @@ const AddBoatGlobal = () => {
 
 
 
-              </select> }
-            
+              </select>}
+
             </div>
             {/* <div>
               <label htmlFor="min_price">Min Price</label>
@@ -1011,6 +1038,24 @@ const AddBoatGlobal = () => {
               <label htmlFor="crew_member">Crew Member</label>
               <Input className='rounded-lg' {...register('crew_member')} error={!!errors.crew_member} />
             </div>
+            <div>
+              <label htmlFor="host">Host</label>
+              {!isHostsLoading && (
+                <select
+                  {...register("host_id")}
+                  value={selectedHost}
+                  onChange={(e) => setSelectedHost(e.target.value)}
+                  className="w-full border rounded-lg p-2 border-gray-300 focus:ring-1 focus:ring-[#BEA355] focus:outline-none"
+                >
+                  <option value="">Select Host</option>
+                  {hosts?.map((host) => (
+                    <option key={host.id} value={host.id}>
+                      {host.name}
+                    </option>
+                  ))}
+                </select>
+              )}
+            </div>
             {yachtsType == "yachts" && <div className='flex items-center gap-2'>
               <label htmlFor="ny_status">New Year Status</label>
               <input
@@ -1020,6 +1065,17 @@ const AddBoatGlobal = () => {
                 //   setNyStatusChecked(e.target.checked);
                 //   // console.log('NY Status Checked:', e.target.checked);
                 // }}
+                className="form-checkbox h-5 w-5 text-[#BEA355]"
+              />
+
+              <label htmlFor="is_featured">Featured</label>
+              <input
+                type="checkbox"
+                checked={features}
+                onChange={(e) => {
+                  setFeatures(e.target.checked);
+                  // console.log('NY Status Checked:', e.target.checked);
+                }}
                 className="form-checkbox h-5 w-5 text-[#BEA355]"
               />
             </div>}
