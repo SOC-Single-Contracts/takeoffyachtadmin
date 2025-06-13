@@ -52,7 +52,7 @@ const AddBoatGlobal = () => {
   const [categoriesList, setCategoriesList] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [brandsList, setBrandsList] = useState([]);
-  const [selectedBrand, setSelectedBrand] = useState('');
+  const [selectedBrand, setSelectedBrand] = useState(null);
   const [category, setCategory] = useState('');
   const [foodName, setFoodName] = useState('');
   const [foodPrice, setFoodPrice] = useState('');
@@ -105,6 +105,7 @@ const AddBoatGlobal = () => {
       reset(yachtData(data));
       setFeatures(data?.yacht?.is_featured);
       setSelectedHost(data?.yacht?.host_info?.id);
+      setSelectedBrand(data?.yacht?.brand?.name);
 
       const updates = regularYachtsStatesUpdates(data);
 
@@ -151,6 +152,7 @@ const AddBoatGlobal = () => {
       data = response?.find(item => item.yacht && item.yacht.id.toString() == id);
       setSelectedYacht(data);
       reset(f1yachtData(data));
+      setSelectedBrand(data?.yacht?.brand?.name);
 
       const updates = f1YachtsStatesUpdates(data);
 
@@ -265,16 +267,20 @@ const AddBoatGlobal = () => {
   useEffect(() => {
     const fetchBrands = async () => {
       try {
-        const response = await axios.get('https://api.takeoffyachts.com/yacht/brand/');
+        const response = await axios.get(`${BASE_URL}/yacht/brands/`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
         if (response?.data?.error_code === 'pass') {
-          // setBrandsList(response?.data?.data);
+          setBrandsList(response?.data?.data);
         }
       } catch (error) {
         console.error('Error fetching brandsList:', error);
         toast.error('Failed to fetch brandsList');
       }
     };
-    // fetchBrands();
+    fetchBrands();
   }, []);
 
   const handleLocationSelect = useCallback((newLocation, type) => {
@@ -468,6 +474,7 @@ const AddBoatGlobal = () => {
       formData.append('food_name', JSON.stringify(selectedFoodOptions));
       formData.append('is_featured', features);
       formData.append('host_id', selectedHost);
+      formData.append('brand_name', selectedBrand);
 
       // console.log("FormData contents:");
       // for (let pair of formData.entries()) {
@@ -703,6 +710,7 @@ const AddBoatGlobal = () => {
       // formData.append('food_price', foodPrice);
       // formData.append('brand_id', selectedBrand);
       formData.append('food_name', JSON.stringify(selectedFoodOptions));
+      formData.append('brand_name', selectedBrand);
 
       // console.log("FormData contents:");
       // for (let pair of formData.entries()) {
@@ -1055,6 +1063,24 @@ const AddBoatGlobal = () => {
                   ))}
                 </select>
               )}
+            </div>
+            <div>
+              <label htmlFor="host">Brands</label>
+                <select
+                  // {...register("host_id")}
+                  value={selectedBrand}
+                  onChange={(e) => {
+                    setSelectedBrand(e.target.value);
+                  }}
+                  className="w-full border rounded-lg p-2 border-gray-300 focus:ring-1 focus:ring-[#BEA355] focus:outline-none"
+                >
+                  <option value="">Select Brand</option>
+                  {brandsList?.map((brand) => (
+                    <option key={brand.id} value={brand.name}>
+                      {brand.name}
+                    </option>
+                  ))}
+                </select>
             </div>
             {yachtsType == "yachts" && <div className='flex items-center gap-2'>
               <label htmlFor="ny_status">New Year Status</label>
