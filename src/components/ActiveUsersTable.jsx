@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardHeader, CardBody, CardFooter, Typography, Button, IconButton, Dialog, DialogHeader, DialogBody, Input } from "@material-tailwind/react";
 import { ArrowLeftIcon, ArrowRightIcon, FlagIcon, LocateIcon, PowerIcon, ShipIcon, TypeIcon } from "lucide-react";
 import { FaXmark } from "react-icons/fa6";
+import axios from "axios";
 
 const InfoRow = ({ label, value, icon }) => (
   <div className="flex justify-between">
@@ -17,6 +18,8 @@ const InfoRow = ({ label, value, icon }) => (
     </span>
   </div>
 );
+
+const BASE_URL = import.meta.env.VITE_API_URL || 'https://api.takeoffyachts.com';
 
 const ActiveUsersTable = ({ limit }) => {
   const [loading, setLoading] = useState(true);
@@ -136,7 +139,22 @@ const ActiveUsersTable = ({ limit }) => {
       </div>
     );
   }
-
+  const deleteUser = async (id) => {
+    try {
+      await axios.delete(`${BASE_URL}/Auth/profile/delete_user/`,
+        {
+          data:
+          {
+            admin_id: 3,
+            user_id: id
+          }
+        }
+      );
+      fetchUsers();
+    } catch (error) {
+      console.error('Error deleting user:', error);
+    }
+  };
   return (
     <div className="w-full">
       <Card className="h-full w-full p-4">
@@ -197,7 +215,7 @@ const ActiveUsersTable = ({ limit }) => {
                       <GoDotFill />{user.status}
                     </span>
                   </td>
-                  <td className="py-3 px-4 flex justify-center items-center">
+                  <td className="py-3 px-4 flex justify-center items-center gap-2">
                     <button
 
                       onClick={(e) => {
@@ -207,6 +225,16 @@ const ActiveUsersTable = ({ limit }) => {
                       className="bg-[#BEA355] submitButton my-4 text-white px-6 py-2 float-right rounded-full  transition-colors disabled:opacity-50"
                     >
                       Add Money
+                    </button>
+                    <button
+
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevents the row click from firing
+                        deleteUser(user.id);
+                      }}
+                      className="bg-[#BEA355] submitButton my-4 text-white px-6 py-2 float-right rounded-full  transition-colors disabled:opacity-50"
+                    >
+                      Delete
                     </button>
                   </td>
                   {/* <td className="py-3 px-4 text-right">
