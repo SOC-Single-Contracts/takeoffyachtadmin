@@ -168,7 +168,7 @@ export const regularYachtsStatesUpdates = (data) => {
     }
 
     if (data?.food?.length > 0) {
-        updates.selectedFoodOptions = data.food.map(food => food?.name);
+        updates.selectedFoodOptions = data.food.map(food => { return { name: food?.name , quantity: food?.min_quantity} }); //food?.name);
     }
 
     /// Additional Images
@@ -316,7 +316,7 @@ export const f1YachtsStatesUpdates = (data) => {
     }
 
     if (data?.food?.length > 0) {
-        updates.selectedFoodOptions = data.food.map(food => food?.name);
+        updates.selectedFoodOptions = data.food.map(food => { return { name: food?.name , quantity: food?.min_quantity} });
     }
 
     /// Additional Images

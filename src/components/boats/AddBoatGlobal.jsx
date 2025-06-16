@@ -61,6 +61,7 @@ const AddBoatGlobal = () => {
   const [selectedSubcategories, setSelectedSubcategories] = useState([]);
   const [foodOptions, setFoodOptions] = useState([]);
   const [selectedFoodOptions, setSelectedFoodOptions] = useState([]);
+  const [foodQuantities, setFoodQuantities] = useState({});
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [nyStatusChecked, setNyStatusChecked] = useState(false);
   const [selectedYacht, setSelectedYacht] = useState({})
@@ -468,10 +469,7 @@ const AddBoatGlobal = () => {
       formData.append('subcategory', JSON.stringify(selectedFeatures));
       formData.append('inclusion', JSON.stringify(selectedInclusion));
       formData.append('categories', JSON.stringify(selectedCategories));
-      // formData.append('food_name', foodName);
-      // formData.append('food_price', foodPrice);
-      // formData.append('brand_id', selectedBrand);
-      formData.append('food_name', JSON.stringify(selectedFoodOptions));
+      formData.append('foods', JSON.stringify(selectedFoodOptions));
       formData.append('is_featured', features);
       formData.append('host_id', selectedHost);
       formData.append('brand_name', selectedBrand);
@@ -706,10 +704,7 @@ const AddBoatGlobal = () => {
       formData.append('subcategory', JSON.stringify(selectedFeatures));
       formData.append('inclusion', JSON.stringify(selectedInclusion));
       formData.append('category', JSON.stringify(selectedCategories));
-      // formData.append('food_name', foodName);
-      // formData.append('food_price', foodPrice);
-      // formData.append('brand_id', selectedBrand);
-      formData.append('food_name', JSON.stringify(selectedFoodOptions));
+      formData.append('foods', JSON.stringify(selectedFoodOptions));
       formData.append('brand_name', selectedBrand);
 
       // console.log("FormData contents:");
@@ -1390,27 +1385,69 @@ const AddBoatGlobal = () => {
 
             <div>
               <label htmlFor="food_options" className="block text-sm font-medium text-gray-700 mb-2">Food Options</label>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                {/* remove duplicate names */}
-                {[...new Map(foodOptions?.map(f => [f.name, f])).values()]?.map((food) => (
-                  <button
-                    key={food.id}
-                    type="button"
-                    onClick={() => {
-                      setSelectedFoodOptions(prev =>
-                        prev.includes(food.name)
-                          ? prev.filter(f => f !== food.name)
-                          : [...prev, food.name]
-                      )
-                    }}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-colors
-                      ${selectedFoodOptions.includes(food.name)
-                        ? 'bg-[#BEA355] text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
-                  >
-                    {food.name} - {import.meta.env.VITE_CURRENCY || "AED"} {food.price}
-                  </button>
+              <div className="grid grid-cols-2 md:grid-cols-2 gap-2">
+                {[...new Map(foodOptions?.map(f => [f.name, f])).values()]?.map((food, index) => (
+                  <div key={food.id} className="relative">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedFoodOptions(prev =>
+                          prev.some(f => f.name === food.name)
+                            ? prev.filter(f => f.name !== food.name)
+                            : [...prev, { name: food.name, quantity: 1 }]
+                        );
+                      }}
+                      className={`w-full px-4 py-2 rounded-full text-sm font-medium transition-colors relative
+                        ${selectedFoodOptions.some(f => f.name === food.name)
+                          ? 'bg-[#BEA355] text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                    >
+                      {selectedFoodOptions.some(f => f.name === food.name) && (
+                        <>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedFoodOptions(prev => 
+                                prev.map(f => 
+                                  f.name === food.name 
+                                    ? { ...f, quantity: Math.max(1, f.quantity - 1) }
+                                    : f
+                                )
+                              );
+                            }}
+                            className="absolute left-2 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30"
+                          >
+                            -
+                          </button>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedFoodOptions(prev => 
+                                prev.map(f => 
+                                  f.name === food.name 
+                                    ? { ...f, quantity: f.quantity + 1 }
+                                    : f
+                                )
+                              );
+                            }}
+                            className="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30"
+                          >
+                            +
+                          </button>
+                        </>
+                      )}
+                      <div className='flex justify-center'>
+                        <span className={`${selectedFoodOptions.some(f => f.name === food.name) ? '' : ''} text-center`}>
+                          {food.name} - {import.meta.env.VITE_CURRENCY || "AED"} {food.price}
+                          {selectedFoodOptions.find(f => f.name === food.name)?.quantity && 
+                            ` | qty: ${selectedFoodOptions.find(f => f.name === food.name).quantity}`}
+                        </span>
+                      </div>
+                    </button>
+                  </div>
                 ))}
               </div>
             </div>
