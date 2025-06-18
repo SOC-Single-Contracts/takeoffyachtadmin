@@ -153,6 +153,7 @@ const AddBoatGlobal = () => {
       data = response?.find(item => item.yacht && item.yacht.id.toString() == id);
       setSelectedYacht(data);
       reset(f1yachtData(data));
+      setSelectedHost(data?.yacht?.host_info?.id);
       setSelectedBrand(data?.yacht?.brand?.name);
 
       const updates = f1YachtsStatesUpdates(data);
@@ -473,7 +474,12 @@ const AddBoatGlobal = () => {
       formData.append('is_featured', features);
       formData.append('host_id', selectedHost);
       formData.append('brand_name', selectedBrand);
-
+      if (!selectedHost) {
+        formData.delete('host_id');
+      }
+      if (!selectedBrand) {
+      formData.delete('brand_name');
+      }
       // console.log("FormData contents:");
       // for (let pair of formData.entries()) {
       //   console.log(`${pair[0]}:`, pair[1]);
@@ -705,6 +711,10 @@ const AddBoatGlobal = () => {
       formData.append('inclusion', JSON.stringify(selectedInclusion));
       formData.append('category', JSON.stringify(selectedCategories));
       formData.append('foods', JSON.stringify(selectedFoodOptions));
+      formData.append('host_id', selectedHost);
+      if (!selectedHost) {
+        formData.delete('host_id');
+      }
       formData.append('brand_name', selectedBrand);
 
       // console.log("FormData contents:");
