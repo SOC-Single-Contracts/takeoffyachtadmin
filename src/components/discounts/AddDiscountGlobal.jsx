@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 import { useNavigate, useParams } from 'react-router-dom';
 import { addDiscount, getDiscount, updateDiscount } from '../../services/api/discountService';
 import { getAllBrands } from '../../services/api/brandService';
+import axios from 'axios';
 
 const discountSchema = z.object({
   code: z.string().min(1, "Code is required"),
@@ -79,8 +80,24 @@ const AddDiscountGlobal = () => {
   const fetchBrands = async () => {
     try {
       setLoading(true);
-      const data = await getAllBrands(token);
-      setBrands(data || []);
+      // const data = await getAllBrands(token);
+      // setBrands(data || []);
+      const fetchBrands = async () => {
+        try {
+          const response = await axios.get(`https://api.takeoffyachts.com/yacht/brands2/`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+          });
+          if (response?.data?.error_code === 'pass') {
+            setBrands(response?.data?.data || []);
+          }
+        } catch (error) {
+          console.error('Error fetching brandsList:', error);
+          toast.error('Failed to fetch brandsList');
+        }
+      };
+      fetchBrands();
     } catch (error) {
       console.error('Error fetching brands:', error);
       setBrands([]);
