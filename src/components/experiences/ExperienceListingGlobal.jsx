@@ -285,7 +285,25 @@ const ExperienceListingGlobal = ({ yachtsType }) => {
       handlePagination();
     }
   }, [searchValue]);
-  //test
+
+  const handleDelete = async (id) => {
+    setLoading(true)
+    try {
+      await fetch(`${baseUrl}/yacht/delete_any/experiencedb/${id}/`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json', // optional, but good practice
+        },
+      });
+      handlePagination();
+      setLoading(false)
+    } catch (error) {
+      setLoading(false)
+      console.log('Error deleting yacht:', error);
+    }
+  }
+   //test
   // useEffect(() => {
     // console.log("loading", loading)
     // console.log("yachtsType", yachtsType)
@@ -381,7 +399,7 @@ const ExperienceListingGlobal = ({ yachtsType }) => {
               </thead>
               <tbody>
                 {boats?.map((boat) => (
-                  <tr key={boat?.experience.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => openModal(boat?.experience)}>
+                  <tr key={boat?.experience.id} className="hover:bg-gray-50 cursor-pointer" onClick={(e) => {e.stopPropagation(); openModal(boat?.experience)}}>
                     {yachtsType === "f1-exp" ? <td className="p-4">{boat?.experience.name}</td>
                       : yachtsType === "regular-exp" ? <td className="p-4">{boat?.experience.name}</td>
                         : yachtsType === "new_year" ? <td className="p-4">{boat?.experience.name}</td>
@@ -410,6 +428,9 @@ const ExperienceListingGlobal = ({ yachtsType }) => {
                           Edit
                         </Button>
                       </Link>
+                      <Button variant="text" className="text-[#BEA355]" onClick={(e) => {e.stopPropagation(); handleDelete(boat?.experience.id)}}>
+                          Delete
+                      </Button>
                     </td>
                   </tr>
                 ))}

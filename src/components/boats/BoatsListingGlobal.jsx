@@ -282,6 +282,37 @@ const BoatsListingGlobal = ({ yachtsType }) => {
       handlePagination();
     }
   }, [searchValue]);
+  
+  const handleDelete = async (id) => {
+    setLoading(true)
+    try {
+      if (yachtsType == "f1yachts") {
+        await fetch(`${baseUrl}/yacht/delete_any/f1yacht/${id}/`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json', // optional, but good practice
+          },
+        });
+
+        handlePagination();
+      } else {
+        await fetch(`${baseUrl}/yacht/yacht/`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ yacht: id }),
+      });
+      handlePagination();
+    }
+      setLoading(false)
+    } catch (error) {
+      setLoading(false)
+      console.log('Error deleting yacht:', error);
+    }
+
+  }
   //test
   // useEffect(() => {
   //   // console.log("loading", loading)
@@ -407,6 +438,12 @@ const BoatsListingGlobal = ({ yachtsType }) => {
                           Edit
                         </Button>
                       </Link>
+                      <Button variant="text" className="text-[#BEA355]" onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(boat?.yacht.id)}
+                        }>
+                          Deleted
+                        </Button>
                     </td>
                   </tr>
                 ))}
