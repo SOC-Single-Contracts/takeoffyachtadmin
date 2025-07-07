@@ -136,13 +136,15 @@ const Miscellaneous = () => {
                     )}
                   </td>
                   <td className="p-4">
+                    <Link to={`/extras/edit/${item.id}`}>
                     <Button 
                       variant="text" 
                       className="text-[#BEA355]"
-                      onClick={() => handleOpen(item)}
+                      // onClick={() => handleOpen(item)}
                     >
                       Edit
                     </Button>
+                    </Link>
                   </td>
                 </tr>
               ))}

@@ -53,6 +53,7 @@ import AddSpecifications from "../components/specifications/AddSpecifications";
 import BoatBookings from "../pages/booking/BoatBooking";
 import EventBookings from "../pages/booking/EventBooking";
 import AddExtras from "../components/extras/AddExtras";
+import EditExtras from "../components/extras/EditExtras";
 import Miscellaneous from "../components/extras/Miscellaneous";
 import Extra from "../components/extras/Extra";
 import WaterSports from "../components/extras/WaterSports";
@@ -161,6 +162,7 @@ const AppRoutes = () => {
           <Route path="extras/misc" element={<Miscellaneous />} />
           <Route path="extras/extra" element={<Extra />} />
           <Route path="extras/add" element={<AddExtras />} />
+          <Route path="extras/edit/:id" element={<EditExtras />} />
           <Route path="extras" element={<AllExtras />} />
 
           {/* Merchants Routes */}

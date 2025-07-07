@@ -136,6 +136,7 @@ const Extra = () => {
                     )}
                   </td>
                   <td className="p-4">
+                    <Link to={`/extras/edit/${item.id}`}>
                     <Button 
                       variant="text" 
                       className="text-[#BEA355]"
@@ -143,6 +144,7 @@ const Extra = () => {
                     >
                       Edit
                     </Button>
+                    </Link>
                   </td>
                 </tr>
               ))}
