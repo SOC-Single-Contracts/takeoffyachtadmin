@@ -35,6 +35,7 @@ export const yachtData = (data) => {
         ny_status: data?.yacht?.ny_status ?? false,
         ny_availability_from: data?.yacht?.ny_availability?.from ?? "",
         ny_availability_to: data?.yacht?.ny_availability?.to ?? "",
+        bath: data?.yacht?.bath ?? "",
     }
     return obj
 };

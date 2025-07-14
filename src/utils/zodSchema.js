@@ -32,7 +32,7 @@ export const zodSchemaRegularYachts = z.object({
   ny_status: z.any().optional(),
   ny_availability_from: z.any().optional(),
   ny_availability_to: z.any().optional(),
-
+  bath: z.any().optional(),
 });
 
 
@@ -63,6 +63,7 @@ export const zodSchemaf1Yachts = z.object({
   inclusion: z.array(z.any()).optional(),
   category_name: z.any().optional(),
   yacht_name: z.any().optional(),
+  bath: z.any().optional(),
   // ny_price: z.any().optional(),
   // ny_firework: z.any().optional(),
   // ny_status: z.any().optional(),

@@ -102,6 +102,7 @@ const AddBoatGlobal = () => {
       const response = await getSingleBoatById(id, yachtsType == "f1yachts" ? "f1yachts" : "regular");
       data = response?.find(item => item.yacht && item.yacht.id.toString() == id);
 
+console.log("My Response is Dum In =====> ",response)
       setSelectedYacht(data);
       reset(yachtData(data));
       setFeatures(data?.yacht?.is_featured);
@@ -310,7 +311,7 @@ const AddBoatGlobal = () => {
 
   const handleSubmitYachts = async (data) => {
 
-    // console.log(data)
+    console.log(" green Rao ====> ",data)
     try {
       if (!mainImage && !isEditMode) {
         toast.error('Please select a main yacht image');
@@ -486,7 +487,7 @@ const AddBoatGlobal = () => {
       // }
 
       let url;
-
+console .log("My Form Data is here ====> ",  formData)
       url = isEditMode
         ? `https://api.takeoffyachts.com/yacht/yacht/`
         : 'https://api.takeoffyachts.com/yacht/yacht/';
@@ -1051,6 +1052,12 @@ const AddBoatGlobal = () => {
               <label htmlFor="crew_member">Crew Member</label>
               <Input className='rounded-lg' {...register('crew_member')} error={!!errors.crew_member} />
             </div>
+            {
+              yachtsType == "yachts" && <div>
+              <label htmlFor="bath">Bath</label>
+              <Input type='number' className='rounded-lg' {...register('bath')} error={!!errors.bath} />
+            </div>
+            }
             <div>
               <label htmlFor="host">Host</label>
               {!isHostsLoading && (
